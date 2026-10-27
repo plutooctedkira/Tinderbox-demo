@@ -162,6 +162,19 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
+ .acts{display:flex;gap:8px;margin:6px 0 10px}
+ .acts button{padding:4px 12px;font-size:12px;border:1px solid var(--line);background:#fff;
+   border-radius:6px;cursor:pointer}
+ .addform{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0 8px}
+ .addform textarea{width:100%;box-sizing:border-box;margin:0 0 6px;padding:8px 10px;font-size:13px;
+   border:1px solid var(--line);border-radius:7px;font-family:inherit;resize:vertical}
+ .addform textarea:focus{outline:none;border-color:var(--blue)}
+ .afrow{display:flex;gap:8px;align-items:center}
+ .afrow select{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px}
+ .afrow button{padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;
+   font-size:12.5px;cursor:pointer}
+ .afrow button[type=submit]{background:var(--navy);color:#fff;border-color:var(--navy)}
+ .afmsg{flex:1;font-size:12px;color:#b4232c}
  .ctxbox{margin:0 0 8px}
  .ticker{display:flex;align-items:baseline;gap:9px;padding:6px 2px;border-bottom:1px solid var(--line);
    cursor:pointer;overflow:hidden}
@@ -250,8 +263,24 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
+      <button id="addbtn" title="记一条">＋</button>
     </div>
   </div>
+  <form class="addform" id="addform" hidden>
+    <textarea id="af-sum" rows="2" placeholder="结论：定了什么（一句话）"></textarea>
+    <textarea id="af-why" rows="2" placeholder="依据：为什么这么定（写不出依据就别记）"></textarea>
+    <div class="afrow">
+      <select id="af-cat">
+        <option value="decision">决策</option>
+        <option value="preference">偏好</option>
+        <option value="task">任务</option>
+        <option value="knowledge">知识</option>
+      </select>
+      <span class="afmsg" id="af-msg"></span>
+      <button type="submit">保存</button>
+      <button type="button" id="af-cancel">取消</button>
+    </div>
+  </form>
   <div class="ctxbox" id="ctx"></div>
 <div class="hint" id="hint">回车检索 · 历史含归档与旧版本</div>
   <div id="list"></div>
@@ -319,7 +348,28 @@ async function open(id, card){
         <span class="rtag">${esc(r.relation)}</span>
         <span class="rs">${esc(r.l1_summary)}</span>
         <span class="rc">${r.confidence.toFixed(2)}</span></div>`).join('')}</div>`:''}
+    <div class="acts"><button id="act-edit">编辑</button>
+      <button id="act-arch">${d.status==='archived'?'恢复':'归档'}</button></div>
     <pre>${esc(d.text)}</pre>`;
+  $('#act-edit').onclick=async()=>{
+    const next=prompt('改摘要（会留痕，可回滚）', d.l1_summary);
+    if(!next || next.trim()===d.l1_summary) return;
+    const r=await fetch('/api/entry/update',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({entry_id:d.entry_id,summary:next.trim()})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'改不了'); return; }
+    open(d.entry_id);
+  };
+  $('#act-arch').onclick=async()=>{
+    const toArchive = d.status!=='archived';
+    const r=await fetch('/api/entry/archive',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({entry_id:d.entry_id,archived:toArchive})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'操作失败'); return; }
+    open(d.entry_id);
+  };
   document.querySelectorAll('.relrow').forEach(el=>el.onclick=()=>open(el.dataset.id));
   document.querySelectorAll('.node').forEach(n=>n.onclick=()=>open(n.dataset.id));
 }
@@ -541,6 +591,30 @@ $('#q').addEventListener('input',()=>{
   }catch(e){}
 })();
 renderContext();
+$('#addbtn').onclick=()=>{
+  const f=$('#addform');
+  f.hidden=!f.hidden;
+  if(!f.hidden){ $('#af-sum').focus(); $('#af-msg').textContent=''; }
+};
+$('#af-cancel').onclick=()=>{ $('#addform').hidden=true; };
+$('#addform').onsubmit=async e=>{
+  e.preventDefault();
+  const msg=$('#af-msg'); msg.textContent='';
+  const body={
+    summary:$('#af-sum').value.trim(),
+    reason:$('#af-why').value.trim(),
+    category:$('#af-cat').value
+  };
+  const r=await fetch('/api/add',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(body)});
+  const j=await r.json();
+  if(!j.ok){ msg.textContent=j.error||'保存失败'; return; }
+  $('#af-sum').value=''; $('#af-why').value=''; $('#addform').hidden=true;
+  renderContext();
+  document.querySelector('#modes [data-mode].on')?.click() ||
+    document.querySelector('[data-mode=chains]').click();
+  open(j.result.entry_id);
+};
 document.querySelector('[data-mode=chains]').click();
 </script></body></html>"""
 
@@ -665,6 +739,61 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 self._deny_api()
                 return
+
+        if u.path == "/api/add":
+            conn = tb.connect()
+            try:
+                out = tb.add_memory(
+                    conn,
+                    summary=(data.get("summary") or ""),
+                    reason=(data.get("reason") or ""),
+                    category=(data.get("category") or "decision"),
+                    title=(data.get("title") or ""),
+                )
+            except ValueError as e:
+                self._json({"ok": False, "error": str(e)}, 422)
+                return
+            finally:
+                conn.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/entry/update":
+            conn = tb.connect()
+            try:
+                out = tb.update_summary(conn, (data.get("entry_id") or ""),
+                                        (data.get("summary") or ""))
+            except KeyError as e:
+                self._json({"ok": False, "error": str(e)}, 404)
+                return
+            except ValueError as e:
+                self._json({"ok": False, "error": str(e)}, 422)
+                return
+            finally:
+                conn.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/entry/archive":
+            eid = (data.get("entry_id") or "").strip()
+            archived = bool(data.get("archived", True))
+            conn = tb.connect()
+            try:
+                row = conn.execute("SELECT status FROM memory_entries WHERE entry_id=?",
+                                   (eid,)).fetchone()
+                if row is None:
+                    self._json({"ok": False, "error": "没有这条记忆"}, 404)
+                    return
+                new_status = "archived" if archived else "active"
+                with tb.tx(conn):
+                    conn.execute("UPDATE memory_entries SET status=? WHERE entry_id=?",
+                                 (new_status, eid))
+                    tb._reindex(conn, eid)
+            finally:
+                conn.close()
+            tb.log_event("manual", "memory archived" if archived else "memory restored", entry=eid)
+            self._json({"ok": True, "status": new_status})
+            return
 
         if u.path == "/api/conflicts/resolve":
             cid = data.get("conflict_id")

@@ -785,11 +785,11 @@ def title_rows(conn, query: str, statuses: tuple[str, ...]) -> list:
     if not toks:
         return []
     marks = ",".join("?" * len(statuses))
-    score_expr = " + ".join(["(d.title LIKE ?) + (e.keywords LIKE ?) + (e.l1_summary LIKE ?)"] * len(toks))
-    where_expr = " OR ".join(["(d.title LIKE ? OR e.keywords LIKE ? OR e.l1_summary LIKE ?)"] * len(toks))
+    score_expr = " + ".join(["(d.title LIKE ?) + (e.keywords LIKE ?)"] * len(toks))
+    where_expr = " OR ".join(["(d.title LIKE ? OR e.keywords LIKE ?)"] * len(toks))
     likes = []
     for t in toks:
-        likes += [f"%{t}%", f"%{t}%", f"%{t}%"]
+        likes += [f"%{t}%", f"%{t}%"]
     sql = (f"SELECT e.*, -(0.0 + {score_expr}) AS rank FROM memory_entries e "
            f"LEFT JOIN memory_documents d ON d.doc_id = e.doc_id "
            f"WHERE e.status IN ({marks}) AND ({where_expr}) "
@@ -1197,6 +1197,68 @@ def resolve_conflict(conn, conflict_id: str, resolution: str) -> dict:
                      (state, resolution, conflict_id))
     log_event("conflict", "conflict resolved", conflict=conflict_id, resolution=resolution)
     return {"conflict_id": conflict_id, "resolution": resolution, "state": state}
+
+
+def add_memory(conn, *, summary: str, reason: str, category: str = "decision",
+               title: str = "") -> dict:
+    """手写一条记忆。强制「结论 + 依据」——和 LLM 精修同一把尺。
+
+    会先落一份 L0 原文（结论——因为依据），保证每条记忆都有原文可回看。
+    """
+    summary, reason = summary.strip(), reason.strip()
+    if len(summary) < 6:
+        raise ValueError("结论太短：至少 6 个字")
+    if len(reason) < 6:
+        raise ValueError("依据太短：写清为什么这么定（至少 6 个字）")
+    if category not in ("decision", "preference", "task", "knowledge"):
+        raise ValueError(f"分类不认识：{category}")
+    if "——因为" in summary:
+        text = summary
+    else:
+        text = f"{summary}——因为{reason}"
+    doc_title = title.strip() or f"手记 {now()[:16].replace('T', ' ')}"
+    doc_id = put_document(conn, text, title=doc_title, source="manual")
+    eid = insert_memory(conn, user_id="owner", summary=_clip(text, 160),
+                        category=category, doc_id=doc_id, offset=0, length=len(text),
+                        importance=0.8, confidence="high", keywords="",
+                        reason=reason, extract_state="manual")
+    log_event("manual", "memory added", entry=eid, doc=doc_id, category=category)
+    return {"entry_id": eid, "doc_id": doc_id, "summary": text}
+
+
+def _reindex(conn, entry_id: str) -> None:
+    """改了摘要/关键词之后，把两套 FTS 都同步过去。"""
+    row = conn.execute("SELECT row_id, l1_summary, keywords FROM memory_entries "
+                       "WHERE entry_id=?", (entry_id,)).fetchone()
+    if row is None:
+        return
+    body = " ".join(tokenize(row["l1_summary"]))
+    kw = " ".join(tokenize(row["keywords"] or ""))
+    for fts in ("memory_fts_active", "memory_fts_history"):
+        conn.execute(f"UPDATE {fts} SET tokenized=?, kw_tokens=? WHERE rowid=?",
+                     (body, kw, row["row_id"]))
+    log_event("index", "reindexed", entry=entry_id)
+
+
+def update_summary(conn, entry_id: str, new_summary: str, *, why: str = "manual_edit") -> dict:
+    """改一条记忆的摘要，留痕到 memory_revisions，可回滚。"""
+    new_summary = new_summary.strip()
+    if len(new_summary) < 6:
+        raise ValueError("摘要太短")
+    row = conn.execute("SELECT l1_summary FROM memory_entries WHERE entry_id=?",
+                       (entry_id,)).fetchone()
+    if row is None:
+        raise KeyError("没有这条记忆")
+    old = row["l1_summary"]
+    with tx(conn):
+        conn.execute("UPDATE memory_entries SET l1_summary=? WHERE entry_id=?",
+                     (new_summary, entry_id))
+        conn.execute("INSERT INTO memory_revisions(revision_id,entry_id,old_summary,"
+                     "new_summary,reason,created_at) VALUES (?,?,?,?,?,?)",
+                     (new_id("rv"), entry_id, old, new_summary, why, now()))
+        _reindex(conn, entry_id)
+    log_event("manual", "memory edited", entry=entry_id)
+    return {"entry_id": entry_id, "old": old, "new": new_summary}
 
 
 def archive(conn, entry_id: str):
