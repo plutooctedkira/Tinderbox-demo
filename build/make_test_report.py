@@ -123,7 +123,7 @@ CRITERIA = {
     "cli_decay": "不写库（dry-run）",
     "cli_reclaim": "dry-run 只报告条数",
     "probe_concept": "能输出 accuracy 与分位表",
-    "write": "新增接口已关闭（404）；编辑/归档/恢复全通；审计轨迹含三类",
+    "write": "新增接口已关闭；编辑/归档/恢复全通；审计含三类；面板导入可试跑且幂等",
     "backup": "备份自检通过；破坏后能完整还原",
     "topic": "按材料名 R@1 ≥60% / R@5 ≥95%",
 }
