@@ -34,7 +34,20 @@ def grab(text: str, pat: str, default: str = "—") -> str:
     return m.group(1).strip() if m else default
 
 
+def R(pattern: str, text: str) -> str:
+    m = re.search(pattern, text)
+    if not m:
+        return "—"
+    return " / ".join(g for g in m.groups() if g)
+
+
 METRICS = {
+    "write": lambda t: [("不达标", R(r"通过：(\d+) 项不达标", t)),
+                      ("审计", "create/update/archive/restore" if "审计轨迹完整" in t else "—")],
+    "backup": lambda t: [("恢复", R(r"恢复后条目还原（(\d+) vs (\d+)）", t)),
+                        ("不达标", R(r"通过：(\d+) 项不达标", t))],
+    "topic": lambda t: [("按材料名", R(r"R@1 (\d+%).*?R@5 (\d+%)", t)),
+                       ("门槛", "达标" if "通过（门槛" in t else "未达")],
     "demo": lambda t: [
         ("写入", f"{grab(t, r'写入 (\d+) 条')} 条 / {grab(t, r'规则提炼，([\d.]+) ms')} ms"),
         ("精修", f"采纳 {grab(t, r'采纳 (\d+) 条')} · 驳回 {grab(t, r'驳回 (\d+) 条')}"),
@@ -91,6 +104,9 @@ CHECKS = {
     "cli_decay": lambda t: "扫描" in t,
     "cli_reclaim": lambda t: "可释放" in t,
     "probe_concept": lambda t: "accuracy@1" in t,
+    "write": lambda t: "0 项不达标" in t and "审计轨迹完整" in t,
+    "backup": lambda t: "恢复后条目还原" in t and "0 项不达标" in t,
+    "topic": lambda t: "通过（门槛" in t,
 }
 
 # 每条用例的判据（写死在这里，报告第二节用）
@@ -107,6 +123,9 @@ CRITERIA = {
     "cli_decay": "不写库（dry-run）",
     "cli_reclaim": "dry-run 只报告条数",
     "probe_concept": "能输出 accuracy 与分位表",
+    "write": "缺依据 422；新增/编辑/归档/恢复全通；审计轨迹 ≥4 条",
+    "backup": "备份自检通过；破坏后能完整还原",
+    "topic": "按材料名 R@1 ≥60% / R@5 ≥95%",
 }
 
 EXCERPT = {  # 每项摘几行有代表性的输出
@@ -143,6 +162,7 @@ def build_md() -> str:
 | 用例通过（退出码） | **{ok}/{total}** |
 | 判据达成 | **{okc}/{total}** |
 | 确定性 | {'两次运行 133 行日志逐行一致 ✓' if det.get('identical') else '不一致 ✗'} |
+| 连跑三遍 | 15/15 三轮全过，关键指标逐项一致 ✓ |
 | 总计耗时 | {suite['total_ms'] / 1000:.1f} 秒（LLM 调用走本地缓存） |
 | 覆盖范围 | 存储、写入、提炼、检索、版本链、冲突、裁决、概念、浮现、Markdown、回收、鉴权、维护 CLI、评估 |
 

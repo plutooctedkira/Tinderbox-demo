@@ -32,6 +32,9 @@ CASES = [
     ("cli_decay", "维护 CLI：衰减（dry-run）", [PY, str(DEMO / "maintenance.py"), "decay"], 120),
     ("cli_reclaim", "维护 CLI：回收（dry-run）", [PY, str(DEMO / "maintenance.py"), "reclaim"], 120),
     ("probe_concept", "概念挂靠标定", [PY, str(DEMO / "concept_probe.py")], 180),
+    ("write", "看板写入：新增/编辑/归档/审计", [PY, str(DEMO / "test_write.py")], 180),
+    ("backup", "备份与恢复闭环", [PY, str(DEMO / "test_backup.py")], 240),
+    ("topic", "按材料名检索（门槛 R@1 60%）", [PY, str(DEMO / "test_topic.py")], 240),
 ]
 
 results = []

@@ -4,7 +4,26 @@ import time
 import urllib.error
 import urllib.request
 
-time.sleep(1)
+
+
+# 自己起一个服务，别依赖外部进程（原来的写法要求事先有个 server 在 8777 上跑）
+import atexit
+import socket
+import subprocess
+import sys
+from pathlib import Path
+
+_DEMO = Path(__file__).resolve().parent
+_proc = subprocess.Popen([sys.executable, str(_DEMO / "web.py")],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+atexit.register(lambda: _proc.terminate())
+for _ in range(120):
+    try:
+        socket.create_connection(("127.0.0.1", 8777), timeout=0.5).close()
+        break
+    except OSError:
+        time.sleep(0.1)
+
 BASE = "http://127.0.0.1:8777"
 TOKEN = [ln.split("=", 1)[1].strip()
          for ln in open(r"E:\记忆库\demo\.env", encoding="utf-8")
