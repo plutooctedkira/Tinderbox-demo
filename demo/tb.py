@@ -664,6 +664,16 @@ def make_topic(summary: str) -> str:
 
 
 # ------------------------------------------------------------------ 写入
+def _kw_with_title(keywords: str, title: str) -> str:
+    """关键词保持原样。
+
+    曾把来源标题并进来，好让「选址」这类词直接命中——但实测内容检索
+    R@1 从 100% 掉到 35%：标题词污染了关键词列，整篇文档的条目互相顶。
+    改为：材料名查询走 title_rows 兜底 + 标题加分。
+    """
+    return keywords
+
+
 def insert_memory(conn, *, user_id, summary, category, doc_id=None, offset=None,
                   length=None, chunk_index=None, importance=0.5,
                   confidence="medium", group_id=None,
@@ -770,7 +780,7 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
                                 chunk_index=idx,
                                 importance=item["importance"],
                                 confidence=item["confidence"],
-                                keywords=item.get("keywords", ""),
+                                keywords=_kw_with_title(item.get("keywords", ""), title),
                                 context=ctx)
             link_concept(conn, eid, hub)
             if sec:
@@ -793,6 +803,9 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
 
 # ------------------------------------------------------------------ 检索
 HALFLIFE = {"decision": 365, "knowledge": 180, "preference": 365, "task": 30}
+W_TITLE = 0.5    # 查询词全部命中来源标题时的加分（标定：R@1 57%→86%）
+W_BODY = 1.0     # bm25 正文列权重
+W_KW = 0.35      # bm25 关键词列权重（含来源标题）
 W_REL, W_REC, W_WEIGHT = 0.60, 0.25, 0.15
 
 
@@ -804,6 +817,29 @@ def recency(created_at: str, category: str) -> float:
         return 0.5
     age_days = max(0.0, (datetime.now(timezone.utc) - t).total_seconds() / 86400)
     return 0.5 ** (age_days / HALFLIFE.get(category, 180))
+
+
+def _apply_title_bonus(conn, hits: list[dict], query: str) -> None:
+    """查询词全部出现在来源标题里 → 加分。按材料名找东西时这是最强信号。"""
+    toks = [t for t in tokenize(query) if t]
+    if not toks:
+        return
+    ids = [h["entry_id"] for h in hits]
+    marks = ",".join("?" * len(ids))
+    titles = {}
+    for r in conn.execute(
+            f"SELECT e.entry_id, d.title FROM memory_entries e "
+            f"LEFT JOIN memory_documents d ON d.doc_id=e.doc_id "
+            f"WHERE e.entry_id IN ({marks})", ids):
+        titles[r["entry_id"]] = title_words(r["title"] or "")
+    q_norm = "".join(toks)
+    for h in hits:
+        tw = titles.get(h["entry_id"], "")
+        # 只有查询本身就是材料名（或它的前缀）才加分；否则内容查询会被整篇文档顶掉
+        matched = bool(tw) and (tw == q_norm or (len(q_norm) >= 3 and tw.startswith(q_norm)))
+        if matched:
+            h["score"] = round(h["score"] + W_TITLE, 3)
+            h["title_hit"] = True
 
 
 def title_rows(conn, query: str, statuses: tuple[str, ...]) -> list:
@@ -837,14 +873,13 @@ def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[di
         his = search(conn, query, mode="history", top_k=top_k * 2)
         # s_rel 是在各自集合内归一化的，score 不能跨集合直接比。
         # 这里把每个集合的分数压到 0~1 再合并，否则"历史集合只有两条"会让旧版本虚高。
-        def scale(items):
-            top = max((x["score"] for x in items), default=0.0) or 1.0
-            for x in items:
-                x["score_norm"] = round(x["score"] / top, 4)
-            return items
+        both = act + his
+        top = max((x["score"] for x in both), default=0.0) or 1.0
+        for x in both:
+            x["score_norm"] = round(x["score"] / top, 4)
 
         by_group: dict[str, list[dict]] = {}
-        for it in scale(his) + scale(act):
+        for it in both:
             by_group.setdefault(it.get("group") or it["entry_id"], []).append(it)
         picked = []
         for members in by_group.values():
@@ -861,7 +896,7 @@ def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[di
 
     def fts_rows(expr: str):
         return conn.execute(
-            f"""SELECT e.*, bm25({fts}, 0.0, 1.0, 0.35) AS rank
+            f"""SELECT e.*, bm25({fts}, 0.0, {W_BODY}, {W_KW}) AS rank
                   FROM {fts} f JOIN memory_entries e ON e.row_id = f.rowid
                  WHERE {fts} MATCH ?
                  ORDER BY rank LIMIT 50""", (expr,)).fetchall()
@@ -872,8 +907,12 @@ def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[di
         rows = fts_rows(expr)
         if len(rows) < 3:                  # 太少了就放宽成 OR
             rows = fts_rows(build_match(query, "or"))
-    if not rows:
-        rows = title_rows(conn, query, statuses)      # 退回到标题/关键词/摘要的字面匹配
+    # 标题/关键词字面命中总是并进来：FTS 有结果时也要，否则"那是在哪份材料里"这类查询会被挤掉
+    seen = {r["entry_id"] for r in rows}
+    for r in title_rows(conn, query, statuses):
+        if r["entry_id"] not in seen:
+            rows.append(r)
+            seen.add(r["entry_id"])
     if not rows:
         return []
 
@@ -893,6 +932,8 @@ def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[di
                     "score": round(W_REL * s_rel + W_REC * s_rec + W_WEIGHT * r["weight"], 3),
                     "created_at": r["created_at"],
                     "bm25": round(r["rank"], 3)})
+    if out and W_TITLE:
+        _apply_title_bonus(conn, out, query)
     out.sort(key=lambda x: -x["score"])
     out = out[:top_k]
     if out:                                # 有相关记忆的，卡片上给个提示（一次查完）
@@ -968,6 +1009,14 @@ CHANGE_RE = re.compile(r"改(?:成|为|到|换|用|口)|换成|换到|推翻|取
 
 
 _DOC_PREFIX = re.compile(r"^[\d\s_\-\.、（）()]+")
+
+
+def title_words(title: str) -> str:
+    """文件名 → 可索引的词。`02_选址改口.md` → `选址改口`。"""
+    if not title:
+        return ""
+    t = Path(title).stem if "." in title else title
+    return _DOC_PREFIX.sub("", t).strip()
 
 
 def _doc_topic(title: str | None) -> str:

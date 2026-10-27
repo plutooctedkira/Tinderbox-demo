@@ -1,0 +1,48 @@
+2026-10-27T10:57:13Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:13Z INFO  ingest    document ingested doc=d-c8df242f0ecb title=01_选址.md chunks=1 entries=3
+2026-10-27T10:57:13Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=3
+2026-10-27T10:57:13Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:13Z INFO  conflict  conflict detected old=mem-a148daf2e3b2 new=mem-f032ad217609 relation=override confidence=0.85
+2026-10-27T10:57:13Z INFO  ingest    document ingested doc=d-3e5163d05f9d title=02_选址改口.md chunks=1 entries=3
+2026-10-27T10:57:13Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=3
+2026-10-27T10:57:13Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:13Z INFO  ingest    document ingested doc=d-22f4cd17cf13 title=03_供应商.md chunks=1 entries=4
+2026-10-27T10:57:13Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
+2026-10-27T10:57:14Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:14Z INFO  ingest    document ingested doc=d-08474a5730bc title=04_设备.md chunks=1 entries=4
+2026-10-27T10:57:14Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
+2026-10-27T10:57:14Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:14Z INFO  ingest    document ingested doc=d-d05c85878c03 title=05_定价.md chunks=1 entries=4
+2026-10-27T10:57:14Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
+2026-10-27T10:57:14Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:14Z INFO  ingest    document ingested doc=d-79404b7b5eb4 title=06_顾客反馈.md chunks=1 entries=5
+2026-10-27T10:57:14Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=5
+2026-10-27T10:57:14Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:14Z INFO  ingest    document ingested doc=d-017c0646da6e title=07_运营.md chunks=1 entries=4
+2026-10-27T10:57:14Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
+2026-10-27T10:57:14Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:15Z INFO  ingest    document ingested doc=d-20633fac1f69 title=08_财务.md chunks=1 entries=5
+2026-10-27T10:57:15Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=5
+2026-10-27T10:57:15Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:15Z INFO  ingest    document ingested doc=d-aeab08b133be title=09_踩坑.md chunks=1 entries=4
+2026-10-27T10:57:15Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
+2026-10-27T10:57:15Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:15Z INFO  ingest    document ingested doc=d-d58b70e19759 title=10_待办.md chunks=1 entries=6
+2026-10-27T10:57:15Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=6
+2026-10-27T10:57:15Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:15Z INFO  conflict  conflict detected old=mem-6269cec76c6e new=mem-341844071966 relation=override confidence=0.85
+2026-10-27T10:57:16Z INFO  ingest    document ingested doc=d-683dbf52cea7 title=11_定价调整.md chunks=1 entries=3
+2026-10-27T10:57:16Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=3
+2026-10-27T10:57:16Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:16Z INFO  conflict  conflict detected old=mem-341844071966 new=mem-0b583188689b relation=override confidence=0.85
+2026-10-27T10:57:16Z INFO  conflict  conflict detected old=mem-03dc6c4d1d6d new=mem-0d42d471af33 relation=override confidence=0.85
+2026-10-27T10:57:16Z INFO  ingest    document ingested doc=d-c893d1961efd title=12_定价调整二.md chunks=1 entries=3
+2026-10-27T10:57:16Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=3
+2026-10-27T10:57:16Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:16Z INFO  conflict  conflict detected old=mem-b00c6114cea4 new=mem-65317bafa6ee relation=override confidence=0.85
+2026-10-27T10:57:16Z INFO  ingest    document ingested doc=d-2dc517a99a01 title=13_运营调整.md chunks=1 entries=3
+2026-10-27T10:57:16Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=3
+2026-10-27T10:57:16Z INFO  cli       command start cmd=ingest data=E:\记忆库\.vault2
+2026-10-27T10:57:16Z INFO  conflict  conflict detected old=mem-7c27581198a2 new=mem-3501b8f4a868 relation=override confidence=0.85
+2026-10-27T10:57:16Z INFO  ingest    document ingested doc=d-0cab61c82d57 title=14_设备调整.md chunks=1 entries=4
+2026-10-27T10:57:16Z INFO  ingest    import summary added=1 updated=0 skipped=0 failed=0 entries=4
