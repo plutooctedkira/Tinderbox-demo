@@ -1,0 +1,35 @@
+[Unit]
+Description=Tinderbox 记忆库
+After=network.target
+
+[Service]
+Type=simple
+User=tinderbox
+Group=tinderbox
+WorkingDirectory=/opt/tinderbox
+
+# 数据目录
+Environment=TB_DATA=/var/lib/tinderbox/data
+# 放在反向代理后面必须设，否则所有请求都会被当成来自本机
+Environment=TB_TRUST_PROXY=1
+# 默认不允许远程导入；确认需要时再取消下一行注释
+# Environment=TB_ALLOW_IMPORT=1
+
+# 应用只监听回环，外网入口交给 Caddy
+ExecStart=/usr/bin/python3 /opt/tinderbox/demo/tbc.py --data /var/lib/tinderbox/data serve --port 8777
+
+Restart=on-failure
+RestartSec=3
+
+# 加固：只允许写自己的数据目录
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/tinderbox
+
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

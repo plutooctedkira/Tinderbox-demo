@@ -1,0 +1,33 @@
+# Tinderbox 反向代理
+# 把 tb.example.com 换成你的域名，Caddy 会自动申请并续期证书。
+# 只有 443 对外，应用本身仍监听 127.0.0.1:8777。
+
+tb.example.com {
+	encode zstd gzip
+
+	# 不让搜索引擎收录私人记忆库
+	header {
+		X-Robots-Tag "noindex, nofollow"
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		-X-Powered-By
+	}
+
+	# 真实客户端 IP 传给应用（配合 TB_TRUST_PROXY=1 才生效）
+	reverse_proxy 127.0.0.1:8777 {
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+
+	# 请求体上限：导入走服务端路径，不需要大上传
+	request_body {
+		max_size 2MB
+	}
+
+	log {
+		output file /var/log/caddy/tinderbox.log
+		format json
+	}
+}
+
+# 健康检查可以单独开一个内网入口，也可以直接由监控访问 127.0.0.1:8777/healthz

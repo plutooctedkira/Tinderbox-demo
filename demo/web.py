@@ -59,6 +59,16 @@ FAIL_LIMIT, FAIL_WINDOW = 5, 60
 
 
 def _client_ip(handler) -> str:
+    """真实客户端 IP。
+
+    只在 TB_TRUST_PROXY=1 时采信 X-Forwarded-For——否则任何人都能伪造来源，
+    "导入只允许本机"就形同虚设。放到 Caddy/Nginx 后面时才设这个变量。
+    """
+    if os.environ.get("TB_TRUST_PROXY") == "1":
+        xff = handler.headers.get("X-Forwarded-For") or ""
+        first = xff.split(",")[0].strip()
+        if first:
+            return first
     return handler.client_address[0] if handler.client_address else "-"
 
 
@@ -1124,6 +1134,16 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 self._deny_api()
                 return
+
+        if u.path == "/healthz":
+            try:
+                c = tb.connect()
+                n = c.execute("SELECT count(*) n FROM memory_entries").fetchone()["n"]
+                c.close()
+                self._json({"ok": True, "entries": n})
+            except Exception:
+                self._json({"ok": False}, 500)
+            return
 
         if u.path == "/login":
             body = LOGIN_HTML.encode("utf-8")
