@@ -1668,8 +1668,110 @@ REFINE_PROMPT = """把这条记忆改写成「结论——因为依据」的写�
 2. 只依据原文，不编造；原文不足以支撑依据时，**原样输出原摘要**。
 3. 依据只留能改变判断的部分（价格、次数、成本、时间）。
 4. 一句话，不超过 100 字，格式：<结论>——因为<依据>。
+5. **不许出现"原文/材料/上下文"这类字眼**，也不许解释"为什么给不出依据"；
+   依据不足时按第 2 条原样输出原摘要。
 5. 只输出那一句，不要解释。
 """
+
+
+CLEANUP_DDL = """
+CREATE TABLE IF NOT EXISTS memory_cleanup(
+    proposal_id  TEXT PRIMARY KEY,
+    entry_id     TEXT NOT NULL,
+    old_summary  TEXT NOT NULL,
+    new_summary  TEXT NOT NULL,
+    state        TEXT NOT NULL DEFAULT 'pending',   -- pending / accepted / rejected
+    created_at   TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_cleanup_state ON memory_cleanup(state, created_at);
+"""
+
+
+def suggest_cleanup(conn, limit: int = 5) -> dict:
+    """让 LLM 给出清洗建议，但**不落库**——等人审。"""
+    import api_client
+
+    conn.executescript(CLEANUP_DDL)
+    rows = conn.execute(
+        "SELECT entry_id, l1_summary FROM memory_entries "
+        "WHERE extract_state='provisional' AND status='active' AND doc_id IS NOT NULL "
+        " AND version_no = 1 ORDER BY created_at LIMIT ?", (limit,)).fetchall()
+    made, failed = [], []
+    for r in rows:
+        exists = conn.execute("SELECT 1 FROM memory_cleanup WHERE entry_id=? "
+                              "AND state='pending'", (r["entry_id"],)).fetchone()
+        if exists:
+            continue
+        try:
+            span = get_span(conn, r["entry_id"], before=150, after=150)
+            text = (span.get("text") or "").strip()
+            if len(text) < 20:
+                failed.append(r["entry_id"])
+                continue
+            new = api_client.chat(
+                REFINE_PROMPT.format(old=r["l1_summary"], text=text),
+                max_tokens=260).strip().strip("“”\" \n")
+            if "——" not in new or len(new) < max(10, len(r["l1_summary"]) * 0.6):
+                failed.append(r["entry_id"])
+                continue
+            pid = new_id("cl")
+            with tx(conn):
+                conn.execute("INSERT INTO memory_cleanup(proposal_id,entry_id,old_summary,"
+                             "new_summary,state,created_at) VALUES (?,?,?,?,'pending',?)",
+                             (pid, r["entry_id"], r["l1_summary"], new, now()))
+            made.append(pid)
+        except Exception:
+            failed.append(r["entry_id"])
+    return {"suggested": len(made), "failed": len(failed), "scanned": len(rows)}
+
+
+def list_cleanup(conn, state: str = "pending") -> list[dict]:
+    conn.executescript(CLEANUP_DDL)
+    return [dict(r) for r in conn.execute(
+        "SELECT c.proposal_id, c.entry_id, c.old_summary, c.new_summary, c.state, "
+        "c.created_at, e.category FROM memory_cleanup c "
+        "LEFT JOIN memory_entries e ON e.entry_id = c.entry_id "
+        "WHERE c.state=? ORDER BY c.created_at LIMIT 100", (state,))]
+
+
+def apply_cleanup(conn, proposal_id: str, summary: str | None = None) -> dict:
+    """采纳建议（可以带用户改过的版本）。走 update_summary，留痕可回滚。"""
+    row = conn.execute("SELECT entry_id, new_summary FROM memory_cleanup "
+                       "WHERE proposal_id=? AND state='pending'", (proposal_id,)).fetchone()
+    if row is None:
+        raise KeyError("没有这条待审建议")
+    final = (summary or row["new_summary"]).strip()
+    out = update_summary(conn, row["entry_id"], final, why="clean_accepted")
+    with tx(conn):
+        conn.execute("UPDATE memory_cleanup SET state='accepted', new_summary=? "
+                     "WHERE proposal_id=?", (final, proposal_id))
+        conn.execute("UPDATE memory_entries SET extract_state='refined' WHERE entry_id=?",
+                     (row["entry_id"],))
+    audit(conn, "owner", "clean_accept", row["entry_id"], proposal=proposal_id)
+    return out
+
+
+def reject_cleanup(conn, proposal_id: str) -> dict:
+    with tx(conn):
+        conn.execute("UPDATE memory_cleanup SET state='rejected' WHERE proposal_id=?",
+                     (proposal_id,))
+    return {"proposal_id": proposal_id, "state": "rejected"}
+
+
+def delete_entry(conn, entry_id: str) -> dict:
+    """真删（归档是另一条路）。原文块不删，只是不再有引用。"""
+    row = conn.execute("SELECT doc_id, memory_group_id FROM memory_entries "
+                       "WHERE entry_id=?", (entry_id,)).fetchone()
+    if row is None:
+        raise KeyError("没有这条记忆")
+    with tx(conn):
+        conn.execute("DELETE FROM memory_entry_concepts WHERE entry_id=?", (entry_id,))
+        conn.execute("DELETE FROM memory_relations WHERE from_entry=? OR to_entry=?",
+                     (entry_id, entry_id))
+        conn.execute("DELETE FROM memory_cleanup WHERE entry_id=?", (entry_id,))
+        conn.execute("DELETE FROM memory_entries WHERE entry_id=?", (entry_id,))
+    log_event("manual", "memory deleted", entry=entry_id)
+    return {"entry_id": entry_id, "deleted": True}
 
 
 def refine(conn, *, limit: int = 20, user_id: str = "owner") -> dict:

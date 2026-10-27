@@ -213,6 +213,25 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
    font-size:12.5px;cursor:pointer}
  #imf-go,#bakbtn{background:var(--navy);color:#fff;border-color:var(--navy)}
  .setcard .imfmsg{margin-top:10px;font-size:12px;color:#5f6b7e;white-space:pre-wrap;display:none}
+ .uprow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+ .uprow input[type=file]{flex:1;font-size:12px;color:#5f6b7e}
+ .pathimp{margin-top:12px}
+ .pathimp summary{font-size:12px;color:#5f6b7e;cursor:pointer;margin-bottom:8px}
+ .pathimp input[type=text]{width:100%;box-sizing:border-box;margin:6px 0;padding:8px 10px;
+   font-size:13px;border:1px solid var(--line);border-radius:7px}
+ .cleanmode{display:flex;gap:6px;margin:0 0 12px;flex-wrap:wrap}
+ .cleanmode button{padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:7px;
+   font-size:12.5px;color:#5f6b7e;cursor:pointer}
+ .cleanmode button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+ .cleanrow{padding:10px 12px;border:1px solid var(--line);border-radius:9px;margin:0 0 8px;background:#fff}
+ .cleanrow .cs{font-size:12.5px;color:#33405a;line-height:1.6}
+ .cleanrow .cn{font-size:12.5px;color:#1f5130;background:#f3faf5;border-radius:6px;
+   padding:6px 8px;margin-top:6px;line-height:1.6}
+ .cleanrow .cacts{display:flex;gap:8px;margin-top:8px}
+ .cbtn{padding:3px 12px;font-size:11.5px;border:1px solid var(--line);background:#fff;
+   border-radius:6px;cursor:pointer}
+ .cbtn.ok{background:var(--navy);color:#fff;border-color:var(--navy)}
+ .cbtn.del{color:#b4232c}
  .archrow{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px dashed #eef1f6;font-size:12.5px}
  .archrow .as{flex:1;color:#33405a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .archrow .ad{color:#a3b0c2;font-size:11px;flex:none}
@@ -354,22 +373,45 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <section id="settings" hidden>
   <div class="sethead"><button id="setback">← 返回</button><h2>设置</h2></div>
   <div class="setgrid">
-    <div class="setcard">
+    <div class="setcard wide">
       <h3>导入</h3>
-      <p class="sethint">从本机文件夹或文件导入，支持 .txt .md .docx .pdf，单文件 ≤5 MB。</p>
-      <input id="imf-path" type="text" placeholder="路径，如 D:\笔记">
-      <input id="imf-proj" type="text" placeholder="项目名（留空=用文件夹名）">
-      <label class="imfchk"><input id="imf-dry" type="checkbox"> 试跑（不写库）</label>
-      <div class="setrow"><button id="imf-go">开始导入</button>
-        <button id="imf-cancel" hidden>取消</button></div>
-      <div class="imfmsg" id="imf-msg"></div>
+      <p class="sethint">选择本机文件（.txt .md .docx .pdf），或按文件夹路径整批导入。</p>
+      <div class="uprow">
+        <input type="file" id="up-files" multiple>
+        <button id="up-go">上传并导入</button>
+      </div>
+      <div class="setrow" style="margin-top:8px">
+        <input id="imf-proj" type="text" placeholder="项目名（留空=用文件夹名）">
+        <label class="imfchk"><input id="imf-dry" type="checkbox"> 试跑（不写库）</label>
+      </div>
+      <div class="imfmsg" id="up-msg"></div>
+      <details class="pathimp">
+        <summary>或者：按本机路径导入整个文件夹</summary>
+        <input id="imf-path" type="text" placeholder="D:\笔记">
+        <div class="setrow"><button id="imf-go">从路径导入</button>
+          <button id="imf-cancel" hidden>取消</button></div>
+        <div class="imfmsg" id="imf-msg"></div>
+      </details>
     </div>
+
+    <div class="setcard wide">
+      <h3>清洗</h3>
+      <p class="sethint">规则提炼出的摘要比较糙；清洗把它改写成「结论 —— 因为依据」。</p>
+      <div class="cleanmode" id="cleanmode">
+        <button data-cm="manual" class="on">手动清洗</button>
+        <button data-cm="auto">自动清洗（需审核）</button>
+        <button data-cm="none">不清洗</button>
+      </div>
+      <div id="clean-body"></div>
+    </div>
+
     <div class="setcard">
       <h3>备份</h3>
       <p class="sethint">把数据库与原文打包到数据目录下的 backup/，保留最近 5 份。</p>
       <div class="setrow"><button id="bakbtn">立即备份</button></div>
       <div class="imfmsg" id="bakmsg"></div>
     </div>
+
     <div class="setcard wide">
       <h3>已归档 <span class="cnt" id="archn"></span></h3>
       <p class="sethint">归档只是从现行检索里移走，随时可以恢复。</p>
@@ -728,7 +770,7 @@ function openSettings(){
   document.querySelector('main').hidden = true;
   $('#settings').hidden = false;
   $('#setbtn').classList.add('on');
-  loadArchived();
+  loadArchived(); renderClean();
 }
 function closeSettings(){
   $('#settings').hidden = true;
@@ -738,58 +780,66 @@ function closeSettings(){
 $('#setbtn').onclick=()=>{ $('#settings').hidden ? openSettings() : closeSettings(); };
 $('#setback').onclick=closeSettings;
 
-async function loadArchived(){
-  const d=await (await fetch('/api/list?status=archived&limit=200')).json();
-  $('#archn').textContent = d.items.length? d.items.length : '';
-  if(!d.items.length){ $('#archlist').innerHTML='<div class="sethint">还没有归档的记忆</div>'; return; }
-  $('#archlist').innerHTML = d.items.map(it=>`
-    <div class="archrow" data-id="${it.entry_id}">
-      <span class="tag ${it.category}">${it.category}</span>
-      <span class="as">${esc(it.l1_summary)}</span>
-      <span class="ad">${fmt(it.created_at)}</span>
-      <button class="restore" data-id="${it.entry_id}">恢复</button>
-    </div>`).join('');
-  document.querySelectorAll('.restore').forEach(b=>b.onclick=async ev=>{
-    ev.stopPropagation();
-    b.disabled=true;
-    await fetch('/api/entry/archive',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({entry_id:b.dataset.id, archived:false})});
-    await loadArchived(); await loadMeta();
-  });
-}
-
-$('#imf-go').onclick=async()=>{
-  const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='正在扫描…';
-  const go=$('#imf-go'), cancel=$('#imf-cancel');
-  go.disabled=true; cancel.hidden=false;
-  let jobId=null, timer=null, cancelled=false;
-  cancel.onclick=async()=>{ cancelled=true; cancel.disabled=true;
-    if(jobId) await fetch('/api/import/cancel',{method:'POST',
-      headers:{'Content-Type':'application/json'},body:JSON.stringify({id:jobId})}); };
-  const poll=async()=>{
-    if(!jobId) return;
+/* ---------- 通用：轮询导入任务 ---------- */
+function pollJob(jobId, msg, onDone){
+  let timer=setInterval(async()=>{
     const j=await (await fetch('/api/import/status?id='+jobId)).json();
-    if(!j.ok){ clearInterval(timer); msg.textContent=j.error; go.disabled=false; return; }
+    if(!j.ok){ clearInterval(timer); msg.textContent=j.error; return; }
     const J=j.job, pct=J.total? Math.round(J.done*100/J.total):0;
-    msg.textContent=`${J.state==='running'?'导入中':'完成'} ${J.done}/${J.total}（${pct}%）`
+    msg.textContent=`${J.state==='running'?'进行中':'完成'} ${J.done}/${J.total}（${pct}%）`
       +` · 新增 ${J.added} · 更新 ${J.updated} · 跳过 ${J.skipped} · 失败 ${J.failed} · ${J.entries} 条`
       + (J.project?` · 项目 ${J.project}`:'');
     if(J.state!=='running'){
-      clearInterval(timer); cancel.hidden=true; cancel.disabled=false; go.disabled=false;
+      clearInterval(timer);
       if(J.failures && J.failures.length) msg.textContent += '\n问题：'+J.failures.slice(0,5).join('；');
-      if(!cancelled && J.state==='done'){ await loadMeta(); }
+      if(onDone) await onDone(J);
     }
-  };
+  }, 600);
+}
+
+/* ---------- 文件上传导入 ---------- */
+$('#up-go').onclick=async()=>{
+  const files=[...($('#up-files').files||[])];
+  const msg=$('#up-msg'); msg.style.display='block';
+  if(!files.length){ msg.textContent='先选择文件'; return; }
+  msg.textContent='读取文件中…';
+  const payload=[];
+  for(const f of files){
+    const buf=await f.arrayBuffer();
+    let bin=''; const bytes=new Uint8Array(buf);
+    for(let i=0;i<bytes.length;i+=0x8000)
+      bin+=String.fromCharCode.apply(null, bytes.subarray(i,i+0x8000));
+    payload.push({name:f.webkitRelativePath||f.name, b64:btoa(bin)});
+  }
+  msg.textContent=`上传 ${payload.length} 个文件…`;
+  const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({files:payload, project:$('#imf-proj').value.trim(),
+                         dry_run:$('#imf-dry').checked})});
+  const j=await r.json();
+  if(!j.ok){ msg.textContent=j.error||'上传失败'; return; }
+  pollJob(j.job, msg, async()=>{ await loadMeta(); await loadArchived(); });
+};
+
+/* ---------- 路径导入 ---------- */
+$('#imf-go').onclick=async()=>{
+  const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='正在扫描…';
+  const go=$('#imf-go'), cancel=$('#imf-cancel');
+  go.disabled=true; cancel.hidden=false; let jobId=null;
+  cancel.onclick=async()=>{ cancel.disabled=true;
+    if(jobId) await fetch('/api/import/cancel',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({id:jobId})}); };
   try{
     const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({path:$('#imf-path').value.trim(), project:$('#imf-proj').value.trim(),
                            dry_run:$('#imf-dry').checked})});
     const j=await r.json();
     if(!j.ok){ msg.textContent=j.error||'导入失败'; go.disabled=false; cancel.hidden=true; return; }
-    jobId=j.job; timer=setInterval(poll, 600); poll();
-  }catch(err){ msg.textContent='出错：'+err; go.disabled=false; cancel.hidden=true; }
+    jobId=j.job; pollJob(jobId, msg, async()=>{ go.disabled=false; cancel.hidden=true;
+      await loadMeta(); await loadArchived(); });
+  }catch(e){ msg.textContent='出错：'+e; go.disabled=false; cancel.hidden=true; }
 };
 
+/* ---------- 备份 ---------- */
 $('#bakbtn').onclick=async()=>{
   const b=$('#bakbtn'), msg=$('#bakmsg');
   b.disabled=true; msg.style.display='block'; msg.textContent='备份中…';
@@ -802,6 +852,129 @@ $('#bakbtn').onclick=async()=>{
   }catch(e){ msg.textContent='出错：'+e; }
   finally{ b.disabled=false; }
 };
+
+/* ---------- 归档 ---------- */
+async function loadArchived(){
+  const d=await (await fetch('/api/list?status=archived&limit=200')).json();
+  $('#archn').textContent = d.items.length? d.items.length : '';
+  if(!d.items.length){ $('#archlist').innerHTML='<div class="sethint">还没有归档的记忆</div>'; return; }
+  $('#archlist').innerHTML = d.items.map(it=>`
+    <div class="archrow" data-id="${it.entry_id}">
+      <span class="tag ${it.category}">${it.category}</span>
+      <span class="as">${esc(it.l1_summary)}</span>
+      <span class="ad">${fmt(it.created_at)}</span>
+      <button class="restore" data-id="${it.entry_id}">恢复</button>
+    </div>`).join('');
+  document.querySelectorAll('.restore').forEach(b=>b.onclick=async ev=>{
+    ev.stopPropagation(); b.disabled=true;
+    await fetch('/api/entry/archive',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({entry_id:b.dataset.id, archived:false})});
+    await loadArchived(); await loadMeta();
+  });
+}
+
+/* ---------- 清洗 ---------- */
+let cleanMode='manual';
+$('#cleanmode').querySelectorAll('button').forEach(b=>b.onclick=()=>{
+  cleanMode=b.dataset.cm;
+  $('#cleanmode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
+  renderClean();
+});
+function cleanRow(it, extra){
+  return `<div class="cleanrow" data-id="${it.entry_id||''}">
+    <div class="cs">${esc(it.l1_summary||it.new_summary||'')}</div>
+    ${(it.new_summary && it.new_summary!==it.l1_summary)?`<div class="cn">建议：${esc(it.new_summary)}</div>`:''}
+    <div class="cacts">${extra}</div></div>`;
+}
+async function renderClean(){
+  const body=$('#clean-body');
+  if(cleanMode==='none'){
+    body.innerHTML='<div class="sethint">已选择不清洗：摘要保持规则提炼的样子，不改写、不调模型。</div>';
+    return;
+  }
+  if(cleanMode==='manual'){
+    body.innerHTML='<div class="sethint">逐条改或删。改动会留痕，可回滚。</div><div id="manual-list">加载中…</div>';
+    const d=await (await fetch('/api/list?status=provisional&limit=50')).json();
+    if(!d.items.length){ $('#manual-list').innerHTML='<div class="sethint">没有待清洗的记忆</div>'; return; }
+    $('#manual-list').innerHTML = d.items.map(it=>cleanRow(it,
+      `<button class="cbtn edit" data-id="${it.entry_id}">编辑</button>
+       <button class="cbtn del" data-id="${it.entry_id}">删除</button>`)).join('');
+    document.querySelectorAll('.cbtn.edit').forEach(b=>b.onclick=async()=>{
+      const cur=b.closest('.cleanrow').querySelector('.cs').textContent;
+      const next=prompt('改摘要（留痕，可回滚）', cur);
+      if(!next || next.trim()===cur) return;
+      const r=await fetch('/api/entry/update',{method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({entry_id:b.dataset.id, summary:next.trim()})});
+      const j=await r.json();
+      if(!j.ok){ alert(j.error||'改不了'); return; }
+      renderClean(); loadMeta();
+    });
+    document.querySelectorAll('.cbtn.del').forEach(b=>b.onclick=async()=>{
+      if(!confirm('彻底删除这条记忆？（不可恢复，归档才可恢复）')) return;
+      const r=await fetch('/api/entry/delete',{method:'POST',
+        headers:{'Content-Type':'application/json'},body:JSON.stringify({entry_id:b.dataset.id})});
+      const j=await r.json();
+      if(!j.ok){ alert(j.error||'删不掉'); return; }
+      renderClean(); loadMeta();
+    });
+    return;
+  }
+  // auto
+  body.innerHTML=`<div class="sethint">模型只给建议，采纳后才写入；采纳前你可以先改。</div>
+    <div class="setrow"><button id="gen-clean">生成 5 条建议</button></div>
+    <div id="prop-list" class="sethint" style="margin-top:8px">加载中…</div>`;
+  $('#gen-clean').onclick=async()=>{
+    const btn=$('#gen-clean'); btn.disabled=true; btn.textContent='生成中…';
+    const r=await fetch('/api/clean/suggest',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({limit:5})});
+    const j=await r.json();
+    btn.disabled=false; btn.textContent='生成 5 条建议';
+    if(!j.ok){ alert(j.error||'生成失败'); return; }
+    await renderProposals();
+    alert(`生成 ${j.result.suggested} 条 · 失败 ${j.result.failed} 条`);
+  };
+  await renderProposals();
+}
+async function renderProposals(){
+  const list=$('#prop-list'); if(!list) return;
+  const d=await (await fetch('/api/clean/list?state=pending')).json();
+  if(!d.items.length){ list.innerHTML='<div class="sethint">没有待审建议</div>'; return; }
+  list.innerHTML = d.items.map(it=>`
+    <div class="cleanrow">
+      <div class="cs">原：${esc(it.old_summary)}</div>
+      <div class="cn">建议：${esc(it.new_summary)}</div>
+      <div class="cacts">
+        <button class="cbtn ok" data-id="${it.proposal_id}">采纳</button>
+        <button class="cbtn editp" data-id="${it.proposal_id}" data-new="${esc(it.new_summary)}">改后采纳</button>
+        <button class="cbtn no" data-id="${it.proposal_id}">忽略</button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('.cbtn.ok').forEach(b=>b.onclick=async()=>{
+    b.disabled=true;
+    const r=await fetch('/api/clean/apply',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({proposal_id:b.dataset.id})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'采纳失败'); b.disabled=false; return; }
+    renderProposals(); loadMeta();
+  });
+  list.querySelectorAll('.cbtn.editp').forEach(b=>b.onclick=async()=>{
+    const next=prompt('改完再采纳', b.dataset.new);
+    if(!next) return;
+    b.disabled=true;
+    const r=await fetch('/api/clean/apply',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({proposal_id:b.dataset.id, summary:next.trim()})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'采纳失败'); b.disabled=false; return; }
+    renderProposals(); loadMeta();
+  });
+  list.querySelectorAll('.cbtn.no').forEach(b=>b.onclick=async()=>{
+    b.disabled=true;
+    await fetch('/api/clean/reject',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({proposal_id:b.dataset.id})});
+    renderProposals();
+  });
+}
 
 function showOnboarding(){
   $('#hint').textContent='还没有记忆';
@@ -887,6 +1060,70 @@ if (e === '2') box.textContent = '请输入令牌';
 _JOBS: dict = {}
 _JOBS_LOCK = threading.Lock()
 _IMPORT_MAX_FILES = 2000
+
+
+def _start_upload(files: list, project: str, dry: bool) -> dict:
+    job_id = uuid.uuid4().hex[:10]
+    job = {"id": job_id, "state": "running", "done": 0, "total": len(files), "added": 0,
+           "updated": 0, "skipped": 0, "failed": 0, "entries": 0, "cancel": False,
+           "failures": [], "started": time.time(), "path": "上传", "project": project}
+    with _JOBS_LOCK:
+        _JOBS[job_id] = job
+    threading.Thread(target=_upload_worker, args=(job, files, project, dry), daemon=True).start()
+    return job
+
+
+def _upload_worker(job: dict, files: list, project: str, dry: bool) -> None:
+    import base64
+    import shutil
+    import tbc
+
+    conn = None
+    tmp_root = Path(os.environ.get("TB_DATA") or tb.DB_PATH.parent) / ".upload_tmp"
+    try:
+        conn = tb.connect()
+        tmp_root.mkdir(parents=True, exist_ok=True)
+        for item in files:
+            if job["cancel"]:
+                job["state"] = "cancelled"
+                return
+            name = str(item.get("name") or "未命名").replace("\\", "/")
+            try:
+                raw = base64.b64decode(item.get("b64") or "")
+                if len(raw) > 12 * 1024 * 1024:
+                    job["failed"] += 1
+                    job["failures"].append(f"{name}：超过 12 MB")
+                    continue
+                dest = tmp_root / name.replace("/", "__")
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_bytes(raw)
+                text, why = tbc.read_text(dest)
+                if text is None:
+                    job["failed"] += 1
+                    job["failures"].append(f"{name}：{why or '读不了'}")
+                    continue
+                text = text.strip()
+                if len(text) < 20:
+                    job["skipped"] += 1
+                    continue
+                action, n = tbc.ingest_one(conn, name, text, dry=dry, project=project)
+                job[action] += 1
+                job["entries"] += n
+            except Exception as e:
+                job["failed"] += 1
+                job["failures"].append(f"{name}：{type(e).__name__}: {e}")
+            finally:
+                job["done"] += 1
+        job["state"] = "done"
+        tb.log_event("import", "upload done", files=len(files), added=job["added"],
+                     entries=job["entries"])
+    except Exception as e:
+        job["state"] = "error"
+        job["failures"].append(f"{type(e).__name__}: {e}")
+    finally:
+        if conn is not None:
+            conn.close()
+        shutil.rmtree(tmp_root, ignore_errors=True)
 
 
 def _start_import(target: Path, project: str, dry: bool) -> dict:
@@ -1107,6 +1344,74 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"ok": True, "result": out})
             return
 
+        if u.path == "/api/clean/suggest":
+            limit = int(data.get("limit") or 5)
+            conn2 = tb.connect()
+            try:
+                out = tb.suggest_cleanup(conn2, limit=max(1, min(limit, 20)))
+            except Exception as e:
+                self._json({"ok": False, "error": f"{type(e).__name__}: {e}"}, 500)
+                return
+            finally:
+                conn2.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/clean/apply":
+            conn2 = tb.connect()
+            try:
+                out = tb.apply_cleanup(conn2, (data.get("proposal_id") or ""),
+                                       (data.get("summary") or None))
+            except KeyError as e:
+                self._json({"ok": False, "error": str(e)}, 404)
+                return
+            except ValueError as e:
+                self._json({"ok": False, "error": str(e)}, 422)
+                return
+            finally:
+                conn2.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/clean/reject":
+            conn2 = tb.connect()
+            try:
+                out = tb.reject_cleanup(conn2, (data.get("proposal_id") or ""))
+            finally:
+                conn2.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/entry/delete":
+            conn2 = tb.connect()
+            try:
+                out = tb.delete_entry(conn2, (data.get("entry_id") or ""))
+            except KeyError as e:
+                self._json({"ok": False, "error": str(e)}, 404)
+                return
+            finally:
+                conn2.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/upload":
+            allowed, why = import_allowed(_client_ip(self))
+            if not allowed:
+                self._json({"ok": False, "error": why}, 403)
+                return
+            files = data.get("files") or []
+            if not isinstance(files, list) or not files:
+                self._json({"ok": False, "error": "没有文件"}, 422)
+                return
+            if len(files) > 50:
+                self._json({"ok": False, "error": "一次最多 50 个文件"}, 422)
+                return
+            project = (data.get("project") or "").strip()
+            dry = bool(data.get("dry_run"))
+            job = _start_upload(files, project, dry)
+            self._json({"ok": True, "job": job["id"]})
+            return
+
         if u.path == "/api/refine":
             limit = int(data.get("limit") or 10)
             conn = tb.connect()
@@ -1262,6 +1567,9 @@ class Handler(BaseHTTPRequestHandler):
                     self._json({"ok": False, "error": "没有这个任务"}, 404)
                 else:
                     self._json({"ok": True, "job": dict(job)})
+            elif u.path == "/api/clean/list":
+                state = (qs.get("state") or ["pending"])[0]
+                self._json({"items": tb.list_cleanup(conn, state=state)})
             elif u.path == "/api/meta":
                 row = conn.execute(
                     "SELECT sum(extract_state='provisional' AND status IN ('active','pending_merge')) p,"
