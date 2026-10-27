@@ -22,9 +22,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tb  # noqa: E402
 
-TEXT_EXT = {".txt", ".md", ".markdown", ".org", ".rst", ".csv", ".log", ".text"}
+TEXT_EXT = {".txt", ".md", ".markdown", ".org", ".rst", ".csv", ".log", ".text", ".docx"}
+NEEDS_LIB = {".pdf": "pypdf", ".doc": "旧版 Word（另存为 .docx 或 .txt）"}
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", ".idea", ".vscode",
-             ".tools", "out", "dist", "build_cache"}
+             ".tools", "out", "dist", "build_cache", "logs", "l0", "backup"}
+SKIP_FILES = {"token.txt", "config.toml", "memory.db", "memory.db-wal", "memory.db-shm"}
 MAX_BYTES = 5 * 1024 * 1024
 
 DEFAULT_CONFIG = """# Tinderbox 配置（密钥只放这里或环境变量，绝不入库）
@@ -115,20 +117,41 @@ def cmd_init(args) -> int:
 
 
 # ------------------------------------------------------------------ 读取文本
-def read_text(path: Path) -> str | None:
+def docx_text(path: Path) -> str | None:
+    """解 docx = zip + xml，不依赖第三方库。"""
+    import html
+    import re
+    import zipfile
+    try:
+        with zipfile.ZipFile(path) as z:
+            xml = z.read("word/document.xml").decode("utf-8", "ignore")
+    except Exception:
+        return None
+    xml = xml.replace("</w:p>", "\n").replace("</w:tr>", "\n")
+    text = re.sub(r"<[^>]+>", "", xml)
+    return html.unescape(text)
+
+
+def read_text(path: Path) -> tuple[str | None, str | None]:
+    """返回 (文本, 失败原因)。"""
+    suffix = path.suffix.lower()
+    if suffix in NEEDS_LIB:
+        return None, f"不支持 {suffix}（{NEEDS_LIB[suffix]}）"
+    if suffix == ".docx":
+        return docx_text(path), None
     raw = path.read_bytes()
     if b"\x00" in raw[:4096]:
-        return None                      # 二进制
+        return None, "二进制文件"
     for enc in ("utf-8", "gbk", "utf-16"):
         try:
-            return raw.decode(enc)
+            return raw.decode(enc), None
         except UnicodeDecodeError:
             continue
-    return raw.decode("utf-8", "ignore")
+    return raw.decode("utf-8", "ignore"), None
 
 
-def iter_targets(paths: list[str]):
-    """产出 (标题, Path 或 None)。标题取相对路径，便于回溯源文件。"""
+def iter_targets(paths: list[str], seen: dict | None = None, exclude: Path | None = None):
+    """产出 (标题, Path 或 None)。seen 统计扩展名；exclude 是数据目录，整个跳过。"""
     for item in paths:
         if item == "-":
             yield "<stdin>", None
@@ -143,6 +166,19 @@ def iter_targets(paths: list[str]):
                     continue
                 if any(part in SKIP_DIRS for part in f.parts):
                     continue
+                if f.name in SKIP_FILES:
+                    continue
+                if exclude is not None:
+                    try:
+                        f.resolve().relative_to(exclude.resolve())
+                        if seen is not None:
+                            seen["_excluded"] = seen.get("_excluded", 0) + 1
+                        continue          # 数据目录内的文件，不导入
+                    except ValueError:
+                        pass
+                if seen is not None:
+                    ext = f.suffix.lower() or "(无扩展名)"
+                    seen[ext] = seen.get(ext, 0) + 1
                 if f.suffix.lower() not in TEXT_EXT:
                     continue
                 yield str(f.relative_to(base)).replace("\\", "/"), f
@@ -188,7 +224,10 @@ def cmd_ingest(args) -> int:
 
     stats = {"added": 0, "updated": 0, "skipped": 0, "failed": 0, "entries": 0}
     failures, short = [], []
-    for title, path in iter_targets(args.paths):
+    seen: dict = {}
+    handled = 0
+    for title, path in iter_targets(args.paths, seen, exclude=root):
+        handled += 1
         try:
             if path is None:
                 text = sys.stdin.read()
@@ -197,9 +236,9 @@ def cmd_ingest(args) -> int:
                     failures.append((title, f"超过 {max_bytes // 1024 // 1024} MB"))
                     stats["failed"] += 1
                     continue
-                text = read_text(path)
+                text, why = read_text(path)
                 if text is None:
-                    failures.append((title, "二进制文件"))
+                    failures.append((title, why or "读不了"))
                     stats["failed"] += 1
                     continue
             text = text.strip()
@@ -219,6 +258,18 @@ def cmd_ingest(args) -> int:
     print(f"\n新增 {stats['added']} · 更新 {stats['updated']} · 跳过 {stats['skipped']} "
           f"· 失败 {stats['failed']} · 共 {stats['entries']} 条记忆"
           + ("（dry-run，未写库）" if args.dry_run else ""))
+    if handled == 0:
+        excluded = seen.pop("_excluded", 0)
+        print("没有找到可导入的文件。目录里实际有：")
+        if excluded:
+            print(f"  （其中 {excluded} 个在数据目录里，已跳过）")
+        for ext, n in sorted(((k, v) for k, v in seen.items() if k != "_excluded"),
+                             key=lambda x: -x[1])[:10]:
+            ok = "✓ 支持" if ext in TEXT_EXT else "✗ 跳过"
+            print(f"  {ext:<12}{n:>5} 个  {ok}")
+        if not seen:
+            print("  （一个文件都没看到——路径对吗？）")
+
     tb.log_event("ingest", "import summary", added=stats["added"],
                  updated=stats["updated"], skipped=stats["skipped"],
                  failed=stats["failed"], entries=stats["entries"])
