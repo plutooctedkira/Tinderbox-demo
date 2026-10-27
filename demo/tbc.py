@@ -267,7 +267,7 @@ def cmd_ingest(args) -> int:
                              key=lambda x: -x[1])[:10]:
             ok = "✓ 支持" if ext in TEXT_EXT else "✗ 跳过"
             print(f"  {ext:<12}{n:>5} 个  {ok}")
-        if not seen:
+        if not seen and not excluded:
             print("  （一个文件都没看到——路径对吗？）")
 
     tb.log_event("ingest", "import summary", added=stats["added"],
