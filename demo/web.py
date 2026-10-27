@@ -95,6 +95,13 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .col::-webkit-scrollbar-thumb{background:#d3dbe6;border-radius:5px}
  .col::-webkit-scrollbar-thumb:hover{background:#b9c5d6}
  .col::-webkit-scrollbar-track{background:transparent}
+ @media (max-width: 900px){
+   body{height:auto;overflow:auto}
+   main{flex-direction:column;overflow:visible;padding:12px}
+   .col{overflow:visible;max-width:none!important;width:100%;padding-right:0}
+   .bar{position:static}
+ }
+
  .bar{display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:3;
    background:var(--bg);padding:2px 0 8px}
  input[type=text]{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:8px;

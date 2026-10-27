@@ -773,6 +773,30 @@ def recency(created_at: str, category: str) -> float:
     return 0.5 ** (age_days / HALFLIFE.get(category, 180))
 
 
+def title_rows(conn, query: str, statuses: tuple[str, ...]) -> list:
+    """FTS 无命中时的兜底：按来源文件名、关键词、摘要做字面匹配。
+
+    为什么需要：全文索引只覆盖摘要，而用户常按"这是哪份材料"来找
+    （搜「选址」，摘要写的是"大学城""创业园区"，一条都不含"选址"）。
+
+    排序：命中词越多越靠前（rank 取负值，越小越好，与 bm25 的方向一致）。
+    """
+    toks = [t for t in tokenize(query) if len(t) >= 1]
+    if not toks:
+        return []
+    marks = ",".join("?" * len(statuses))
+    score_expr = " + ".join(["(d.title LIKE ?) + (e.keywords LIKE ?) + (e.l1_summary LIKE ?)"] * len(toks))
+    where_expr = " OR ".join(["(d.title LIKE ? OR e.keywords LIKE ? OR e.l1_summary LIKE ?)"] * len(toks))
+    likes = []
+    for t in toks:
+        likes += [f"%{t}%", f"%{t}%", f"%{t}%"]
+    sql = (f"SELECT e.*, -(0.0 + {score_expr}) AS rank FROM memory_entries e "
+           f"LEFT JOIN memory_documents d ON d.doc_id = e.doc_id "
+           f"WHERE e.status IN ({marks}) AND ({where_expr}) "
+           f"ORDER BY rank LIMIT 50")
+    return conn.execute(sql, likes + list(statuses) + likes).fetchall()
+
+
 def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[dict]:
     # hybrid：一次给全（现行 + 历史），同组只留一条且优先现行——用户不必先判断"这条还有效吗"
     if mode == "hybrid":
@@ -815,6 +839,8 @@ def search(conn, query: str, *, mode: str = "active", top_k: int = 5) -> list[di
         rows = fts_rows(expr)
         if len(rows) < 3:                  # 太少了就放宽成 OR
             rows = fts_rows(build_match(query, "or"))
+    if not rows:
+        rows = title_rows(conn, query, statuses)      # 退回到标题/关键词/摘要的字面匹配
     if not rows:
         return []
 
