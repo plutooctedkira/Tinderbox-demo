@@ -221,7 +221,7 @@ def drop_document(conn, doc_id: str):
             conn.execute("DELETE FROM memory_blobs WHERE ref_count <= 0")
 
 
-def ingest_one(conn, title: str, text: str, *, dry: bool) -> tuple[str, int]:
+def ingest_one(conn, title: str, text: str, *, dry: bool, project: str = "") -> tuple[str, int]:
     """返回 (动作, 条目数)。动作：added / updated / skipped。"""
     digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
     row = conn.execute("SELECT doc_id, blob_hash FROM memory_documents WHERE title=?",
@@ -235,7 +235,7 @@ def ingest_one(conn, title: str, text: str, *, dry: bool) -> tuple[str, int]:
         action = "updated"
     else:
         action = "added"
-    res = tb.ingest(conn, text, title=title, source="file")
+    res = tb.ingest(conn, text, title=title, source="file", project=project)
     return action, len(res["entries"])
 
 
@@ -250,6 +250,12 @@ def cmd_ingest(args) -> int:
     failures, short = [], []
     seen: dict = {}
     handled = 0
+    project = (args.project or "").strip()
+    if not project:
+        real = [x for x in args.paths if x != "-"]
+        if len(real) == 1 and Path(real[0]).expanduser().is_dir():
+            project = Path(real[0]).expanduser().resolve().name
+
     for title, path in iter_targets(args.paths, seen, exclude=root):
         handled += 1
         try:
@@ -270,7 +276,7 @@ def cmd_ingest(args) -> int:
                 stats["skipped"] += 1
                 short.append((title, len(text)))
                 continue
-            action, n = ingest_one(conn, title, text, dry=args.dry_run)
+            action, n = ingest_one(conn, title, text, dry=args.dry_run, project=project)
             stats[action] += 1
             stats["entries"] += n
             mark = {"added": "+", "updated": "~", "skipped": "="}[action]
@@ -514,6 +520,8 @@ def main() -> int:
 
     p = sub.add_parser("ingest")
     p.add_argument("paths", nargs="+")
+    p.add_argument("--project", default="",
+                   help="把这些材料挂到哪个项目下（默认用目录名；留空则各自成根）")
     p.add_argument("--dry-run", action="store_true")
     p.set_defaults(func=cmd_ingest)
 

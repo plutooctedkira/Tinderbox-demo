@@ -742,7 +742,7 @@ def select_items(items: list[dict], n_chars: int) -> list[dict]:
 
 def ingest(conn, text: str, *, user_id="owner", title="", source="import",
            doc_id: str | None = None, extractor=None, judge_fn=None,
-           judge_fns: list | None = None) -> dict:
+           judge_fns: list | None = None, project: str = "") -> dict:
     if doc_id is None:
         doc_id = put_document(conn, text, user_id=user_id, title=title, source=source)
     elif not title:
@@ -764,6 +764,14 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
         keep_ids = {id(x) for x in kept}
         gathered = [(i, it) for i, it in gathered if id(it) in keep_ids]
 
+    # 项目层：有 project 就挂到项目下；没有就保持"材料即根"
+    proj = (project or "").strip()
+    if proj:
+        parent = ensure_concept(conn, proj, None, 0)
+        level = 1
+    else:
+        parent, level = None, 0
+
     for idx, item in sorted(gathered, key=lambda p: p[1]["offset"]):
             # 前因：同一话题里、比它早的那几段。链首（没有上一版）尤其需要
             prior = [x for x in seen_topic.get(item["topic"], [])
@@ -772,7 +780,8 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
                 " → ".join(_clip(p["l1_summary"], 36) for p in prior[-2:])
             seen_topic.setdefault(item["topic"], []).append(item)
             sec = topic_key(item["topic"] or "").removeprefix("回到").strip()
-            hub = ensure_concept(conn, (title_words(title) or "未命名材料"), None, 0)
+            doc_concept = ensure_concept(conn, (title_words(title) or "未命名材料"), parent, level)
+            hub = doc_concept
             eid = insert_memory(conn, user_id=user_id, summary=item["l1_summary"],
                                 reason=item.get("reason", ""),
                                 category=item["category"], doc_id=doc_id,
@@ -784,7 +793,7 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
                                 context=ctx)
             link_concept(conn, eid, hub)
             if sec:
-                sec_id = ensure_concept(conn, sec, hub, 1)
+                sec_id = ensure_concept(conn, sec, hub, level + 1)
                 link_concept(conn, eid, sec_id)
             items_all.append({**item, "entry_id": eid, "chunk_index": idx})
     conflicts = check_conflicts(conn, judge_fn=judge_fn, judge_fns=judge_fns, doc_id=doc_id)
