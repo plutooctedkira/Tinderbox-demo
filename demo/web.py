@@ -19,7 +19,13 @@ from urllib.parse import parse_qs, urlparse
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import tb  # noqa: E402
 
-PORT = 8777
+_data = os.environ.get("TB_DATA")
+if _data:
+    tb.DB_PATH = Path(_data) / "memory.db"
+    tb.ARCHIVE = Path(_data) / "l0"
+
+
+PORT = int(os.environ.get('TB_PORT') or 8777)
 ENV_FILE = Path(__file__).resolve().parent / ".env"
 
 
@@ -744,8 +750,13 @@ class Handler(BaseHTTPRequestHandler):
             conn.close()
 
 
+def run(port: int | None = None):
+    p = port or PORT
+    print(f"压缩 {tb.CODEC} · 分词 {tb.TOKENIZER}")
+    print(f"数据 {tb.DB_PATH}")
+    ThreadingHTTPServer(("127.0.0.1", p), Handler).serve_forever()
+
+
 if __name__ == "__main__":
     print(f"Tinderbox demo → http://127.0.0.1:{PORT}")
-    print(f"压缩 {tb.CODEC} · 分词 {tb.TOKENIZER}")
-    print("🔑 访问令牌：demo/.env 的 API_TOKEN（首次启动自动生成，可在登录页粘贴）")
-    ThreadingHTTPServer(("127.0.0.1", PORT), Handler).serve_forever()
+    run()

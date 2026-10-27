@@ -6,6 +6,7 @@ demo/.env
 
 # 运行产物：数据库、日志、LLM 缓存、压缩块
 demo/out/
+.tbdata/
 *.db
 *.db-wal
 *.db-shm
