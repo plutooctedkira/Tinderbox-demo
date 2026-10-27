@@ -992,33 +992,39 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
             act_b = speech_act(b["l1_summary"])
             if act_b not in ("change", "decision"):
                 continue                        # 罗列/备注不主动去改别人
-            best, best_score = None, 0.0
+            cands: list[tuple[float, float, dict]] = []
             for a in rows[:i]:
                 if a["doc_id"] == b["doc_id"] and a["row_id"] >= b["row_id"]:
                     continue                        # 同批里更晚的不算前任
-                if speech_act(a["l1_summary"]) not in ("change", "decision"):
-                    continue                        # 候选清单不能当前任
+                # 候选可以是任何"现行"条目——价格表/营业时间这类陈述句也算政策，
+                # 是否真被覆盖交给下面的 judge 判（同话题 + 变更标记 + 字面锚点）
                 if a["status"] == "superseded":
-                    continue                        # 已作废的不再当前任
+                    continue
                 ov = _overlap(_tokens(b["l1_summary"]), _tokens(a["l1_summary"]))
                 nt, ot = _doc_topic(b["doc_title"]), _doc_topic(a["doc_title"])
                 same = 1.0 if (nt and ot and (nt == ot or nt in ot or ot in nt)) else 0.0
                 score = 0.7 * ov + 0.3 * same
                 if a["entry_id"] in heads:
                     score += 0.06               # 优先挂在组内现行版本上，别挂在老尸首上
-                if score > best_score:
-                    best, best_score = a, score
+                cands.append((score, same, a))
             fns = judge_fns or ([judge_fn] if judge_fn else [judge])
-            if best is None or best_score < min_score:
+            # 同话题的排前面：话题对上了，哪怕字面重合低也优先判
+            cands.sort(key=lambda x: (-x[1], -x[0]))
+
+            cands = [c for c in cands[:5] if c[0] >= min_score]
+            if not cands:
                 continue                        # 召回分太低，不值得动用贵模型
-            a = best
-            if True:
-                b_kw = f"{nt} {b['keywords']}" if nt else b["keywords"]
-                a_kw = f"{ot} {a['keywords']}" if ot else a["keywords"]
+            for best_score, _, a in cands:
+                # 注意：这里必须用「当前候选」的话题重算，
+                # 不能沿用上面打分循环遗留的 nt/ot（那是最后一条候选的）
+                _nt, _ot = _doc_topic(b["doc_title"]), _doc_topic(a["doc_title"])
+                b_kw = f"{_nt} {b['keywords']}" if _nt else b["keywords"]
+                a_kw = f"{_ot} {a['keywords']}" if _ot else a["keywords"]
                 goods = [fn(b["l1_summary"], b_kw, a["l1_summary"], a_kw) for fn in fns]
                 rel, conf, reason = merge_verdicts(goods)
+
                 if rel not in ("override", "duplicate") or conf < threshold:
-                    continue
+                    continue                        # 这条候选不像，换下一条
                 exists = conn.execute(
                     "SELECT 1 FROM memory_conflicts WHERE "
                     "(old_entry_id=? AND new_entry_id=?) OR (old_entry_id=? AND new_entry_id=?)",
@@ -1040,6 +1046,7 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
                               "reason": reason,
                               "old": a["l1_summary"], "new": b["l1_summary"],
                               "old_id": a["entry_id"], "new_id": b["entry_id"]})
+                break                               # 一条新条目最多挂一处冲突
     return found
 
 

@@ -223,11 +223,11 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .node.gone .ver{color:#8a94a6}
 </style></head><body>
 <header><h1>Tinderbox · 记忆库</h1>
- <div class="sub">L1 摘要常驻 · L0 原文冷存 · 中文检索（双列加权 BM25）· 版本链 · 双 FTS</div></header>
+ <div class="sub">L1 摘要 · L0 原文 · 中文检索 · 版本链</div></header>
 <main>
  <div class="col">
   <div class="bar">
-    <input id="q" type="text" placeholder="直接搜：连廊 / 耶加 / 止损线 / 首选" autofocus>
+    <input id="q" type="text" placeholder="检索" autofocus>
     <div class="modes" id="modes">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
@@ -235,12 +235,12 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
     </div>
   </div>
   <div class="ctxbox" id="ctx"></div>
-<div class="hint" id="hint">输入词后回车 · 「历史」里能搜到已归档/被取代的条目</div>
+<div class="hint" id="hint">回车检索 · 历史含归档与旧版本</div>
   <div id="list"></div>
  </div>
  <div class="col" style="max-width:46%">
   <div class="detail" id="detail"><h3>原文片段</h3>
-   <div class="meta">点左边任意一条：上方是版本链时间线，下方是它对应的 L0 原文片段（按 offset 切片，前后各 60 字）。</div>
+   <div class="meta">点任一条：上方版本链，下方原文片段。</div>
    <pre id="span">（尚未选择）</pre></div>
  </div>
 </main>
@@ -263,7 +263,7 @@ async function search(keepSel){
   const d=await r.json();
   const hist = d.items.filter(i=>i.status!=='active').length;
   $('#hint').textContent = d.items.length
-      ? `命中 ${d.items.length} 条${hist ? `（其中 ${hist} 条是旧版本，已划掉）` : ''} · ${d.ms} ms`
+      ? `${d.items.length} 条${hist ? ` · ${hist} 条旧版本` : ''} · ${d.ms} ms`
       : '没有命中';
   if(!d.items.length){$('#list').innerHTML='<div class="empty">没有命中</div>';return;}
   $('#list').innerHTML = d.items.map(it=>`
@@ -318,7 +318,7 @@ async function renderContext(){
     const badges=[];
     if(d.pending_conflicts) badges.push(`<span class="ctxb warn">${d.pending_conflicts} 处待裁决</span>`);
     if(d.provisional) badges.push(`<span class="ctxb">${d.provisional} 条未精修</span>`);
-    el.innerHTML=`<div class="ctxhead"><b>对话开头会先浮现这几条</b>${badges.join('')}</div>`+
+    el.innerHTML=`<div class="ctxhead"><b>浮现</b>${badges.join('')}</div>`+
       d.memories.map(m=>`
         <div class="ctxrow" data-id="${m.entry_id}">
           <span class="tag ${m.category}">${m.category}</span>
@@ -467,9 +467,9 @@ async function renderChains(){
   const r=await fetch('/api/chains');
   const d=await r.json();
   $('#hint').textContent = d.items.length
-      ? `共 ${d.items.length} 组发生过更迭，点任一步看原文`
-      : '还没有发生过更迭';
-  if(!d.items.length){ $('#list').innerHTML='<div class="empty">没有多版本组</div>'; return; }
+      ? `${d.items.length} 组发生过更迭`
+      : '还没有更迭';
+  if(!d.items.length){ $('#list').innerHTML='<div class="empty">没有更迭</div>'; return; }
   $('#list').innerHTML = d.items.map((g,i)=>`
     <div class="grp"><div class="tl">${g.nodes.map((n,j)=>{
       const gap = j===0 ? '' : `<div class="arrow">→<br><span style="font-size:10px">${Math.round(n.gap_days)}天</span></div>`;
