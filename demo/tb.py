@@ -1345,6 +1345,80 @@ def list_entries(conn, *, status: str = "archived", category: str = "",
     return [dict(r) for r in conn.execute(sql, args)]
 
 
+def entry_revisions(conn, entry_id: str, limit: int = 20) -> list[dict]:
+    """这条记忆被改过几次（精修 / 手改 / 回滚都算）。"""
+    return [dict(r) for r in conn.execute(
+        "SELECT revision_id, old_summary, new_summary, reason, created_at "
+        "FROM memory_revisions WHERE entry_id=? ORDER BY created_at DESC LIMIT ?",
+        (entry_id, max(1, min(limit, 100))))]
+
+
+def revert_summary(conn, entry_id: str, revision_id: str) -> dict:
+    """把摘要回滚到某个历史版本；回滚本身也留一条痕迹。"""
+    rev = conn.execute("SELECT old_summary FROM memory_revisions WHERE revision_id=? "
+                       "AND entry_id=?", (revision_id, entry_id)).fetchone()
+    if rev is None:
+        raise KeyError("没有这条历史版本")
+    target = rev["old_summary"]
+    return update_summary(conn, entry_id, target, why=f"revert:{revision_id}")
+
+
+def make_backup(root: Path, keep: int = 0) -> dict:
+    """备份到 <数据目录>/backup/<时间戳>/，并做一致性校验。
+
+    用 sqlite 的 backup 接口而不是复制文件：复制会拿到 WAL 中间态。
+    """
+    import hashlib
+    import json
+    import shutil
+    import sqlite3
+    from datetime import datetime
+
+    root = Path(root)
+    db = root / "memory.db"
+    if not db.exists():
+        raise FileNotFoundError("还没有数据库")
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    dest = root / "backup" / stamp
+    dest.mkdir(parents=True, exist_ok=True)
+
+    src = sqlite3.connect(db)
+    tgt = sqlite3.connect(dest / "memory.db")
+    try:
+        src.backup(tgt)
+    finally:
+        tgt.close()
+        src.close()
+    if (root / "l0").exists():
+        shutil.copytree(root / "l0", dest / "l0", dirs_exist_ok=True)
+    if (root / "config.toml").exists():
+        shutil.copy2(root / "config.toml", dest / "config.toml")
+
+    def counts(path):
+        c = sqlite3.connect(path)
+        try:
+            return {k: c.execute(sql).fetchone()[0] for k, sql in (
+                ("documents", "SELECT count(*) FROM memory_documents"),
+                ("entries", "SELECT count(*) FROM memory_entries"),
+                ("conflicts", "SELECT count(*) FROM memory_conflicts"))}
+        finally:
+            c.close()
+
+    manifest = {"created_at": stamp,
+                "db_sha256": hashlib.sha256((dest / "memory.db").read_bytes()).hexdigest(),
+                "counts": counts(dest / "memory.db")}
+    (dest / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
+                                        encoding="utf-8")
+    ok = manifest["counts"] == counts(db)
+    if keep:
+        olds = sorted((root / "backup").iterdir(), key=lambda x: x.name)[:-keep]
+        for old in olds:
+            shutil.rmtree(old, ignore_errors=True)
+    log_event("backup", "backup made", dest=str(dest), entries=manifest["counts"]["entries"],
+              ok=ok)
+    return {"dest": str(dest), "counts": manifest["counts"], "ok": ok}
+
+
 def _reindex(conn, entry_id: str) -> None:
     """改了摘要/关键词之后，把两套 FTS 都同步过去。"""
     row = conn.execute("SELECT row_id, l1_summary, keywords FROM memory_entries "

@@ -383,60 +383,18 @@ def _db_counts(db_path: Path) -> dict:
 
 
 def cmd_backup(args) -> int:
-    import hashlib
-    import json
-    import shutil
-    import sqlite3
-    from datetime import datetime
-
     root = data_dir(args)
     bind_paths(root)
-    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    dest = root / "backup" / stamp
-    dest.mkdir(parents=True, exist_ok=True)
-
-    db = root / "memory.db"
-    if not db.exists():
+    try:
+        out = tb.make_backup(root, keep=args.keep)
+    except FileNotFoundError:
         print("还没有数据库，无需备份")
         return 1
-
-    # 用 sqlite 的 backup 接口，保证拿到一致的快照（不复制 WAL 中间态）
-    src = sqlite3.connect(db)
-    tgt = sqlite3.connect(dest / "memory.db")
-    try:
-        src.backup(tgt)
-    finally:
-        tgt.close()
-        src.close()
-
-    if (root / "l0").exists():
-        shutil.copytree(root / "l0", dest / "l0", dirs_exist_ok=True)
-    for name in ("config.toml",):
-        if (root / name).exists():
-            shutil.copy2(root / name, dest / name)
-    # 刻意不含 token.txt
-
-    digest = hashlib.sha256((dest / "memory.db").read_bytes()).hexdigest()
-    manifest = {"created_at": stamp, "db_sha256": digest,
-                "counts": _db_counts(dest / "memory.db"),
-                "l0_files": len(list((dest / "l0").rglob("*"))) if (dest / "l0").exists() else 0}
-    (dest / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
-                                        encoding="utf-8")
-
-    # 校验：备份出来的库能打开、计数与源库一致
-    src_counts = _db_counts(db)
-    ok = manifest["counts"] == src_counts
-    print(f"备份 {dest}")
-    print(f"  条目 {src_counts['entries']} · 材料 {src_counts['documents']} · L0 {manifest['l0_files']} 个")
-    print(f"  校验 {'通过 ✓' if ok else '不一致 ✗'}")
-
-    if args.keep:
-        olds = sorted((root / "backup").iterdir(), key=lambda x: x.name)[:-args.keep]
-        for old in olds:
-            shutil.rmtree(old, ignore_errors=True)
-        if olds:
-            print(f"  清理旧备份 {len(olds)} 份（保留最近 {args.keep}）")
-    return 0 if ok else 1
+    print(f"备份 {out['dest']}")
+    print(f"  条目 {out['counts']['entries']} · 材料 {out['counts']['documents']} · "
+          f"冲突 {out['counts']['conflicts']}")
+    print(f"  校验 {'通过 ✓' if out['ok'] else '不一致 ✗'}")
+    return 0 if out["ok"] else 1
 
 
 def cmd_restore(args) -> int:

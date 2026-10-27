@@ -86,6 +86,19 @@ try:
     st, d = call("/api/entry?id=" + eid)
     acts = {a["action"] for a in d.get("audit", [])}
     ok({"update", "archive", "restore"} <= acts, f"审计轨迹完整（{sorted(acts)}）")
+    # 历史版本与回滚
+    st, d2 = call("/api/entry?id=" + eid)
+    revs = d2.get("revisions") or []
+    ok(len(revs) >= 1, f"编辑留下历史版本（{len(revs)} 条）")
+    if revs:
+        st, rv = call("/api/entry/revert", {"entry_id": eid,
+                                            "revision_id": revs[-1]["revision_id"]})
+        ok(st == 200, "可回滚到历史版本")
+
+    # 备份
+    st, bk = call("/api/backup", {"keep": 2})
+    ok(st == 200 and bk.get("result", {}).get("ok") is True, "面板可备份且校验通过")
+
     # 面板导入：异步任务，轮询到结束
     import time as _t
 

@@ -164,6 +164,8 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
+ .revbtn{padding:1px 8px;font-size:11px;border:1px solid var(--line);background:#fff;
+   border-radius:5px;cursor:pointer;flex:none;margin-left:auto}
  .audit{margin:0 0 10px}
  .audit h4{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600}
  .arow{display:flex;gap:8px;font-size:11px;color:#5f6b7e;padding:2px 0;border-bottom:1px dashed #eef1f6}
@@ -277,6 +279,7 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
       <button id="impbtn" title="从文件夹导入">导入</button>
       <button id="refbtn" title="把规则摘要改写成「结论——因为依据」">精修<span id="refn"></span></button>
+      <button id="bakbtn" title="备份数据库与原文">备份</button>
       <button data-mode="archived" title="已归档的记忆">归档</button>
     </div>
   </div>
@@ -323,12 +326,13 @@ async function search(keepSel){
   if(!q){$('#list').innerHTML='';$('#hint').textContent='输入词后回车';return;}
   const r=await fetch(`/api/search?q=${encodeURIComponent(q)}&mode=hybrid`);
   const d=await r.json();
+  d.items = d.items.filter(catKeep);
   const hist = d.items.filter(i=>i.status!=='active').length;
   $('#hint').textContent = d.items.length
       ? `${d.items.length} 条${hist ? ` · ${hist} 条旧版本` : ''} · ${d.ms} ms`
       : '没有命中';
-  if(!d.items.length){$('#list').innerHTML='<div class="empty">没有命中</div>';return;}
-  $('#list').innerHTML = d.items.map(it=>`
+  if(!d.items.length){$('#list').innerHTML=chipsHTML()+'<div class="empty">没有命中</div>';bindChips();return;}
+  $('#list').innerHTML = chipsHTML() + d.items.map(it=>`
     <div class="card" data-id="${it.entry_id}">
       <div class="row">
         <div class="l1 ${it.status==='active'?'':'dead'}"><span class="tag ${it.status==='active'?it.category:(it.status==='pending_merge'?'pending':'gone')}">${
@@ -364,6 +368,10 @@ async function open(id, card){
         <span class="rtag">${esc(r.relation)}</span>
         <span class="rs">${esc(r.l1_summary)}</span>
         <span class="rc">${r.confidence.toFixed(2)}</span></div>`).join('')}</div>`:''}
+    ${(d.revisions && d.revisions.length) ? `<div class="audit"><h4>历史版本（可回滚）</h4>${
+      d.revisions.map(r=>`<div class="arow"><span class="aat">${fmtFull(r.at)}</span>
+        <span class="adt" title="${esc(r.old)}">${esc(r.old.slice(0,40))}</span>
+        <button class="revbtn" data-rev="${r.revision_id}">回滚</button></div>`).join('')}</div>`:''}
     ${(d.audit && d.audit.length) ? `<div class="audit"><h4>操作轨迹</h4>${
       d.audit.map(a=>`<div class="arow"><span class="aat">${fmtFull(a.at)}</span>
         <span class="aac">${esc(a.actor)}</span>
@@ -372,6 +380,15 @@ async function open(id, card){
     <div class="acts"><button id="act-edit">编辑</button>
       <button id="act-arch">${d.status==='archived'?'恢复':'归档'}</button></div>
     <pre>${esc(d.text)}</pre>`;
+  document.querySelectorAll('.revbtn').forEach(b=>b.onclick=async ev=>{
+    ev.stopPropagation();
+    const r=await fetch('/api/entry/revert',{method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({entry_id:d.entry_id, revision_id:b.dataset.rev})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'回滚失败'); return; }
+    await refreshList(); open(d.entry_id);
+  });
   $('#act-edit').onclick=async()=>{
     const next=prompt('改摘要（会留痕，可回滚）', d.l1_summary);
     if(!next || next.trim()===d.l1_summary) return;
@@ -400,6 +417,18 @@ function fmtGap(g){ if(g==null) return '';
   if(g<1) return `${Math.max(1,Math.round(g*24))} 小时`;
   return `${Math.round(g)} 天`; }
 let openCols = {}, openGroups = {}, netCache = {}, netFilter = 'all';
+let catFilter = 'all';
+const CATS = ['all','decision','preference','task','knowledge'];
+function chipsHTML(){
+  return `<div class="netfilter">${CATS.map(k=>`<button class="fchip ${catFilter===k?'on':''}"
+    data-cat="${k}">${k==='all'?'全部':k}</button>`).join('')}</div>`;
+}
+function bindChips(){
+  document.querySelectorAll('#list .fchip').forEach(b=>b.onclick=()=>{
+    catFilter=b.dataset.cat; search();
+  });
+}
+function catKeep(it){ return catFilter==='all' || it.category===catFilter; }
 
 let ctxItems=[], ctxIdx=0, ctxTimer=null;
 function ctxShow(i){
@@ -474,9 +503,10 @@ async function renderConflicts(){
 }
 async function renderArchived(){
   const d=await (await fetch('/api/list?status=archived&limit=100')).json();
+  d.items = d.items.filter(catKeep);
   $('#hint').textContent = d.items.length ? `${d.items.length} 条已归档` : '没有归档的记忆';
-  if(!d.items.length){ $('#list').innerHTML='<div class="empty">没有归档的记忆</div>'; return; }
-  $('#list').innerHTML = d.items.map(it=>`
+  if(!d.items.length){ $('#list').innerHTML=chipsHTML()+'<div class="empty">没有归档的记忆</div>'; bindChips(); return; }
+  $('#list').innerHTML = chipsHTML() + d.items.map(it=>`
     <div class="card" data-id="${it.entry_id}">
       <div class="row">
         <div class="l1 dead"><span class="tag gone">已归档</span>${esc(it.l1_summary)}</div>
@@ -484,6 +514,7 @@ async function renderArchived(){
       </div>
     </div>`).join('');
   document.querySelectorAll('#list .card').forEach(c=>c.onclick=()=>open(c.dataset.id, c));
+  bindChips();
 }
 async function renderNet(){
   const d=await (await fetch('/api/concepts')).json();
@@ -678,6 +709,40 @@ $('#impform').onsubmit=async e=>{
     poll();
   }catch(err){ msg.textContent='出错：'+err; btn.disabled=false; }
 };
+
+async function loadMeta(){
+  try{
+    const m=await (await fetch('/api/meta')).json();
+    if(m.provisional) $('#refn').textContent=m.provisional;
+  }catch(e){}
+}
+$('#refbtn').onclick=async()=>{
+  const btn=$('#refbtn'); btn.disabled=true;
+  const txt=btn.textContent; btn.textContent='精修中…';
+  try{
+    const r=await fetch('/api/refine',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({limit:10})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'精修失败'); }
+    else{
+      const s=j.result;
+      alert(`扫描 ${s.scanned} 条 · 采纳 ${s.refined} · 驳回 ${s.failed}`);
+      await refreshList(); await loadMeta();
+    }
+  }catch(e){ alert('出错：'+e); }
+  finally{ btn.disabled=false; btn.textContent=txt; }
+};
+$('#bakbtn').onclick=async()=>{
+  const b=$('#bakbtn'); b.disabled=true; b.textContent='备份中…';
+  try{
+    const r=await fetch('/api/backup',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({keep:5})});
+    const j=await r.json();
+    if(!j.ok){ alert(j.error||'备份失败'); }
+    else alert(`已备份 ${j.result.counts.entries} 条记忆\n${j.result.dest}\n校验${j.result.ok?'通过':'不通过'}`);
+  }finally{ b.disabled=false; b.textContent='备份'; }
+};
+loadMeta();
 document.querySelector('[data-mode=chains]').click();
 </script></body></html>"""
 
@@ -903,6 +968,32 @@ class Handler(BaseHTTPRequestHandler):
             self._json({"ok": True})
             return
 
+        if u.path == "/api/entry/revert":
+            conn = tb.connect()
+            try:
+                out = tb.revert_summary(conn, (data.get("entry_id") or ""),
+                                        (data.get("revision_id") or ""))
+            except KeyError as e:
+                self._json({"ok": False, "error": str(e)}, 404)
+                return
+            except ValueError as e:
+                self._json({"ok": False, "error": str(e)}, 422)
+                return
+            finally:
+                conn.close()
+            self._json({"ok": True, "result": out})
+            return
+
+        if u.path == "/api/backup":
+            root = Path(os.environ.get("TB_DATA") or tb.DB_PATH.parent)
+            try:
+                out = tb.make_backup(root, keep=int(data.get("keep") or 0))
+            except Exception as e:
+                self._json({"ok": False, "error": f"{type(e).__name__}: {e}"}, 500)
+                return
+            self._json({"ok": True, "result": out})
+            return
+
         if u.path == "/api/refine":
             limit = int(data.get("limit") or 10)
             conn = tb.connect()
@@ -1086,6 +1177,7 @@ class Handler(BaseHTTPRequestHandler):
                     "SELECT at, actor, action, detail FROM memory_audit "
                     "WHERE entry_id=? ORDER BY at DESC LIMIT 8", (eid,))]
                 origin = tb.entry_origin(conn, eid)
+                revisions = tb.entry_revisions(conn, eid)
                 span = tb.get_span(conn, eid, before=60, after=60)
                 nodes = tb.chain(conn, row["memory_group_id"])
                 prev = None
@@ -1109,7 +1201,10 @@ class Handler(BaseHTTPRequestHandler):
                                      "confidence": r["confidence"]})
                 self._json({**dict(row), "offset": span["offset"],
                             "length": span["length"], "text": span["text"],
-                            "chain": nodes, "relations": rels, "audit": audit_rows, "origin": origin})
+                            "chain": nodes, "relations": rels, "audit": audit_rows, "origin": origin,
+                       "revisions": [{"revision_id": r["revision_id"],
+                                      "old": r["old_summary"], "reason": r["reason"],
+                                      "at": r["created_at"]} for r in revisions]})
             else:
                 self._json({"error": "not found"}, 404)
         finally:
