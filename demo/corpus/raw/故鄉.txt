@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html class="client-nojs vector-feature-language-in-header-enabled vector-feature-language-in-main-menu-disabled vector-feature-language-in-main-page-header-disabled vector-feature-page-tools-pinned-disabled vector-feature-toc-pinned-clientpref-1 vector-feature-main-menu-pinned-disabled vector-feature-limited-width-clientpref-1 vector-feature-limited-width-content-disabled vector-feature-custom-font-size-clientpref-1 vector-feature-appearance-pinned-clientpref-1 skin-theme-clientpref-day vector-sticky-header-enabled vector-toc-not-available skin-thumbsize-clientpref-standard skin-underline-clientpref-browser" lang="zh" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<title>故鄉 - 维基文库，自由的图书馆</title>
+<script>(function(){var className="client-js vector-feature-language-in-header-enabled vector-feature-language-in-main-menu-disabled vector-feature-language-in-main-page-header-disabled vector-feature-page-tools-pinned-disabled vector-feature-toc-pinned-clientpref-1 vector-feature-main-menu-pinned-disabled vector-feature-limited-width-clientpref-1 vector-feature-limited-width-content-disabled vector-feature-custom-font-size-clientpref-1 vector-feature-appearance-pinned-clientpref-1 skin-theme-clientpref-day vector-sticky-header-enabled vector-toc-not-available skin-thumbsize-clientpref-standard skin-underline-clientpref-browser";var cookie=document.cookie.match(/(?:^|; )zhwikisourcemwclientpreferences=([^;]+)/);if(cookie){cookie[1].split('%2C').forEach(function(pref){className=className.replace(new RegExp('(^| )'+pref.replace(/-clientpref-\w+$|[^\w-]+/g,'')+'-clientpref-\\w+( |$)'),'$1'+pref+'$2');});}document.documentElement.className=className;}());RLCONF={"wgBreakFrames":false,"wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"zh","wgMonthNames":["","1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"],"wgRequestId":"76489219-b5c1-429e-8cf8-45743a18d67f","wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"故鄉","wgTitle":"故鄉","wgCurRevisionId":2570945,"wgRevisionId":2570945,"wgArticleId":8046,"wgIsArticle":true,"wgIsRedirect":false,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":["魯迅","1921年","1921年1月","PD-old-80-1996","中华人民共和国公有领域","中華民國公有領域"],"wgPageViewLanguage":"zh","wgPageContentLanguage":"zh","wgPageContentModel":"wikitext","wgRelevantPageName":"故鄉","wgRelevantArticleId":8046,"wgTempUserName":null,"wgUserVariant":"zh","wgIsProbablyEditable":true,"wgRelevantPageIsProbablyEditable":true,"wgRestrictionEdit":[],"wgRestrictionMove":[],"wgNoticeProject":"wikisource","wgConfirmEditCaptchaNeededForGenericEdit":"hcaptcha","wgConfirmEditForceShowCaptcha":false,"wgConfirmEditHCaptchaSiteKey":"5d0c670e-a5f4-4258-ad16-1f42792c9c62","wgMediaViewerOnClick":true,"wgMediaViewerEnabledByDefault":true,"wgMediaViewerDesktopVue":false,"wgVisualEditor":{"pageLanguageCode":"zh","pageLanguageDir":"ltr","pageVariantFallbacks":["zh-hans","zh-hant","zh-cn","zh-tw","zh-hk","zh-sg","zh-mo","zh-my"]},"wgMFDisplayWikibaseDescriptions":{"search":true,"watchlist":true,"tagline":false,"nearby":true},"wgWMESchemaEditAttemptStepOversample":false,"wgWMEPageLength":600,"prpProofreadPageBookNamespaces":[0],"prpSourceIndexPage":"Index:魯迅全集01 (1948).pdf","wgTestKitchenUserExperiments":{"overrides":[],"enrolled":[],"assigned":[],"subject_ids":[]},"wgEditSubmitButtonLabelPublish":true,"wgVisualEditorPageIsDisambiguation":false,"wgULSPosition":"interlanguage","wgULSisCompactLinksEnabled":false,"wgVector2022LanguageInHeader":true,"wgULSisLanguageSelectorEmpty":false,"wgULSLanguageSelectorV2Enabled":true,"wgWikibaseItemId":"Q13403344","wgCheckUserClientHintsHeadersJsApi":["brands","architecture","bitness","fullVersionList","mobile","model","platform","platformVersion"],"wgCheckUserClientHintsInEditRequest":true,"wgSiteNoticeId":"2.0"};
+RLSTATE={"ext.gadget.text-spacing":"ready","ext.globalCssJs.user.styles":"ready","site.styles":"ready","user.styles":"ready","ext.globalCssJs.user":"ready","user":"ready","user.options":"loading","oojs-ui-core.styles":"ready","oojs-ui.styles.indicators":"ready","mediawiki.widgets.styles":"ready","oojs-ui-core.icons":"ready","ext.wikisource.icons":"ready","ext.proofreadpage.base":"ready","ext.proofreadpage.article":"ready","ext.wikimediamessages.styles":"ready","skins.vector.search.codex.styles":"ready","skins.vector.styles":"ready","skins.vector.icons":"ready","ext.visualEditor.desktopArticleTarget.noscript":"ready","ext.uls.interlanguage":"ready","wikibase.client.init":"ready","ext.dismissableSiteNotice.styles":"ready"};RLPAGEMODULES=["ext.wikisource.download","ext.scribunto.logs","site","mediawiki.page.ready","skins.vector.js","ext.centralNotice.geoIP","ext.centralNotice.startUp","ext.gadget.noteTA","ext.gadget.tabbedwindow","ext.gadget.PageNumbers","ext.gadget.scrollUpButton","ext.gadget.unihan-helper","ext.urlShortener.toolbar","ext.centralauth.centralautologin","ext.testKitchen","ext.wikimediaCustomizations.donorAccountCreation","mmv.bootstrap","ext.visualEditor.desktopArticleTarget.init","ext.echo.centralauth","ext.eventLogging","ext.wikimediaEvents","ext.navigationTiming","ext.uls.interface","wikibase.client.vector-2022","wikibase.databox.fromWikidata","ext.checkUser.clientHints","ext.dismissableSiteNotice"];</script>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.loader.impl(function(){return["user.options@12s5i",function($,jQuery,require,module){mw.user.tokens.set({"patrolToken":"+\\","watchToken":"+\\","csrfToken":"+\\"});
+}];});});</script>
+<link rel="stylesheet" href="/w/load.php?lang=zh&amp;modules=ext.dismissableSiteNotice.styles%7Cext.proofreadpage.article%2Cbase%7Cext.uls.interlanguage%7Cext.visualEditor.desktopArticleTarget.noscript%7Cext.wikimediamessages.styles%7Cext.wikisource.icons%7Cmediawiki.widgets.styles%7Coojs-ui-core.icons%2Cstyles%7Coojs-ui.styles.indicators%7Cskins.vector.icons%2Cstyles%7Cskins.vector.search.codex.styles%7Cwikibase.client.init&amp;only=styles&amp;skin=vector-2022">
+<script async="" src="/w/load.php?lang=zh&amp;modules=startup&amp;only=scripts&amp;raw=1&amp;skin=vector-2022"></script>
+<meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="/w/load.php?lang=zh&amp;modules=ext.gadget.text-spacing&amp;only=styles&amp;skin=vector-2022">
+<link rel="stylesheet" href="/w/load.php?lang=zh&amp;modules=site.styles&amp;only=styles&amp;skin=vector-2022">
+<meta name="generator" content="MediaWiki 1.47.0-wmf.24">
+<meta name="referrer" content="origin">
+<meta name="referrer" content="origin-when-cross-origin">
+<meta name="robots" content="max-image-preview:standard">
+<meta name="format-detection" content="telephone=no">
+<meta name="viewport" content="width=1120">
+<meta property="og:title" content="故鄉 - 维基文库，自由的图书馆">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="//thumb.wikimedia.org">
+<link rel="alternate" type="application/x-wiki" title="编辑" href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=edit">
+<link rel="icon" href="/static/favicon/wikisource.ico">
+<link rel="search" type="application/opensearchdescription+xml" href="/w/rest.php/v1/search" title="Wikisource (zh)">
+<link rel="EditURI" type="application/rsd+xml" href="//zh.wikisource.org/w/api.php?action=rsd">
+<link rel="canonical" href="https://zh.wikisource.org/wiki/%E6%95%85%E9%84%89">
+<link rel="alternate" hreflang="zh" href="https://zh.wikisource.org/wiki/%E6%95%85%E9%84%89">
+<link rel="alternate" hreflang="zh-Hans" href="https://zh.wikisource.org/zh-hans/%E6%95%85%E9%84%89">
+<link rel="alternate" hreflang="zh-Hant" href="https://zh.wikisource.org/zh-hant/%E6%95%85%E9%84%89">
+<link rel="alternate" hreflang="x-default" href="https://zh.wikisource.org/wiki/%E6%95%85%E9%84%89">
+<link rel="license" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh">
+<link rel="alternate" type="application/atom+xml" title="Wikisource的Atom订阅" href="/w/index.php?title=Special:RecentChanges&amp;feed=atom">
+<link rel="dns-prefetch" href="//meta.wikimedia.org" />
+<link rel="dns-prefetch" href="auth.wikimedia.org">
+</head>
+<body class="skin--responsive skin-vector skin-vector-search-vue mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-subject mw-editable page-故鄉 rootpage-故鄉 skin-vector-2022 action-view">
+<div id="mw-aria-live-region" class="mw-aria-live-region" aria-live="polite"></div><a class="mw-jump-link" href="#bodyContent">跳转到内容</a>
+<div class="vector-header-container">
+	<header class="vector-header mw-header no-font-mode-scale">
+		<div class="vector-header-start">
+			<nav class="vector-main-menu-landmark" aria-label="站点">
+				
+<div id="vector-main-menu-dropdown" class="vector-dropdown vector-main-menu-dropdown vector-button-flush-left vector-button-flush-right"  title="主菜单" >
+	<input type="checkbox" id="vector-main-menu-dropdown-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-vector-main-menu-dropdown" class="vector-dropdown-checkbox "  aria-label="主菜单"   >
+	<label id="vector-main-menu-dropdown-label" for="vector-main-menu-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only " aria-hidden="true"  ><span class="vector-icon mw-ui-icon-menu mw-ui-icon-wikimedia-menu cdx-button__icon"></span>
+
+<span class="vector-dropdown-label-text">主菜单</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+
+				<div id="vector-main-menu-unpinned-container" class="vector-unpinned-container">
+		
+<div id="vector-main-menu" class="vector-main-menu vector-pinnable-element">
+	<div
+	class="vector-pinnable-header vector-main-menu-pinnable-header vector-pinnable-header-unpinned"
+	data-feature-name="main-menu-pinned"
+	data-pinnable-element-id="vector-main-menu"
+	data-pinned-container-id="vector-main-menu-pinned-container"
+	data-unpinned-container-id="vector-main-menu-unpinned-container"
+>
+	<div class="vector-pinnable-header-label">主菜单</div>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-pin-button" data-event-name="pinnable-header.vector-main-menu.pin" aria-label="将 主菜单 移动至侧边栏">移至侧栏</button>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-unpin-button" data-event-name="pinnable-header.vector-main-menu.unpin" aria-label="隐藏主菜单">隐藏</button>
+</div>
+
+	
+<div id="p-navigation" class="vector-menu mw-portlet mw-portlet-navigation"  >
+	<div class="vector-menu-heading">
+		导航
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="n-mainpage-description" class="mw-list-item"><a href="/wiki/Wikisource:%E9%A6%96%E9%A1%B5" title="访问首页​[z]" accesskey="z"><span>首页</span></a></li><li id="n-randomwork" class="mw-list-item"><a href="/wiki/Special:RandomRootpage/Main"><span>随机作品</span></a></li><li id="n-randomauthor" class="mw-list-item"><a href="/wiki/Special:Random/Author"><span>随机作者</span></a></li><li id="n-randomindex" class="mw-list-item"><a href="/wiki/Special:RandomRootpage/Index"><span>随机原本</span></a></li><li id="n-allpages" class="mw-list-item"><a href="/wiki/Special:AllPages"><span>所有页面</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+	
+<div id="p-editor" class="vector-menu mw-portlet mw-portlet-editor"  >
+	<div class="vector-menu-heading">
+		编者
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="n-portal" class="mw-list-item"><a href="/wiki/Wikisource:%E7%A4%BE%E5%8C%BA%E4%B8%BB%E9%A1%B5" title="关于本项目，您可以做什么，以及何处能找到相关资料"><span>社群首页</span></a></li><li id="n-scriptorium" class="mw-list-item"><a href="/wiki/Wikisource:%E5%86%99%E5%AD%97%E9%97%B4"><span>写字间</span></a></li><li id="n-recentchanges" class="mw-list-item"><a href="/wiki/Special:RecentChanges" title="本wiki的最近更改列表​[r]" accesskey="r"><span>最近更改</span></a></li><li id="n-specialpages" class="mw-list-item"><a href="/wiki/Special:SpecialPages" title="所有特殊页面的列表​[q]" accesskey="q"><span>特殊页面</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+<div id="p-help" class="vector-menu mw-portlet mw-portlet-help"  >
+	<div class="vector-menu-heading">
+		帮助
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="n-help" class="mw-list-item"><a href="/wiki/Help:%E7%9B%AE%E5%BD%95" title="查找帮助的地方"><span>帮助</span></a></li><li id="n-about" class="mw-list-item"><a href="/wiki/Wikisource:%E5%85%B3%E4%BA%8E"><span>关于维基文库</span></a></li><li id="n-contact" class="mw-list-item"><a href="/wiki/Wikisource:%E8%81%94%E7%BB%9C%E6%88%91%E4%BB%AC"><span>联系我们</span></a></li><li id="n-policy" class="mw-list-item"><a href="/wiki/Wikisource:%E6%96%B9%E9%92%88%E4%B8%8E%E6%8C%87%E5%BC%95"><span>方针与指引</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+<div id="p-do" class="vector-menu mw-portlet mw-portlet-do emptyPortlet"  >
+	<div class="vector-menu-heading">
+		显示选项
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			
+		</ul>
+		
+	</div>
+</div>
+
+</div>
+
+				</div>
+
+	</div>
+</div>
+
+		</nav>
+			
+<a href="/wiki/Wikisource:%E9%A6%96%E9%A1%B5" class="mw-logo">
+	<img class="mw-logo-icon" src="/static/images/icons/wikisource.svg" alt="" aria-hidden="true" height="50" width="50">
+	<span class="mw-logo-container skin-invert">
+		<img class="mw-logo-wordmark" alt="Wikisource" src="/static/images/mobile/copyright/wikisource-wordmark-zh.svg" style="width: 7.125em; height: 1.5em;">
+	</span>
+</a>
+
+		</div>
+		<div class="vector-header-end">
+			
+<div id="p-search" role="search" class="vector-search-box-vue  vector-search-box-collapses vector-search-box-show-thumbnail vector-search-box-auto-expand-width vector-search-box">
+	<a href="/wiki/Special:Search" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only search-toggle" title="搜索Wikisource内容​[f]" accesskey="f"><span class="vector-icon mw-ui-icon-search mw-ui-icon-wikimedia-search cdx-button__icon"></span>
+
+<span>搜索</span>
+	</a>
+	<div class="vector-typeahead-search-container">
+		<div class="cdx-typeahead-search cdx-typeahead-search--show-thumbnail cdx-typeahead-search--auto-expand-width">
+			<form action="/w/index.php" id="searchform" class="cdx-search-input cdx-search-input--has-end-button">
+				<div id="simpleSearch" class="cdx-search-input__input-wrapper"  data-search-loc="header-moved">
+					<div class="cdx-text-input cdx-text-input--has-start-icon">
+						<input
+							class="cdx-text-input__input mw-searchInput" autocomplete="off"
+							 type="search" name="search" placeholder="搜索Wikisource内容" aria-label="搜索Wikisource内容" autocapitalize="none" spellcheck="false" title="搜索Wikisource内容​[f]" accesskey="f" id="searchInput"
+							>
+						<span class="cdx-text-input__icon cdx-text-input__start-icon"></span>
+					</div>
+					<input type="hidden" name="title" value="Special:Search">
+				</div>
+				<button class="cdx-button cdx-search-input__end-button">搜索</button>
+			</form>
+		</div>
+	</div>
+</div>
+
+			<nav class="vector-user-links vector-user-links-wide" aria-label="个人工具">
+	<div class="vector-user-links-main">
+	
+<div id="p-vector-user-menu-preferences" class="vector-menu mw-portlet emptyPortlet"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			
+		</ul>
+		
+	</div>
+</div>
+
+	
+<div id="p-vector-user-menu-userpage" class="vector-menu mw-portlet emptyPortlet"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			
+		</ul>
+		
+	</div>
+</div>
+
+	<nav class="vector-appearance-landmark" aria-label="外观">
+		
+<div id="vector-appearance-dropdown" class="vector-dropdown "  title="更改页面字体大小、宽度和颜色的外观" >
+	<input type="checkbox" id="vector-appearance-dropdown-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-vector-appearance-dropdown" class="vector-dropdown-checkbox "  aria-label="外观"   >
+	<label id="vector-appearance-dropdown-label" for="vector-appearance-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only " aria-hidden="true"  ><span class="vector-icon mw-ui-icon-appearance mw-ui-icon-wikimedia-appearance cdx-button__icon"></span>
+
+<span class="vector-dropdown-label-text">外观</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+
+			<div id="vector-appearance-unpinned-container" class="vector-unpinned-container">
+				
+			</div>
+		
+	</div>
+</div>
+
+	</nav>
+	
+<div id="p-vector-user-menu-notifications" class="vector-menu mw-portlet emptyPortlet"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			
+		</ul>
+		
+	</div>
+</div>
+
+	
+<div id="p-vector-user-menu-overflow" class="vector-menu mw-portlet"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			<li id="pt-sitesupport-2" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="https://donate.wikimedia.org/?wmf_source=donate&amp;wmf_medium=sidebar&amp;wmf_campaign=zh.wikisource.org&amp;uselang=zh" data-mw-donate-attempt="top_link" class=""><span>资助</span></a>
+</li>
+<li id="pt-createaccount-2" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=Special:CreateAccount&amp;returnto=%E6%95%85%E9%84%89" title="我们推荐您创建账号并登录，但这不是强制性的" class=""><span>创建账号</span></a>
+</li>
+<li id="pt-login-2" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=Special:UserLogin&amp;returnto=%E6%95%85%E9%84%89" title="我们推荐您登录，但这不是强制性的​[o]" accesskey="o" class=""><span>登录</span></a>
+</li>
+
+			
+		</ul>
+		
+	</div>
+</div>
+
+	</div>
+	
+<div id="vector-user-links-dropdown" class="vector-dropdown vector-user-menu vector-button-flush-right vector-user-menu-logged-out vector-user-links-dropdown--collapsible"  title="更多选项" >
+	<input type="checkbox" id="vector-user-links-dropdown-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-vector-user-links-dropdown" class="vector-dropdown-checkbox "  aria-label="个人工具"   >
+	<label id="vector-user-links-dropdown-label" for="vector-user-links-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only " aria-hidden="true"  ><span class="vector-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar cdx-button__icon"></span>
+
+<span class="vector-dropdown-label-text">个人工具</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+
+		
+<div id="p-personal" class="vector-menu mw-portlet mw-portlet-personal"  title="用户菜单" >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			<li id="pt-sitesupport" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="https://donate.wikimedia.org/?wmf_source=donate&amp;wmf_medium=sidebar&amp;wmf_campaign=zh.wikisource.org&amp;uselang=zh" data-mw-donate-attempt="top_link" class=""><span class="vector-icon mw-ui-icon-heart mw-ui-icon-wikimedia-heart cdx-button__icon"></span>
+
+<span>资助</span></a>
+</li>
+<li id="pt-createaccount" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=Special:CreateAccount&amp;returnto=%E6%95%85%E9%84%89" title="我们推荐您创建账号并登录，但这不是强制性的" class=""><span class="vector-icon mw-ui-icon-userAvatar mw-ui-icon-wikimedia-userAvatar cdx-button__icon"></span>
+
+<span>创建账号</span></a>
+</li>
+<li id="pt-login" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=Special:UserLogin&amp;returnto=%E6%95%85%E9%84%89" title="我们推荐您登录，但这不是强制性的​[o]" accesskey="o" class=""><span class="vector-icon mw-ui-icon-logIn mw-ui-icon-wikimedia-logIn cdx-button__icon"></span>
+
+<span>登录</span></a>
+</li>
+
+			
+		</ul>
+		
+	</div>
+</div>
+
+	
+	</div>
+</div>
+
+</nav>
+
+		</div>
+	</header>
+</div>
+<div class="mw-page-container">
+	<div class="mw-page-container-inner">
+		<div class="vector-sitenotice-container">
+			<div id="siteNotice"><div id="mw-dismissablenotice-anonplace"></div><script>(function(){var node=document.getElementById("mw-dismissablenotice-anonplace");if(node){node.outerHTML="\u003Cdiv class=\"mw-dismissable-notice\"\u003E\u003Cdiv class=\"mw-dismissable-notice-close\"\u003E[\u003Ca tabindex=\"0\" role=\"button\"\u003E关闭\u003C/a\u003E]\u003C/div\u003E\u003Cdiv class=\"mw-dismissable-notice-body\"\u003E\u003C!-- CentralNotice --\u003E\u003Cdiv id=\"localNotice\" data-nosnippet=\"\"\u003E\u003Cdiv class=\"anonnotice\" lang=\"zh\" dir=\"ltr\"\u003E\u003Cp\u003E恭喜！维基文库收录的文章数量达到\u003Ca href=\"/wiki/Special:Statistics\" title=\"Special:Statistics\"\u003E四百万篇\u003C/a\u003E！\n\u003C/p\u003E\u003C/div\u003E\u003C/div\u003E\u003C/div\u003E\u003C/div\u003E";}}());</script></div>
+		</div>
+		<div class="vector-column-start">
+			<div class="vector-main-menu-container">
+		<div id="mw-navigation">
+			<nav id="mw-panel" class="vector-main-menu-landmark" aria-label="站点">
+				<div id="vector-main-menu-pinned-container" class="vector-pinned-container">
+				
+				</div>
+		</nav>
+		</div>
+	</div>
+</div>
+		<div class="mw-content-container">
+			<main id="content" class="mw-body">
+				<header class="mw-body-header vector-page-titlebar no-font-mode-scale">
+					<h1 id="firstHeading" class="firstHeading mw-first-heading"><span lang="zh" dir="ltr"><span class="mw-page-title-main">故鄉</span></span></h1>
+			
+<div id="p-lang-btn" class="vector-dropdown mw-portlet mw-portlet-lang"  >
+	<input type="checkbox" id="p-lang-btn-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-p-lang-btn" class="vector-dropdown-checkbox mw-interlanguage-selector"  aria-label="3种语言" aria-description="前往另一种语言写成的文章。3种语言可用"  >
+	<label id="p-lang-btn-label" for="p-lang-btn-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--action-progressive mw-portlet-lang-heading-3" aria-hidden="true"  ><span class="vector-icon mw-ui-icon-language-progressive mw-ui-icon-wikimedia-language-progressive cdx-button__icon"></span>
+
+<span class="vector-dropdown-label-text">3种语言</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+		<div class="vector-menu-content">
+			
+			<ul class="vector-menu-content-list">
+				
+				<li class="interlanguage-link interwiki-en mw-list-item"><a href="https://en.wikisource.org/wiki/My_Old_Home" title="My Old Home – 英语" lang="en" hreflang="en" data-title="My Old Home" data-language-autonym="English" data-language-local-name="英语" class="interlanguage-link-target"><span>English</span></a></li><li class="interlanguage-link interwiki-ja mw-list-item"><a href="https://ja.wikisource.org/wiki/%E6%95%85%E9%83%B7_(%E9%AD%AF%E8%BF%85%E3%81%AE%E5%B0%8F%E8%AA%AC)" title="故郷 (魯迅の小説) – 日语" lang="ja" hreflang="ja" data-title="故郷 (魯迅の小説)" data-language-autonym="日本語" data-language-local-name="日语" class="interlanguage-link-target"><span>日本語</span></a></li><li class="interlanguage-link interwiki-vi mw-list-item"><a href="https://vi.wikisource.org/wiki/L%C3%A0ng_qu%C3%AA" title="Làng quê – 越南语" lang="vi" hreflang="vi" data-title="Làng quê" data-language-autonym="Tiếng Việt" data-language-local-name="越南语" class="interlanguage-link-target"><span>Tiếng Việt</span></a></li>
+			</ul>
+			<div class="after-portlet after-portlet-lang"><span class="wb-langlinks-edit wb-langlinks-link"><a href="https://www.wikidata.org/wiki/Special:EntityPage/Q13403344#sitelinks-wikisource" title="编辑跨语言链接" class="wbc-editpage">编辑链接</a></span></div>
+		</div>
+
+	</div>
+</div>
+</header>
+				<div class="vector-page-toolbar">
+					<div class="vector-page-toolbar-container">
+						<div id="left-navigation">
+							<nav aria-label="命名空间">
+								
+<div id="p-associated-pages" class="vector-menu vector-menu-tabs mw-portlet mw-portlet-associated-pages"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			<li id="ca-nstab-main" class="selected mw-list-item vector-tab-noicon"><a data-mw-interface  href="/wiki/%E6%95%85%E9%84%89" title="查看内容页面​[c]" accesskey="c" class=""><span>作品</span></a>
+</li>
+<li id="ca-proofread-source" class="mw-list-item vector-tab-noicon"><a data-mw-interface  title="用于建立该段文本的扫描版本" href="/wiki/Index:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601_(1948).pdf" class=""><span>来源</span></a>
+</li>
+<li id="ca-talk" class="mw-list-item vector-tab-noicon"><a data-mw-interface  href="/wiki/Talk:%E6%95%85%E9%84%89" rel="discussion" title="有关内容页面的讨论​[t]" accesskey="t" class=""><span>讨论</span></a>
+</li>
+
+			
+		</ul>
+		
+	</div>
+</div>
+
+								
+<div id="vector-variants-dropdown" class="vector-dropdown "  >
+	<input type="checkbox" id="vector-variants-dropdown-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-vector-variants-dropdown" class="vector-dropdown-checkbox " aria-label="更改语言变体"    >
+	<label id="vector-variants-dropdown-label" for="vector-variants-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet" aria-hidden="true"  ><span class="vector-dropdown-label-text">不转换</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+
+					
+<div id="p-variants" class="vector-menu mw-portlet mw-portlet-variants"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="ca-varlang-0" class="selected ca-variants-zh mw-list-item"><a href="/zh/%E6%95%85%E9%84%89" lang="zh" hreflang="zh"><span>不转换</span></a></li><li id="ca-varlang-1" class="ca-variants-zh-Hans mw-list-item"><a href="/zh-hans/%E6%95%85%E9%84%89" lang="zh-Hans" hreflang="zh-Hans"><span>简体</span></a></li><li id="ca-varlang-2" class="ca-variants-zh-Hant mw-list-item"><a href="/zh-hant/%E6%95%85%E9%84%89" lang="zh-Hant" hreflang="zh-Hant"><span>繁體</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+				
+	</div>
+</div>
+
+							</nav>
+						</div>
+						<div id="right-navigation" class="vector-collapsible">
+							<nav aria-label="查看">
+			    
+<div id="p-views" class="vector-menu vector-menu-tabs mw-portlet mw-portlet-views"  >
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			<li id="ca-view" class="selected mw-list-item vector-menu-item--collapsible vector-tab-noicon"><a data-mw-interface  href="/wiki/%E6%95%85%E9%84%89" class=""><span>阅读</span></a>
+</li>
+<li id="ca-edit" class="mw-list-item vector-menu-item--collapsible vector-tab-noicon"><a data-mw-interface  href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=edit" title="编辑该页面​[e]" accesskey="e" class=""><span>编辑</span></a>
+</li>
+<li id="ca-history" class="mw-list-item vector-menu-item--collapsible vector-tab-noicon"><a data-mw-interface  href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=history" title="此页面过去的修订​[h]" accesskey="h" class=""><span>查看历史</span></a>
+</li>
+
+			
+		</ul>
+		
+	</div>
+</div>
+
+			</nav>
+
+							<nav class="vector-page-tools-landmark" aria-label="页面工具">
+								
+<div id="vector-page-tools-dropdown" class="vector-dropdown vector-page-tools-dropdown"  >
+	<input type="checkbox" id="vector-page-tools-dropdown-checkbox" role="button" aria-haspopup="true" data-event-name="ui.dropdown-vector-page-tools-dropdown" class="vector-dropdown-checkbox "  aria-label="工具"   >
+	<label id="vector-page-tools-dropdown-label" for="vector-page-tools-dropdown-checkbox" class="vector-dropdown-label cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only " aria-hidden="true"  ><span class="vector-icon mw-ui-icon-verticalEllipsis mw-ui-icon-wikimedia-verticalEllipsis cdx-button__icon"></span>
+
+<span class="vector-dropdown-label-text">工具</span>
+	</label>
+	<div class="vector-dropdown-content">
+
+
+									<div id="vector-page-tools-unpinned-container" class="vector-unpinned-container">
+						
+<div id="vector-page-tools" class="vector-page-tools vector-pinnable-element">
+	<div
+	class="vector-pinnable-header vector-page-tools-pinnable-header vector-pinnable-header-unpinned"
+	data-feature-name="page-tools-pinned"
+	data-pinnable-element-id="vector-page-tools"
+	data-pinned-container-id="vector-page-tools-pinned-container"
+	data-unpinned-container-id="vector-page-tools-unpinned-container"
+>
+	<div class="vector-pinnable-header-label">工具</div>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-pin-button" data-event-name="pinnable-header.vector-page-tools.pin" aria-label="将 工具 移动至侧边栏">移至侧栏</button>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-unpin-button" data-event-name="pinnable-header.vector-page-tools.unpin" aria-label="隐藏工具">隐藏</button>
+</div>
+
+	
+<div id="p-cactions" class="vector-menu mw-portlet mw-portlet-cactions emptyPortlet vector-has-collapsible-items"  >
+	<div class="vector-menu-heading">
+		操作
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			<li id="ca-view-more" class="selected mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/wiki/%E6%95%85%E9%84%89" class=""><span class="vector-icon mw-ui-icon-eye mw-ui-icon-wikimedia-eye cdx-button__icon"></span>
+
+<span>阅读</span></a>
+</li>
+<li id="ca-edit-more" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=edit" title="编辑该页面​[e]" accesskey="e" class=""><span class="vector-icon mw-ui-icon-edit mw-ui-icon-wikimedia-edit cdx-button__icon"></span>
+
+<span>编辑</span></a>
+</li>
+<li id="ca-history-more" class="mw-list-item vector-menu-item--collapsible"><a data-mw-interface  href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=history" title="此页面过去的修订​[h]" accesskey="h" class=""><span class="vector-icon mw-ui-icon-history mw-ui-icon-wikimedia-history cdx-button__icon"></span>
+
+<span>查看历史</span></a>
+</li>
+
+			
+		</ul>
+		
+	</div>
+</div>
+
+<div id="p-tb" class="vector-menu mw-portlet mw-portlet-tb"  >
+	<div class="vector-menu-heading">
+		常规
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="t-whatlinkshere" class="mw-list-item"><a href="/wiki/Special:WhatLinksHere/%E6%95%85%E9%84%89" title="所有链接至本页面的wiki页面列表​[j]" accesskey="j"><span>链入页面</span></a></li><li id="t-recentchangeslinked" class="mw-list-item"><a href="/wiki/Special:RecentChangesLinked/%E6%95%85%E9%84%89" rel="nofollow" title="链自本页的页面的最近更改​[k]" accesskey="k"><span>相关更改</span></a></li><li id="t-upload" class="mw-list-item"><a href="//commons.wikimedia.org/wiki/Special:UploadWizard?uselang=zh" title="上传文件​[u]" accesskey="u"><span>上传文件</span></a></li><li id="t-permalink" class="mw-list-item"><a href="/w/index.php?title=%E6%95%85%E9%84%89&amp;oldid=2570945" title="此页面该修订版本的固定链接"><span>固定链接</span></a></li><li id="t-info" class="mw-list-item"><a href="/w/index.php?title=%E6%95%85%E9%84%89&amp;action=info" title="关于此页面的更多信息"><span>页面信息</span></a></li><li id="t-cite" class="mw-list-item"><a href="/w/index.php?title=Special:CiteThisPage&amp;page=%E6%95%85%E9%84%89&amp;id=2570945&amp;wpFormIdentifier=titleform" title="有关如何引用此页面的信息"><span>引用此页</span></a></li><li id="t-urlshortener" class="mw-list-item"><a href="/w/index.php?title=Special:UrlShortener&amp;url=https%3A%2F%2Fzh.wikisource.org%2Fwiki%2F%25E6%2595%2585%25E9%2584%2589"><span>获取短链接</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+<div id="p-electronpdfservice-sidebar-portlet-heading" class="vector-menu mw-portlet mw-portlet-electronpdfservice-sidebar-portlet-heading"  >
+	<div class="vector-menu-heading">
+		打印/导出
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li id="t-print" class="mw-list-item"><a href="javascript:print();" rel="alternate" title="本页面的可打印版本​[p]" accesskey="p"><span>可打印版</span></a></li><li id="wikisource-download-epub" class="mw-list-item"><a title="下载此作品的EPUB版本" href="https://ws-export.wmcloud.org/?format=epub&amp;lang=zh&amp;page=%E6%95%85%E9%84%89"><span>下载为EPUB</span></a></li><li id="wikisource-download-mobi" class="mw-list-item"><a title="下载此作品的MOBI版本" href="https://ws-export.wmcloud.org/?format=mobi&amp;lang=zh&amp;page=%E6%95%85%E9%84%89"><span>下载为MOBI</span></a></li><li id="wikisource-download-pdf" class="mw-list-item"><a title="下载此作品的PDF版本" href="https://ws-export.wmcloud.org/?format=pdf&amp;lang=zh&amp;page=%E6%95%85%E9%84%89"><span>下载为PDF</span></a></li><li id="wikisource-download-choose" class="mw-list-item"><a title="打开一个表单来选择其他格式和字体等。" href="https://ws-export.wmcloud.org/?lang=zh&amp;title=%E6%95%85%E9%84%89"><span>其他格式</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+<div id="p-wikibase-otherprojects" class="vector-menu mw-portlet mw-portlet-wikibase-otherprojects"  >
+	<div class="vector-menu-heading">
+		在其他项目中
+	</div>
+	<div class="vector-menu-content">
+		
+		<ul class="vector-menu-content-list">
+			
+			<li class="wb-otherproject-link wb-otherproject-wikipedia mw-list-item"><a href="https://zh.wikipedia.org/wiki/%E6%95%85%E9%84%89_(%E5%B0%8F%E8%AA%AA)" hreflang="zh"><span>维基百科</span></a></li><li id="t-wikibase" class="wb-otherproject-link wb-otherproject-wikibase-dataitem mw-list-item"><a href="https://www.wikidata.org/wiki/Special:EntityPage/Q13403344" title="链接到连接的数据仓库项目​[g]" accesskey="g"><span>维基数据项目</span></a></li>
+		</ul>
+		
+	</div>
+</div>
+
+</div>
+
+									</div>
+				
+	</div>
+</div>
+
+							</nav>
+						</div>
+					</div>
+				</div>
+				<div class="vector-column-end no-font-mode-scale">
+					<div class="vector-sticky-pinned-container">
+						<nav class="vector-page-tools-landmark" aria-label="页面工具">
+							<div id="vector-page-tools-pinned-container" class="vector-pinned-container">
+				
+							</div>
+		</nav>
+						<nav class="vector-appearance-landmark" aria-label="外观">
+							<div id="vector-appearance-pinned-container" class="vector-pinned-container">
+				<div id="vector-appearance" class="vector-appearance vector-pinnable-element">
+	<div
+	class="vector-pinnable-header vector-appearance-pinnable-header vector-pinnable-header-pinned"
+	data-feature-name="appearance-pinned"
+	data-pinnable-element-id="vector-appearance"
+	data-pinned-container-id="vector-appearance-pinned-container"
+	data-unpinned-container-id="vector-appearance-unpinned-container"
+>
+	<div class="vector-pinnable-header-label">外观</div>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-pin-button" data-event-name="pinnable-header.vector-appearance.pin" aria-label="将 外观 移动至侧边栏">移至侧栏</button>
+	<button class="vector-pinnable-header-toggle-button vector-pinnable-header-unpin-button" data-event-name="pinnable-header.vector-appearance.unpin" aria-label="隐藏外观">隐藏</button>
+</div>
+
+
+</div>
+
+							</div>
+		</nav>
+					</div>
+				</div>
+				<div id="bodyContent" class="vector-body" aria-labelledby="firstHeading" data-mw-ve-target-container>
+					<div class="vector-body-before-content">
+							<div class="mw-indicators">
+		<div id="mw-indicator-~ext-wikisource-download" class="mw-indicator"><span id='ooui-php-1' class='ext-wikisource-download-button oo-ui-widget oo-ui-widget-enabled oo-ui-buttonElement oo-ui-buttonElement-framed oo-ui-buttonElement-size-medium oo-ui-labelElement oo-ui-flaggedElement-primary oo-ui-flaggedElement-progressive oo-ui-buttonWidget' data-ooui='{"_":"OO.ui.ButtonWidget","href":"https:\/\/ws-export.wmcloud.org\/?format=epub&amp;lang=zh&amp;page=%E6%95%85%E9%84%89","rel":["nofollow"],"label":"\u4e0b\u8f7d","title":"\u4e0b\u8f7d\u6b64\u4f5c\u54c1\u7684EPUB\u7248\u672c","flags":["primary","progressive"],"data":{"wsExportUrl":"https:\/\/ws-export.wmcloud.org"},"classes":["ext-wikisource-download-button"]}'><a role='button' title='下载此作品的EPUB版本' tabindex='0' href='https://ws-export.wmcloud.org/?format=epub&amp;lang=zh&amp;page=%E6%95%85%E9%84%89' rel='nofollow' class='oo-ui-buttonElement-button'><span class='oo-ui-iconElement-icon oo-ui-iconElement-noIcon oo-ui-image-invert'></span><span class='oo-ui-labelElement-label'>下载</span><span class='oo-ui-indicatorElement-indicator oo-ui-indicatorElement-noIndicator oo-ui-image-invert'></span></a></span></div>
+		</div>
+
+						<div id="siteSub" class="noprint">維基文庫，自由的圖書館</div>
+						<div id="contentSub"><div id="mw-content-subtitle"><table class="pr_quality" title="15个已核对页面，0个仅已校对页面和0个未校对页面"><tr><td class="quality4" style="width: 100%;"></td><td class="quality3" style="width: 0%;"></td><td class="quality2" style="width: 0%;"></td><td class="quality1" style="width: 0%;"></td><td class="quality0" style="width: 0%;"></td><td class="qualitye" style="width: 0%;"></td></tr></table></div></div>
+						
+					</div>
+					
+					<div id="mw-content-text" class="mw-body-content"><div class="mw-content-ltr mw-parser-output" lang="zh" dir="ltr"><p class="mw-empty-elt">
+</p>
+<div id="headerContainer">
+<table style="width:100%; margin-top:0px;margin-bottom:3px;border:1px solid var(--border-color-content-added,#93A6C0); background-color: var(--background-color-neutral-subtle,#F9F9F9); color: inherit; text-align: center; text-wrap: balance;">
+
+<tbody><tr>
+<td style="width:0; text-align:left; font-size:small;">←
+</td>
+<td style="width:25%; text-align:left; font-size:small;"><a href="/wiki/%E9%A2%A8%E6%B3%A2" title="風波">風波</a>
+</td>
+<td style="width:50%;"><b><a class="mw-selflink selflink">故鄉</a></b><br /><span style="color:var(--color-placeholder,#999999)">作者：</span><a href="/wiki/Author:%E9%AD%AF%E8%BF%85" title="Author:魯迅">魯迅</a><br /><span style="color:var(--color-placeholder,#999999)">1921年1月</span>
+</td>
+<td style="width:25%; text-align:right; font-size:small;"><a href="/wiki/%E9%98%BF%EF%BC%B1%E6%AD%A3%E5%82%B3" class="mw-redirect" title="阿Ｑ正傳">阿Ｑ正傳</a>
+</td>
+<td class="noprint" style="width:0; text-align:right; font-size:small;">→
+</td></tr></tbody></table>
+<table style="width:100%; background:var(--background-color-progressive-subtle,#F8FCFF); color: inherit;font-size:small; border-bottom:1px solid var(--border-color-content-added,#93A6C0)">
+
+<tbody><tr>
+<td>
+<table style="font-size:0.9em; text-align:left; background:var(--background-color-neutral-subtle,#F9F9F9); float:right;color: inherit;">
+<tbody><tr>
+<td style="color: var(--color-placeholder,#999999);">本作品收錄於《<b><a href="/wiki/%E5%90%B6%E5%96%8A" title="吶喊">呐喊</a></b>》和《<b><a href="/wiki/%E6%96%B0%E9%9D%92%E5%B9%B4/%E7%AC%AC09%E5%8D%B7#第一號（1921年5月1日）" title="新青年/第09卷">新青年·第九卷·第一號</a></b>》
+</td></tr></tbody></table>
+<ul id="plainSister" style="display:inline-block; font-size:93%; line-height:normal; list-style-type:none; list-style-image:none; list-style-position:outside; border:1px solid var(--border-color-base,#AAA); float:right; clear:right; margin:0.5ex 0.5ex 0.5ex 0.5ex; padding:0.0ex 0.0ex 0.0ex 0.0ex; background-color:var(--background-color-base,#FFFFFF);color: inherit;"><li class="noprint sisitem"><span class="sisicon" style="padding-right:1ex;"><span typeof="mw:File/Frameless"><a href="/wiki/Special:SiteMatrix" title="Special:SiteMatrix"><img alt="姊妹计划" src="//thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/20px-Wikimedia-logo.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail" decoding="async" loading="lazy" width="18" height="18" class="mw-file-element" srcset="//thumb.wikimedia.org/wikipedia/commons/thumb/8/81/Wikimedia-logo.svg/40px-Wikimedia-logo.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x" data-file-width="1024" data-file-height="1024" /></a></span></span><a href="/wiki/Special:SiteMatrix" title="Special:SiteMatrix">姊妹计划</a>: <a href="https://zh.wikipedia.org/wiki/%E6%95%85%E9%84%89_(%E5%B0%8F%E8%AA%AA)" class="extiw" title="w:故鄉 (小說)">百科</a>·<a href="https://www.wikidata.org/wiki/Q13403344" class="extiw" title="d:Q13403344">数据项</a></li></ul>
+</td></tr></tbody></table></div>
+<div class="prp-pages-output" lang="zh-Hant">
+<p><span><span class="pagenum ws-pagenum" id="344" data-page-number="344" data-page-name="Page:魯迅全集01 (1948).pdf/365" data-page-index="365" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/365"><span id="pageindex&#95;365" class="pagenum-inner ws-noexport">&#8203;</span></span></span>
+</p><p>我冒了嚴寒，回到相隔二千餘里，別了二十餘年的故鄕去。
+</p><p>時候既然是深冬；漸近故鄕時，天氣又陰晦了，冷風吹進船艙中，嗚嗚的響，從篷隙向外一望，蒼黃的天底下，遠近橫着幾個蕭索的荒村，沒有一些活氣。我的心禁不住悲涼起來了。
+</p><p>阿！這不是我二十年來時時記得的故鄕？
+</p><p>我所記得的故鄕全不如此。我的故鄕好得多了。但要我記起他的美麗，說出他的佳處來，卻又沒有影像，沒有言辭了。彷彿也就如此。於是我自己解釋說：故鄕本也如此，——雖然沒有進步，也未必有如我所感的悲涼，這只是我自己心情的改變罷了，因爲我這次<span><span class="pagenum ws-pagenum" id="345" data-page-number="345" data-page-name="Page:魯迅全集01 (1948).pdf/366" data-page-index="366" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/366"><span id="pageindex&#95;366" class="pagenum-inner ws-noexport">&#8203;</span></span></span>回鄕，本沒有什麽好心緖。
+</p><p>我這次是專爲了別他而來的。我們多年聚族而居的老屋，已經公同賣給別姓了，交屋的期限，只在本年，所以必須趕在正月初一以前，永別了熟識的老屋，而且遠離了熟識的故鄕，搬家到我在謀食的異地去。
+</p><p>第二日淸早晨我到了我家的門口了。瓦楞上許多枯草的斷莖當風抖着，正在說明這老屋難免易主的原因。幾房的本家大約已經搬走了，所以很寂靜。我到了自家的房外，我的母親早已迎着出來了，接着便飛出了八歲的姪兒<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>。
+</p><p>我的母親很高興，但也藏着許多淒涼的神情，教我坐下，歇息，喝茶，且不談搬家的事。<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>沒有見過我，遠遠的對面站着只是看。
+</p><p>但我們終於談到搬家的事。我說外間的寓所已經租定了，又買了幾件家具，此外須將家裏所有的木器賣去，再去增添。母親也說好，而且行李也略已齊集，木器不便搬運的，也小半賣去了，只是收不起錢來。
+</p><p>『你休息一兩天，去拜望親戚本家一回，我們便可以走了。』母親說。
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="346" data-page-number="346" data-page-name="Page:魯迅全集01 (1948).pdf/367" data-page-index="367" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/367"><span id="pageindex&#95;367" class="pagenum-inner ws-noexport">&#8203;</span></span></span>『是的。』
+</p><p>『還有<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>，他每到我家來時，總問起你，很想見你一回面。我已經將你到家的大約日期通知他，他也許就要來了。』
+</p><p>這時候，我的腦裏忽然閃出一幅神異的圖畫來：深藍的天空中掛着一輪金黃的圓月，下面是海邊的沙地，都種着一望無際的碧綠的西瓜，其間有一個十一二歲的少年，項帶銀圈，手揑一柄鋼叉，向一匹猹儘力的刺去，那猹卻將身一扭，反從他的胯下逃走了。
+</p><p>這少年便是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>。我認識他時，也不過十多歲，離現在將有三十年了；那時我的父親還在世，家景也好，我正是一個少爺。那一年，我家是一件大祭祀的値年。這祭祀，說是三十多年纔能輪到一回，所以很鄭重；正月裏供祖像，供品很多，祭器很講究，拜的人也很多，祭器也很要防偸去。我家只有一個忙月（我們這里給人做工的分三種：整年給一定人家做工的叫長年；按日給人做工的叫短工；自己也種地，只在過年過節以及收租時候來給一定的人家做工的稱忙月），忙不過來，他便對父親說，可以叫他的兒子<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>來管祭器的。
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="347" data-page-number="347" data-page-name="Page:魯迅全集01 (1948).pdf/368" data-page-index="368" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/368"><span id="pageindex&#95;368" class="pagenum-inner ws-noexport">&#8203;</span></span></span>我的父親允許了；我也很高興，因爲我早聽到<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>這名字，而且知道他和我彷彿年紀，閏月生的，五行缺土，所以他的父親叫他<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>。他是能裝弶捉小鳥雀的。
+</p><p>我於是日日盼望新年，新年到，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>也就到了。好容易到了年末，有一日，母親告訴我，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>來了，我便飛跑的去看。他正在廚房裏，紫色的圓臉，頭戴一頂小氈帽，頸上套一個明晃晃的銀項圈，這可見他的父親十分愛他，怕他死去，所以在神佛面前許下願心，用圈子將他套住了。他見人很怕羞，只是不怕我，沒有旁人的時候，便和我說話，於是不到半日，我們便熟識了。
+</p><p>我們那時候不知道談些什麽，只記得<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>很高興，說是上城之後，見了許多沒有見過的東西。
+</p><p>第二日，我便要他捕鳥。他說：
+</p><p>『這不能。須大雪下了纔好。我們沙地上，下了雪，我掃出一塊空地來，用短棒支起一個大竹匾，撒下粃穀，看鳥雀來喫時，我遠遠地將縛在棒上的繩子只一拉，那鳥雀就罩在竹匾下了。什麽都有：稻雞、角雞、鵓鴣、藍背……』
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="348" data-page-number="348" data-page-name="Page:魯迅全集01 (1948).pdf/369" data-page-index="369" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/369"><span id="pageindex&#95;369" class="pagenum-inner ws-noexport">&#8203;</span></span></span>我於是又很盼望下雪。
+</p><p><span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>又對我說：
+</p><p>『現在太冷，你夏天到我們這里來。我們日裏到海邊檢貝殼去，紅的綠的都有，鬼見怕也有，觀音手也有，晚上我和爹管西瓜去，你也去。』
+</p><p>『管賊麽？』
+</p><p>『不是。走路的人口渴了摘一個瓜喫，我們這里是不算偸的。要管的是獾豬、刺蝟、猹。月亮地下，你聽，啦啦的響了，猹在咬瓜了。你便揑了胡叉，輕輕地走去……』
+</p><p>我那時並不知道這所謂猹的是怎麽一件東西——便是現在也沒有知道——只是無端的覺得狀如小狗而很凶猛。
+</p><p>『他不咬人麽？』
+</p><p>『有胡叉呢。走到了，看見猹了，你便刺。這畜生很伶俐，倒向你奔來，反從胯下竄了。他的皮毛是油一般的滑。……』
+</p><p>我素不知道天下有這許多新鮮事：海邊有如許五色的貝殼；西瓜有這樣危險的經<span><span class="pagenum ws-pagenum" id="349" data-page-number="349" data-page-name="Page:魯迅全集01 (1948).pdf/370" data-page-index="370" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/370"><span id="pageindex&#95;370" class="pagenum-inner ws-noexport">&#8203;</span></span></span>歷，我先前單知道他在水果店裏出賣罷了。
+</p><p>『我們沙地裏，潮汛要來的時候，就有許多跳魚兒只是跳，都有靑蛙似的兩個脚。……』
+</p><p>阿！<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>的心裏有無窮無盡的希奇的事，都是我往常的朋友所不知道的。他們不知道一些事，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>在海邊時，他們都和我一樣只看見院子裏高牆上的四角的天空。
+</p><p>可惜正月過去了，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>須回家裏去，我急得大哭，他也躱到廚房裏，哭着不肯出門，但終於被他父親帶走了。他後來還託他的父親帶給我一包貝殼和幾枝很好看的鳥毛，我也曾送他一兩次東西，但從此沒有再見面。
+</p><p>現在我的母親提起了他，我這兒時的記憶，忽而全都閃電似的蘇生過來，似乎看到了我的美麗的故鄕了。我應聲說：
+</p><p>『這好極！他，——怎樣？……』
+</p><p>『他？……他景況也很不如意……』母親說着，便向房外看，『這些人又來了。說是買木器，順手也就隨便拿走的，我得去看看。』
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="350" data-page-number="350" data-page-name="Page:魯迅全集01 (1948).pdf/371" data-page-index="371" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/371"><span id="pageindex&#95;371" class="pagenum-inner ws-noexport">&#8203;</span></span></span>母親站起身，出去了。門外有幾個女人的聲音，我便招<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>走近面前，和他閒話：問他可會寫字，可願意出門。
+</p><p>『我們坐火車去麽？』
+</p><p>『我們坐火車去。』
+</p><p>『船呢？』
+</p><p>『先坐船，……』
+</p><p>『哈！這模樣了！鬍子這麽長了！』一種尖利的怪聲突然大叫起來。
+</p><p>我喫了一嚇，趕忙擡起頭，卻見一個凸顴骨，薄嘴唇，五十歲上下的女人站在我面前，兩手搭在髀間，沒有繫裙，張着兩脚，正像一個畫圖儀器裏細脚伶仃的圓規。
+</p><p>我愕然了。
+</p><p>『不認識了麽？我還抱你咧！』
+</p><p>我愈加愕然了。幸而我的母親也就進來，從旁說：
+</p><p>『他多年出門，統忘卻了。你該記得罷，』便向着我說，『這是斜對門的<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">楊二嫂</span>，……<span><span class="pagenum ws-pagenum" id="351" data-page-number="351" data-page-name="Page:魯迅全集01 (1948).pdf/372" data-page-index="372" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/372"><span id="pageindex&#95;372" class="pagenum-inner ws-noexport">&#8203;</span></span></span>開豆腐店的。』
+</p><p>哦，我記得了。我孩子時候，在斜對門的豆腐店裏確乎終日坐着一個<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">楊二嫂</span>，人都叫伊『豆腐西施』。但是擦着白粉，顴骨沒有這麽高，嘴脣也沒有這麽薄。而且終日坐着，我也從沒有見過這圓規式的姿勢。那時人說：因爲伊，這豆腐店的買賣非常好。但這大約因爲年齡的關係，我卻並未蒙着一毫感化，所以竟完全忘卻了。然而圓規很不平，顯出鄙夷的神色，彷彿嗤笑<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">法國</span>人不知道<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">拿破崙</span>，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">美國</span>人不知道<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">華盛頓</span>似的，冷笑說：
+</p><p>『忘了？這眞是貴人眼高。……』
+</p><p>『那有這事……我……』我惶恐着，站起來說。
+</p><p>『那麽，我對你說。<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">迅</span>哥兒，你闊了，搬動又笨重，你還要什麽這些破爛木器，讓我拿去罷。我們小戶人家，用得着。』
+</p><p>『我並沒有闊哩。我須賣了這些，再去……』
+</p><p>『阿呀呀，你放了道台了，還說不闊？你現在有三房姨太太；出門便是八擡的大轎，還說不闊？嚇，什麽都瞞不過我。』
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="352" data-page-number="352" data-page-name="Page:魯迅全集01 (1948).pdf/373" data-page-index="373" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/373"><span id="pageindex&#95;373" class="pagenum-inner ws-noexport">&#8203;</span></span></span>我知道無話可說了，便閉了口，默默的站着。
+</p><p>『阿呀阿呀，眞是愈有錢，便愈是一毫不肯放鬆，愈是一毫不肯放鬆，便愈有錢……』圓規一面憤憤的回轉身，一面絮絮的說，慢慢向外走，順便將我母親的一副手套塞在褲腰裏，出去了。
+</p><p>此後又有近處的本家和親戚來訪問我。我一面應酬，偸空便收拾些行李，這樣的過了三四天。
+</p><p>一日是天氣很冷的午後，我喫過午飯，坐着喝茶，覺得外面有人進來了，便回頭去看。我看時，不由的非常出驚，慌忙站起身，迎着走去。
+</p><p>這來的便是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>。雖然我一見便知道是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>，但又不是我這記憶上的<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>了。他身材增加了一倍；先前的紫色的圓臉，已經變作灰黃，而且加上了很深的皺紋；眼睛也像他父親一樣，周圍都腫得通紅，這我知道，在海邊種地的人，終日吹着海風，大抵是這樣的。他頭上是一頂破氈帽，身上只一件極薄的棉衣，渾身瑟索着；手裏提着一個紙包和一枝長煙管，那手也不是我所記得的紅活圓實的手，卻又粗又笨而且開裂，像是松樹皮了。
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="353" data-page-number="353" data-page-name="Page:魯迅全集01 (1948).pdf/374" data-page-index="374" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/374"><span id="pageindex&#95;374" class="pagenum-inner ws-noexport">&#8203;</span></span></span>我這時很興奮，但不知道怎麽說纔好，只是說：
+</p><p>『阿！<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土哥</span>，——你來了？……』
+</p><p>我接着便有許多話，想要連珠一般湧出：角雞、跳魚兒、貝殼、猹，……但又總覺得被什麽擋着似的。單在腦裏面回旋，吐不出口外去。
+</p><p>他站住了，臉上現出歡喜和淒涼的神情；動着嘴脣，卻沒有作聲。他的態度終於恭敬起來了，分明的叫道：
+</p><p>『老爺！……』
+</p><p>我似乎打了一個寒噤；我就知道，我們之間已經隔了一層可悲的厚障壁了。我也說不出話。
+</p><p>他回過頭去說：『<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>，給老爺磕頭。』便拖出躱在背後的孩子來，這正是一個二十年前的<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>，只是黃瘦些，頸子上沒有銀圈罷了。『這是第五個孩子，沒有見過世面，躱躱閃閃。……』
+</p><p>母親和<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>下樓來了，他們大約也聽到了聲音。
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="354" data-page-number="354" data-page-name="Page:魯迅全集01 (1948).pdf/375" data-page-index="375" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/375"><span id="pageindex&#95;375" class="pagenum-inner ws-noexport">&#8203;</span></span></span>『老太太。信是早收到了。我實在喜歡的了不得，知道老爺回來……』<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>說。
+</p><p>『阿，你怎的這樣客氣起來。你們先前不是哥弟稱呼麽？還是照舊：<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">迅</span>哥兒。』母親高興的說。
+</p><p>『阿呀，老太太眞是……這成什麽規矩。那時是孩子，不懂事……』<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>說着，又叫<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>上來打拱，那孩子卻害羞，緊緊的只貼在他背後。
+</p><p>『他就是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>？第五個？都是生人，怕生也難怪的；還是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>和他去走走。』母親說。
+</p><p><span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>聽得這話，便來招<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>卻鬆鬆爽爽同他一路出去了。母親叫<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>坐，他遲疑了一回，終於就了坐，將長煙管靠在桌旁，遞過紙包來，說：
+</p><p>『冬天沒有什麽東西了。這一點乾靑豆倒是自家曬在那里的，請老爺……』
+</p><p>我問問他的景況。他只是搖頭。
+</p><p>『非常難。第六個孩子也會幫忙了，卻總是喫不够……又不太平……什麽地方都要錢，沒有定規……收成又壞。種出東西來，挑去賣，總要捐幾回錢，折了本；不去賣，又只能爛掉。……』
+</p>
+<div class="&#95;&#95;nop wst-nop"></div>
+<p><span><span class="pagenum ws-pagenum" id="355" data-page-number="355" data-page-name="Page:魯迅全集01 (1948).pdf/376" data-page-index="376" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/376"><span id="pageindex&#95;376" class="pagenum-inner ws-noexport">&#8203;</span></span></span>他只是搖頭；臉上雖然刻着許多皺紋，卻全然不動，彷彿石像一般。他大約只是覺得苦，卻又形容不出，沈默了片時，便拿起煙管來默默的吸煙了。
+</p><p>母親問他，知道他的家裏事務忙，明天便得回去；又沒有喫過午飯，便叫他自己到廚下炒飯喫去。
+</p><p>他出去了；母親和我都歎息他的景況：多子、饑荒、苛稅、兵、匪、官、紳，都苦得他像一個木偶人了。母親對我說，凡是不必搬走的東西，儘可以送他，可以聽他自己去揀擇。
+</p><p>下午，他揀好了幾件東西：兩條長桌，四個椅子，一副香爐和燭臺，一桿擡秤。他又要所有的草灰（我們這裏煑飯是燒稻草的，那灰，可以做沙地的肥料），待我們啓程的時候，他用船來載去。
+</p><p>夜間，我們又談些閒天，都是無關緊要的話；第二天早晨，他就領了<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>回去了。
+</p><p>又過了九日，是我們啓程的日期。<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>早晨便到了，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>沒有同來，卻只帶着一個五歲的女兒管船隻。我們終日很忙碌，再沒有談天的工夫。來客也不少，有送行的，有拿東西的，有送行兼拿東西的。待到傍晚我們上船的時候，這老屋裏的所有破舊大小粗細東西，<span><span class="pagenum ws-pagenum" id="356" data-page-number="356" data-page-name="Page:魯迅全集01 (1948).pdf/377" data-page-index="377" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/377"><span id="pageindex&#95;377" class="pagenum-inner ws-noexport">&#8203;</span></span></span>已經一掃而空了。
+</p><p>我們的船向前走，兩岸的靑山在黃昏中，都裝成了深黛顏色，連着退向船後梢去。
+</p><p><span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>和我靠着船窗，同看外面模糊的風景，他忽然問道：
+</p><p>『大伯！我們甚麽時候回來？』
+</p><p>『回來？你怎麽還沒有走就想回來了。』
+</p><p>『可是，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>約我到他家玩去咧……』他睜着大的黑眼睛，癡癡的想。
+</p><p>我和母親也都有些惘然，於是又提起<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>來。母親說：那豆腐西施的<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">楊二嫂</span>，自從我家收拾行李以來，本是每日必到的，前天伊在灰堆裏，掏出十多個碗碟來，議論之後，便定說是<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>埋着的，他可以在運灰的時候，一齊搬回家裏去；<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">楊二嫂</span>發見了這件事，自己很以爲功，便拿了那狗氣殺（這是我們這裏養雞的器具，木盤上面有着柵欄，內盛食料，雞可以伸進頸子去啄，狗卻不能，只能看着氣死），飛也似的跑了，虧伊裝着這麽高底的小脚，竟跑得這樣快。
+</p><p>老屋離我愈遠了；故鄕的山水也都漸漸遠離了我，但我卻並不感到怎樣的留戀。我<span><span class="pagenum ws-pagenum" id="357" data-page-number="357" data-page-name="Page:魯迅全集01 (1948).pdf/378" data-page-index="378" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/378"><span id="pageindex&#95;378" class="pagenum-inner ws-noexport">&#8203;</span></span></span>只覺得我四面有看不見的高牆，將我隔成孤身，使我非常氣悶；那西瓜地上的銀項圈的小英雄的影象，我本來十分淸楚，現在卻忽地模糊了，又使我非常的悲哀。
+</p><p>母親和<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>都睡着了。
+</p><p>我躺着，聽船底潺潺的水聲，知道我在走我的路，我想：我竟與<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>隔絕到這地步了，但我們的後輩還是一氣，<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">宏兒</span>不是正在想念<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">水生</span>麽。我希望他們不再像我，又大家隔膜起來……然而我又不願意他們因爲要一氣，都如我的辛苦展轉而生活，也不願意他們都如<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>的辛苦麻木而生活，也不願意都如別人的辛苦恣睢而生活。他們應該有新的生活，爲我們所未經生活過的。
+</p><p>我想到希望，忽然害怕起來了。<span style="text-decoration: underline;-moz-text-decoration-style: solid;text-decoration-style: solid;text-underline-offset:0.25em;">閏土</span>要香爐和燭臺的時候，我還暗地裏笑他，以爲他總是崇拜偶像，什麽時候都不忘卻。現在我所謂希望，不也是我自己手製的偶像麽？只是他的願望切近，我的願望茫遠罷了。
+</p><p>我在朦朧中，眼前展開一片海邊碧綠的沙地來，上面深藍的天空中掛着一輪金黃的圓月。我想：希望是本無所謂有，無所謂無的。這正如地上的路，其實地上本沒有路；走的<span><span class="pagenum ws-pagenum" id="358" data-page-number="358" data-page-name="Page:魯迅全集01 (1948).pdf/379" data-page-index="379" data-page-quality="4" title="Page:%E9%AD%AF%E8%BF%85%E5%85%A8%E9%9B%8601&#95;(1948).pdf/379"><span id="pageindex&#95;379" class="pagenum-inner ws-noexport">&#8203;</span></span></span>人多了，也便成了路。
+</p>
+<style data-mw-deduplicate="TemplateStyles:r9801350">.mw-parser-output .wst-right{text-align:right}</style><div class="wst-right" style="margin-right:3em;">
+<p><small>（一九二一年一月。）</small>
+</p>
+</div>
+</div>
+<style data-mw-deduplicate="TemplateStyles:r4375040">.mw-parser-output .licenseContainer{box-sizing:border-box;margin-top:1em;margin-bottom:0.25em;clear:both;width:auto;page-break-before:always;break-before:page}.mw-parser-output .licenseContainer>div:first-of-type{display:table;border:2px solid var(--border-subtle,#8888aa);border-collapse:collapse;border-spacing:0 0;empty-cells:hide;box-sizing:border-box;margin:0 auto 0 auto;width:100%;background-color:var(--background-color-neutral-subtle,#f7f8ff);color:var(--color-base,#202122)}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child{display:table-row-group}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child{display:table-row}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div{display:table-cell;padding:5px;vertical-align:middle;width:auto}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:first-child{text-align:left}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2){text-align:center}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div{width:100%}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div:first-child{display:block;margin:0 auto 0 auto;text-align:left}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div:nth-child(2){display:table;border-top:1px solid var(--border-subtle,#8888aa)}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div:nth-child(2)>div{display:table-cell;vertical-align:middle}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div:nth-child(2)>div:first-child{text-align:center;padding:5px 0;width:40px}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(2)>div:nth-child(2)>div:nth-child(2){text-align:left;padding:5px;font-size:92%}.mw-parser-output .licenseContainer>div:first-of-type>div:first-child>div:first-child>div:nth-child(3){text-align:right}.mw-parser-output .licensetpl{display:none}.mw-parser-output .licenseContainer.wst-collapsible-box{clear:both;margin:0.25em 0 0.25em 0;font-size:95%;background-color:var(--background-color-neutral-subtle,#f7f8ff);color:var(--color-base,#202122);border:2px solid var(--border-subtle,#8888aa);text-align:left;line-height:1.6}.mw-parser-output .wst-license-container-title{display:inline-block;padding:0.5em}.mw-parser-output .wst-license-container-content{background:transparent;color:inherit;margin:0;padding:3px;text-align:left}.mw-parser-output .licenseContainer.warningLicenseContainer>div:first-child{border:2px solid var(--border-color-error,#b22222);background-color:var(--background-color-error-subtle,#ffeeee);color:var(--color-base,#202122)}.mw-parser-output .licenseContainer.warningLicenseContainer>div:first-child>div:first-child>div:first-child>div:nth-child(2)>div:nth-child(2){border:2px solid var(--border-color-error,#b22222);color:var(--color-base,#202122)}</style><div class="licenseContainer licenseBanner dynlayout-exempt">
+<div><div><div><div>
+<p><span class="imageLeft"><span typeof="mw:File"><span><img alt="" src="//thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/60px-PD-icon.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail" decoding="async" loading="lazy" width="48" height="48" class="mw-file-element" srcset="//thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/120px-PD-icon.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x" data-file-width="196" data-file-height="196" /></span></span></span>
+</p>
+</div><div>
+<div>
+<p>1996年1月1日，这部作品在原著作國家或地區屬於<b><a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E6%9C%89%E9%A0%98%E5%9F%9F" class="extiw" title="w:公有領域">公有領域</a></b>，之前在美國從未出版，其作者1936年逝世，在<b>美國</b>以及版權期限是<b>作者終身加80年</b>以下的國家以及地区，屬於<b><a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E6%9C%89%E9%A0%98%E5%9F%9F" class="extiw" title="w:公有領域">公有領域</a></b>。
+</p>
+<hr />
+<p>这部作品也可能在本國本地版權期限更長，但對外國外地作品應用較短期限規則的國家以及地区，屬於<b>公有領域</b>。
+</p>
+</div>
+</div><div>
+<p><span class="noimageRight"></span>
+</p>
+</div></div></div></div>
+<div class="licensetpl">
+<p><span class="licensetpl&#95;short">Public domain</span><span class="licensetpl&#95;long">Public domain</span><span class="licensetpl&#95;link&#95;req">false</span><span class="licensetpl&#95;attr&#95;req">false</span>
+</p>
+</div>
+</div>
+<link rel="mw-deduplicated-inline-style" href="mw-data:TemplateStyles:r4375040" /><div class="licenseContainer licenseBanner dynlayout-exempt">
+<div><div><div><div>
+<p><span class="imageLeft"><span typeof="mw:File"><span><img alt="" src="//thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/60px-PD-icon.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail" decoding="async" loading="lazy" width="48" height="48" class="mw-file-element" srcset="//thumb.wikimedia.org/wikipedia/commons/thumb/6/62/PD-icon.svg/120px-PD-icon.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x" data-file-width="196" data-file-height="196" /></span></span></span>
+</p>
+</div><div>
+<div>
+<p>本作品現時在兩岸因著作權保護期屆滿而屬於<a href="https://zh.wikipedia.org/wiki/%E5%85%AC%E6%9C%89%E9%A2%86%E5%9F%9F" class="extiw" title="w:公有领域">公有領域</a>。根據2020年第三次修正的《<a href="/wiki/%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E8%91%97%E4%BD%9C%E6%9D%83%E6%B3%95" title="中华人民共和国著作权法">中华人民共和国著作权法</a>》第二十三條第二款（司法管轄區為中國大陸，不包括香港和澳門）和中華民國《<a href="/wiki/%E8%91%97%E4%BD%9C%E6%AC%8A%E6%B3%95_(%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B)" title="著作權法 (中華民國)">著作權法</a>》第三十三條（目前司法管轄區為臺澎金馬地區），法人或者非法人組織的作品，在首次發表50年後，或者自創作完成起50年內未發表，即進入公有領域。其他適用作品則在作者死亡後50年進入公有領域。
+</p><p><small>據《中华人民共和国著作权法释义》（2001年修正版），法人作品應滿足三點要求：（1）由法人（或其他組織，以下簡稱「法人」）主持創作，而非工作人員自發進行；（2）創作思想及表達方式體現法人意志；（3）由法人負責，而非執筆者。（<a rel="nofollow" class="external text" href="http://www.npc.gov.cn/zgrdw/npc/flsyywd/minshang/2002-07/15/content_297590.htm">詳情</a>）</small>
+</p>
+<hr />
+<p>鲁迅《故鄉》最初发表于1921年5月1日《新青年》第九卷第一號。《鲁迅全集》由鲁迅先生纪念委员会编印于1938年。
+</p>
+</div>
+</div><div>
+<p><span class="imageRight"><span class="mw-image-border" typeof="mw:File"><span><img alt="" src="//thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/120px-Flag_of_the_People%27s_Republic_of_China.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail" decoding="async" loading="lazy" width="72" height="48" class="mw-file-element" srcset="//thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Flag_of_the_People%27s_Republic_of_China.svg/250px-Flag_of_the_People%27s_Republic_of_China.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x" data-file-width="900" data-file-height="600" /></span></span><span style="display:block;margin-top:6px;"><span class="mw-image-border" typeof="mw:File"><span><img alt="" src="//thumb.wikimedia.org/wikipedia/commons/thumb/7/72/Flag_of_the_Republic_of_China.svg/120px-Flag_of_the_Republic_of_China.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail" decoding="async" loading="lazy" width="72" height="48" class="mw-file-element" srcset="//thumb.wikimedia.org/wikipedia/commons/thumb/7/72/Flag_of_the_Republic_of_China.svg/250px-Flag_of_the_Republic_of_China.svg.png?utm_source=zh.wikisource.org&amp;utm_campaign=parser&amp;utm_content=thumbnail 2x" data-file-width="900" data-file-height="600" /></span></span></span></span>
+</p>
+</div></div></div></div>
+<div class="licensetpl">
+<p><span class="licensetpl&#95;short">Public domain</span><span class="licensetpl&#95;long">Public domain</span><span class="licensetpl&#95;link&#95;req">false</span><span class="licensetpl&#95;attr&#95;req">false</span>
+</p>
+</div>
+</div>
+<!-- 
+NewPP limit report
+Parsed by mw‐api‐ext.eqiad.main‐9959bb595‐ks6hd
+Cached time: 20261014170032
+Cache expiry: 2592000
+Cache expiry source: Template:Pd/1996 (#time)
+Reduced expiry: false
+Complications: [prevent‐selective‐update]
+CPU time usage: 0.322 seconds
+Real time usage: 0.428 seconds
+Preprocessor visited node count: 4030/1000000
+Revision size: 579/2097152 bytes
+Post‐expand include size: 73435/2097152 bytes
+Template argument size: 4573/2097152 bytes
+Highest expansion depth: 11/100
+Expensive parser function count: 2/500
+Unstrip recursion depth: 1/20
+Unstrip post‐expand size: 34833/5000000 bytes
+Lua time usage: 0.069/10.000 seconds
+Lua memory usage: 1206317/52428800 bytes
+Number of Wikibase entities loaded: 1/500
+-->
+<!--
+Transclusion expansion time report (%,ms,calls,template)
+100.00%  372.557      1 -total
+ 25.35%   94.445     54 Template:专名号
+ 17.21%   64.105      1 Template:Header
+ 14.71%   54.796      1 Template:Pd/1996
+ 13.47%   50.186      1 Template:PD-old-80-1996
+ 13.35%   49.740      2 Template:License
+ 11.03%   41.090    486 Template:專/item
+  7.15%   26.650      1 Page:魯迅全集01_(1948).pdf/379
+  6.08%   22.644      1 Template:Right
+  5.78%   21.520      1 Page:魯迅全集01_(1948).pdf/375
+-->
+
+<!-- Render ID c4060b41-c7f0-11f1-b8d3-25127d981cbe -->
+
+<!-- Saved in parser cache with key zhwikisource:pcache:8046:|#|:idhash:canonical!zh and timestamp 20261014170032 and revision id 2570945. Rendering was triggered because: api-parse
+ -->
+</div><noscript><img src="https://zh.wikisource.org/wiki/Special:CentralAutoLogin/start?useformat=desktop&amp;type=1x1&amp;usesul3=1" alt="" width="1" height="1" style="border: none; position: absolute;"></noscript>
+<div class="printfooter" data-nosnippet="">取自“<a dir="ltr" href="https://zh.wikisource.org/w/index.php?title=故鄉&amp;oldid=2570945">https://zh.wikisource.org/w/index.php?title=故鄉&amp;oldid=2570945</a>”</div></div>
+					<div id="catlinks" class="catlinks" data-mw-interface=""><div id="mw-normal-catlinks" class="mw-normal-catlinks"><a href="/wiki/Special:Categories" title="Special:Categories">分类</a>：<ul><li><a href="/wiki/Category:%E9%AD%AF%E8%BF%85" title="Category:魯迅">魯迅</a></li><li><a href="/wiki/Category:1921%E5%B9%B4" title="Category:1921年">1921年</a></li><li><a href="/wiki/Category:1921%E5%B9%B41%E6%9C%88" title="Category:1921年1月">1921年1月</a></li><li><a href="/wiki/Category:PD-old-80-1996" title="Category:PD-old-80-1996">PD-old-80-1996</a></li><li><a href="/wiki/Category:%E4%B8%AD%E5%8D%8E%E4%BA%BA%E6%B0%91%E5%85%B1%E5%92%8C%E5%9B%BD%E5%85%AC%E6%9C%89%E9%A2%86%E5%9F%9F" title="Category:中华人民共和国公有领域">中华人民共和国公有领域</a></li><li><a href="/wiki/Category:%E4%B8%AD%E8%8F%AF%E6%B0%91%E5%9C%8B%E5%85%AC%E6%9C%89%E9%A0%98%E5%9F%9F" title="Category:中華民國公有領域">中華民國公有領域</a></li></ul></div></div>
+				</div>
+			</main>
+			
+		</div>
+		<div class="mw-footer-container">
+			<footer id="footer" class="mw-footer" >
+				<ul id="footer-info" class="mw-portlet mw-portlet-footer-info">
+	<li id="footer-info-lastmod"> 此页面最后编辑于2025年6月18日 (星期三) 14:08。</li>
+	<li id="footer-info-copyright">本站的全部文字在<a rel="nofollow" class="external text" href="//creativecommons.org/licenses/by-sa/4.0/deed.zh">知识共享 署名-相同方式共享 4.0协议</a>之条款下提供，附加条款亦可能应用。（请参阅<a class="external text" data-mw-original-href="//foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Terms_of_Use" href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Terms_of_Use">使用条款</a>）<br />在部份国家和地区，包括中国大陆、澳门和台湾，作者精神权（含署名权）永久有效（<b><a href="/wiki/Wikisource:%E7%89%88%E6%9D%83%E4%BF%A1%E6%81%AF" title="Wikisource:版权信息">详情</a></b>）。<br />
+Wikisource&#174;和维基文库标志是<a rel="nofollow" class="external text" data-mw-original-href="//wikimediafoundation.org/zh" href="https://wikimediafoundation.org/zh">维基媒体基金会</a>的注册商标；维基&#8482;是维基媒体基金会的商标。<br />维基媒体基金会是在美国佛罗里达州登记的501(c)(3)<a class="external text" data-mw-original-href="//donate.wikimedia.org/wiki/Special:MyLanguage/Tax_deductibility" href="https://donate.wikimedia.org/wiki/Special:MyLanguage/Tax_deductibility">免税</a>、非营利、慈善机构。<br /></li>
+</ul>
+
+				<ul id="footer-places" class="mw-portlet mw-portlet-footer-places">
+	<li id="footer-places-privacy"><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Privacy_policy">隐私政策</a></li>
+	<li id="footer-places-about"><a href="/wiki/Wikisource:%E5%85%B3%E4%BA%8E">关于维基文库</a></li>
+	<li id="footer-places-disclaimers"><a href="/wiki/Wikisource:%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E">免责声明</a></li>
+	<li id="footer-places-legal-safety-contacts"><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Legal:Wikimedia_Foundation_Legal_and_Safety_Contact_Information">法律与安全事项联系方式</a></li>
+	<li id="footer-places-wm-codeofconduct"><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Universal_Code_of_Conduct">行为准则</a></li>
+	<li id="footer-places-developers"><a href="https://developer.wikimedia.org">开发者</a></li>
+	<li id="footer-places-statslink"><a href="https://stats.wikimedia.org/#/zh.wikisource.org">统计</a></li>
+	<li id="footer-places-cookiestatement"><a href="https://foundation.wikimedia.org/wiki/Special:MyLanguage/Policy:Cookie_statement">Cookie声明</a></li>
+	<li id="footer-places-mobileview"><a href="//zh.wikisource.org/w/index.php?title=%E6%95%85%E9%84%89&amp;mobileaction=toggle_view_mobile" class="noprint stopMobileRedirectToggle">移动版视图</a></li>
+</ul>
+
+				<ul id="footer-icons" class="mw-portlet mw-portlet-footer-icons noprint">
+	<li id="footer-copyrightico"><a href="https://www.wikimedia.org/" class="cdx-button cdx-button--fake-button cdx-button--size-large cdx-button--fake-button--enabled"><picture><source media="(min-width: 500px)" srcset="/static/images/footer/wikimedia-button.svg" width="84" height="29"><img src="/static/images/footer/wikimedia.svg" width="25" height="25" alt="Wikimedia Foundation" lang="en" loading="lazy"></picture></a></li>
+	<li id="footer-poweredbyico"><a href="https://www.mediawiki.org/" class="cdx-button cdx-button--fake-button cdx-button--size-large cdx-button--fake-button--enabled"><picture><source media="(min-width: 500px)" srcset="/w/resources/assets/poweredby_mediawiki.svg" width="88" height="31"><img src="/w/resources/assets/mediawiki_compact.svg" alt="Powered by MediaWiki" lang="en" width="25" height="25" loading="lazy"></picture></a></li>
+</ul>
+
+			</footer>
+		</div>
+	</div> 
+</div> 
+<div class="vector-header-container vector-sticky-header-container no-font-mode-scale">
+	<div id="vector-sticky-header" class="vector-sticky-header">
+		<div class="vector-sticky-header-start">
+			<div class="vector-sticky-header-icon-start vector-button-flush-left" aria-hidden="true">
+				<button class="cdx-button cdx-button--weight-quiet cdx-button--icon-only vector-sticky-header-search-toggle" tabindex="-1" data-event-name="ui.vector-sticky-search-form.icon"><span class="vector-icon mw-ui-icon-search mw-ui-icon-wikimedia-search cdx-button__icon"></span>
+
+<span>搜索</span>
+			</button>
+		</div>
+			
+		<div role="search" class="vector-search-box-vue  vector-search-box-show-thumbnail vector-search-box">
+			<div class="vector-typeahead-search-container">
+				<div class="cdx-typeahead-search cdx-typeahead-search--show-thumbnail">
+					<form action="/w/index.php" id="vector-sticky-search-form" class="cdx-search-input cdx-search-input--has-end-button">
+						<div  class="cdx-search-input__input-wrapper"  data-search-loc="header-moved">
+							<div class="cdx-text-input cdx-text-input--has-start-icon">
+								<input
+									class="cdx-text-input__input mw-searchInput" autocomplete="off"
+									
+									type="search" name="search" placeholder="搜索Wikisource内容">
+								<span class="cdx-text-input__icon cdx-text-input__start-icon"></span>
+							</div>
+							<input type="hidden" name="title" value="Special:Search">
+						</div>
+						<button class="cdx-button cdx-search-input__end-button">搜索</button>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="vector-sticky-header-context-bar">
+				<div class="vector-sticky-header-context-bar-primary" aria-hidden="true" ><span lang="zh" dir="ltr"><span class="mw-page-title-main">故鄉</span></span></div>
+			</div>
+		</div>
+		<div class="vector-sticky-header-end" aria-hidden="true">
+			<div class="vector-sticky-header-icons">
+				<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-talk-sticky-header" tabindex="-1" data-event-name="talk-sticky-header"><span class="vector-icon mw-ui-icon-speechBubbles mw-ui-icon-wikimedia-speechBubbles cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-subject-sticky-header" tabindex="-1" data-event-name="subject-sticky-header"><span class="vector-icon mw-ui-icon-article mw-ui-icon-wikimedia-article cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-history-sticky-header" tabindex="-1" data-event-name="history-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-history mw-ui-icon-wikimedia-wikimedia-history cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only mw-watchlink" id="ca-watchstar-sticky-header" tabindex="-1" data-event-name="watch-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-star mw-ui-icon-wikimedia-wikimedia-star cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-edit-sticky-header" tabindex="-1" data-event-name="wikitext-edit-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-wikiText mw-ui-icon-wikimedia-wikimedia-wikiText cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-ve-edit-sticky-header" tabindex="-1" data-event-name="ve-edit-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-edit mw-ui-icon-wikimedia-wikimedia-edit cdx-button__icon"></span>
+
+<span></span>
+			</a>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--icon-only" id="ca-viewsource-sticky-header" tabindex="-1" data-event-name="ve-edit-protected-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-editLock mw-ui-icon-wikimedia-wikimedia-editLock cdx-button__icon"></span>
+
+<span></span>
+			</a>
+		</div>
+			<div class="vector-sticky-header-buttons">
+				<button class="cdx-button cdx-button--weight-quiet mw-interlanguage-selector" id="p-lang-btn-sticky-header" tabindex="-1" data-event-name="ui.dropdown-p-lang-btn-sticky-header"><span class="vector-icon mw-ui-icon-wikimedia-language mw-ui-icon-wikimedia-wikimedia-language cdx-button__icon"></span>
+
+<span>3种语言</span>
+			</button>
+			<a href="#" class="cdx-button cdx-button--fake-button cdx-button--fake-button--enabled cdx-button--weight-quiet cdx-button--action-progressive" id="ca-addsection-sticky-header" tabindex="-1" data-event-name="addsection-sticky-header"><span class="vector-icon mw-ui-icon-speechBubbleAdd-progressive mw-ui-icon-wikimedia-speechBubbleAdd-progressive cdx-button__icon"></span>
+
+<span>添加话题</span>
+			</a>
+		</div>
+			<div class="vector-sticky-header-icon-end">
+				<div class="vector-user-links">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="mw-portlet mw-portlet-dock-bottom emptyPortlet" id="p-dock-bottom">
+	<ul>
+		
+	</ul>
+</div>
+<script>(RLQ=window.RLQ||[]).push(function(){mw.config.set({"wgHostname":"mw-web.eqiad.main-dccb7c848-ct29b","wgBackendResponseTime":129,"wgPageParseReport":{"limitreport":{"cputime":"0.322","walltime":"0.428","ppvisitednodes":{"value":4030,"limit":1000000},"revisionsize":{"value":579,"limit":2097152},"postexpandincludesize":{"value":73435,"limit":2097152},"templateargumentsize":{"value":4573,"limit":2097152},"expansiondepth":{"value":11,"limit":100},"expensivefunctioncount":{"value":2,"limit":500},"unstrip-depth":{"value":1,"limit":20},"unstrip-size":{"value":34833,"limit":5000000},"entityaccesscount":{"value":1,"limit":500},"timingprofile":["100.00%  372.557      1 -total"," 25.35%   94.445     54 Template:专名号"," 17.21%   64.105      1 Template:Header"," 14.71%   54.796      1 Template:Pd/1996"," 13.47%   50.186      1 Template:PD-old-80-1996"," 13.35%   49.740      2 Template:License"," 11.03%   41.090    486 Template:專/item","  7.15%   26.650      1 Page:魯迅全集01_(1948).pdf/379","  6.08%   22.644      1 Template:Right","  5.78%   21.520      1 Page:魯迅全集01_(1948).pdf/375"]},"scribunto":{"limitreport-timeusage":{"value":"0.069","limit":"10.000"},"limitreport-memusage":{"value":1206317,"limit":52428800},"limitreport-logs":"1936\n"},"cachereport":{"origin":"mw-api-ext.eqiad.main-9959bb595-ks6hd","timestamp":"20261014170032","ttl":2592000,"transientcontent":false,"expiry-source":"Template:Pd/1996 (#time)"}}});});</script>
+<script type="application/ld+json">{"@context":"https:\/\/schema.org","@type":"Article","name":"\u6545\u9109","url":"https:\/\/zh.wikisource.org\/wiki\/%E6%95%85%E9%84%89","sameAs":"http:\/\/www.wikidata.org\/entity\/Q13403344","mainEntity":"http:\/\/www.wikidata.org\/entity\/Q13403344","author":{"@type":"Organization","name":"\u7ef4\u57fa\u5a92\u4f53\u9879\u76ee\u8d21\u732e\u8005"},"publisher":{"@type":"Organization","name":"\u7ef4\u57fa\u5a92\u4f53\u57fa\u91d1\u4f1a","logo":{"@type":"ImageObject","url":"https:\/\/www.wikimedia.org\/static\/images\/wmf-hor-googpub.png"}},"datePublished":"2005-10-19T22:00:50Z","dateModified":"2025-06-18T14:08:57Z"}</script>
+</body>
+</html>

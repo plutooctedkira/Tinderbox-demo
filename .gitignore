@@ -1,0 +1,27 @@
+# 密钥与本地配置：绝不入库
+.env
+demo/.env
+
+# 运行产物：数据库、日志、LLM 缓存、压缩块
+demo/out/
+*.db
+*.db-wal
+*.db-shm
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# 老版本归档（20 MB 二进制，不入库；需要时从本地取）
+历史归档/
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+~$*
+
+# 本地工具（下载的便携 git，38 MB）
+.tools/
