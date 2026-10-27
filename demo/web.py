@@ -282,6 +282,11 @@ function setMode(m){
   document.querySelectorAll('#modes button').forEach(x=>x.classList.toggle('on',x.dataset.mode===m));
 }
 document.querySelectorAll('#modes button').forEach(b=>b.onclick=()=>{ setMode(b.dataset.mode); search(); });
+async function refreshList(){
+  // 按当前模式重绘左栏 + 顶部浮现（编辑/归档后必须调，否则左栏是旧的）
+  await search();
+  await renderContext();
+}
 async function search(keepSel){
   if(mode==='chains'){ return renderChains(); }
   if(mode==='net'){ return renderNet(); }
@@ -347,6 +352,7 @@ async function open(id, card){
       body:JSON.stringify({entry_id:d.entry_id,summary:next.trim()})});
     const j=await r.json();
     if(!j.ok){ alert(j.error||'改不了'); return; }
+    await refreshList();
     open(d.entry_id);
   };
   $('#act-arch').onclick=async()=>{
@@ -356,6 +362,7 @@ async function open(id, card){
       body:JSON.stringify({entry_id:d.entry_id,archived:toArchive})});
     const j=await r.json();
     if(!j.ok){ alert(j.error||'操作失败'); return; }
+    await refreshList();
     open(d.entry_id);
   };
   document.querySelectorAll('.relrow').forEach(el=>el.onclick=()=>open(el.dataset.id));
