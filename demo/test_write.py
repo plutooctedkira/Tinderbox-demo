@@ -86,6 +86,21 @@ try:
     st, d = call("/api/entry?id=" + eid)
     acts = {a["action"] for a in d.get("audit", [])}
     ok({"update", "archive", "restore"} <= acts, f"审计轨迹完整（{sorted(acts)}）")
+    # 面板导入：试跑不写库、真跑入库、重复导入幂等
+    seed_dir = str(DEMO / "seed_notes")
+    st, dry = call("/api/import", {"path": seed_dir, "dry_run": True})
+    ok(st == 200 and dry["stats"]["added"] > 0 and dry["stats"]["entries"] == 0,
+       "面板导入：试跑不写库")
+
+    st, real = call("/api/import", {"path": seed_dir, "project": "测试项目"})
+    ok(st == 200 and real["stats"]["entries"] > 0, f"面板导入：真跑写入 {real['stats']['entries']} 条")
+
+    st, again = call("/api/import", {"path": seed_dir, "project": "测试项目"})
+    ok(st == 200 and again["stats"]["added"] == 0, "面板导入：重复导入不重复写")
+
+    st, conc = call("/api/concepts")
+    roots = [x for x in conc["items"] if x["parent_id"] is None]
+    ok(any(r["name"] == "测试项目" for r in roots), "面板导入：项目成为星网根节点")
 finally:
     proc.terminate()
     try:

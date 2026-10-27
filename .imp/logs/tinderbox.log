@@ -1,0 +1,25 @@
+2026-10-27T11:46:17Z INFO  cli       command start cmd=serve data=E:\记忆库\.imp
+2026-10-27T11:46:17Z INFO  web       server start port=8814 db=E:\记忆库\.imp\memory.db
+2026-10-27T11:46:25Z INFO  import    panel import path=E:\记忆库\demo\seed_notes project=seed_notes dry=True added=14 updated=0 failed=0
+2026-10-27T11:46:25Z INFO  ingest    document ingested doc=d-3bca58671de7 title=01_选址.md chunks=1 entries=3
+2026-10-27T11:46:25Z INFO  conflict  conflict detected old=mem-490884aa7554 new=mem-27e6e352c522 relation=override confidence=0.85
+2026-10-27T11:46:25Z INFO  ingest    document ingested doc=d-fc86edfa2d20 title=02_选址改口.md chunks=1 entries=3
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-f977ee7efb09 title=03_供应商.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-48f07d47bb33 title=04_设备.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-856e1b71994f title=05_定价.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-9497e267c2ba title=06_顾客反馈.md chunks=1 entries=5
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-c6de668e36b2 title=07_运营.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-0a8e50d4ddb2 title=08_财务.md chunks=1 entries=5
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-898c714e944f title=09_踩坑.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-7d4c6afbbd39 title=10_待办.md chunks=1 entries=6
+2026-10-27T11:46:26Z INFO  conflict  conflict detected old=mem-277212a6020f new=mem-67695bfd2fd4 relation=override confidence=0.85
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-3898a8ddeb28 title=11_定价调整.md chunks=1 entries=3
+2026-10-27T11:46:26Z INFO  conflict  conflict detected old=mem-67695bfd2fd4 new=mem-a2566ed23d3f relation=override confidence=0.85
+2026-10-27T11:46:26Z INFO  conflict  conflict detected old=mem-739a8752b2de new=mem-15ebe069a253 relation=override confidence=0.85
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-933032a6849e title=12_定价调整二.md chunks=1 entries=3
+2026-10-27T11:46:26Z INFO  conflict  conflict detected old=mem-7fa274ad01fd new=mem-b6be6501e85d relation=override confidence=0.85
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-604c01ebd11b title=13_运营调整.md chunks=1 entries=3
+2026-10-27T11:46:26Z INFO  conflict  conflict detected old=mem-39ae7fc624d1 new=mem-2d4d42d3fbe5 relation=override confidence=0.85
+2026-10-27T11:46:26Z INFO  ingest    document ingested doc=d-a03a0caf47cf title=14_设备调整.md chunks=1 entries=4
+2026-10-27T11:46:26Z INFO  import    panel import path=E:\记忆库\demo\seed_notes project=咖啡车生意 dry=False added=14 updated=0 failed=0
+2026-10-27T11:46:26Z INFO  import    panel import path=E:\记忆库\demo\seed_notes project=咖啡车生意 dry=False added=0 updated=0 failed=0

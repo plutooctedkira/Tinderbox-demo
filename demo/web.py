@@ -174,6 +174,17 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
    border-radius:6px;cursor:pointer}
    border:1px solid var(--line);border-radius:7px;font-family:inherit;resize:vertical}
    font-size:12.5px;cursor:pointer}
+ .impform{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0 8px}
+ .impform input[type=text]{width:100%;box-sizing:border-box;margin:0 0 6px;padding:8px 10px;
+   font-size:13px;border:1px solid var(--line);border-radius:7px}
+ .impform input[type=text]:focus{outline:none;border-color:var(--blue)}
+ .imfrow{display:flex;gap:8px;align-items:center}
+ .imfrow input[type=text]{margin:0;flex:1}
+ .imfchk{font-size:12px;color:#5f6b7e;white-space:nowrap}
+ .imfrow button{padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;
+   font-size:12.5px;cursor:pointer;white-space:nowrap}
+ .imfrow button[type=submit]{background:var(--navy);color:#fff;border-color:var(--navy)}
+ .imfmsg{font-size:12px;color:#5f6b7e;margin-top:8px;white-space:pre-wrap;display:none}
  .ctxbox{margin:0 0 8px}
  .ticker{display:flex;align-items:baseline;gap:9px;padding:6px 2px;border-bottom:1px solid var(--line);
    cursor:pointer;overflow:hidden}
@@ -262,8 +273,19 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
+      <button id="impbtn" title="从文件夹导入">导入</button>
     </div>
   </div>
+  <form class="impform" id="impform" hidden>
+    <input id="imf-path" type="text" placeholder="要导入的文件夹或文件路径，如 D:\笔记">
+    <div class="imfrow">
+      <input id="imf-proj" type="text" placeholder="项目名（留空=用文件夹名）">
+      <label class="imfchk"><input id="imf-dry" type="checkbox"> 试跑</label>
+      <button type="submit">开始导入</button>
+      <button type="button" id="imf-cancel">取消</button>
+    </div>
+    <div class="imfmsg" id="imf-msg"></div>
+  </form>
   <div class="ctxbox" id="ctx"></div>
 <div class="hint" id="hint">回车检索 · 历史含归档与旧版本</div>
   <div id="list"></div>
@@ -593,6 +615,29 @@ $('#q').addEventListener('input',()=>{
   }catch(e){}
 })();
 renderContext();
+$('#impbtn').onclick=()=>{
+  const f=$('#impform'); f.hidden=!f.hidden;
+  if(!f.hidden) $('#imf-path').focus();
+};
+$('#imf-cancel').onclick=()=>{ $('#impform').hidden=true; };
+$('#impform').onsubmit=async e=>{
+  e.preventDefault();
+  const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='导入中…';
+  const btn=e.target.querySelector('[type=submit]'); btn.disabled=true;
+  try{
+    const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({path:$('#imf-path').value.trim(), project:$('#imf-proj').value.trim(),
+                           dry_run:$('#imf-dry').checked})});
+    const j=await r.json();
+    if(!j.ok){ msg.textContent=j.error||'导入失败'; return; }
+    const s=j.stats;
+    msg.textContent=`新增 ${s.added} · 更新 ${s.updated} · 跳过 ${s.skipped} · 失败 ${s.failed} · 共 ${s.entries} 条记忆`
+      + (j.dry_run?'（试跑，未写库）':'') + (j.project?`\n项目：${j.project}`:'')
+      + (j.failures&&j.failures.length?`\n问题：\n`+j.failures.join('\n'):'');
+    if(!j.dry_run){ await refreshList(); }
+  }catch(err){ msg.textContent='出错：'+err; }
+  finally{ btn.disabled=false; }
+};
 document.querySelector('[data-mode=chains]').click();
 </script></body></html>"""
 
@@ -717,6 +762,54 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 self._deny_api()
                 return
+
+        if u.path == "/api/import":
+            path = (data.get("path") or "").strip()
+            project = (data.get("project") or "").strip()
+            dry = bool(data.get("dry_run"))
+            if not path:
+                self._json({"ok": False, "error": "请填写要导入的路径"}, 422)
+                return
+            target = Path(path).expanduser()
+            if not target.exists():
+                self._json({"ok": False, "error": f"路径不存在：{target}"}, 404)
+                return
+
+            import tbc                                  # 复用 CLI 的读取与分块逻辑
+            conn = tb.connect()
+            stats = {"added": 0, "updated": 0, "skipped": 0, "failed": 0, "entries": 0}
+            failures, seen = [], {}
+            try:
+                data_root = Path(os.environ.get("TB_DATA") or tb.DB_PATH.parent)
+                if not project and target.is_dir():
+                    project = target.name
+                for title, f in tbc.iter_targets([str(target)], seen, exclude=data_root):
+                    try:
+                        text, why = tbc.read_text(f)
+                        if text is None:
+                            failures.append(f"{title}：{why or '读不了'}")
+                            stats["failed"] += 1
+                            continue
+                        text = text.strip()
+                        if len(text) < 20:
+                            stats["skipped"] += 1
+                            continue
+                        action, n = tbc.ingest_one(conn, title, text, dry=dry, project=project)
+                        stats[action] += 1
+                        stats["entries"] += n
+                    except Exception as e:
+                        failures.append(f"{title}：{type(e).__name__}: {e}")
+                        stats["failed"] += 1
+                    if stats["added"] + stats["updated"] + stats["skipped"] > 800:
+                        failures.append("文件太多，已截断（上限 800 份）")
+                        break
+            finally:
+                conn.close()
+            tb.log_event("import", "panel import", path=str(target), project=project,
+                         dry=dry, **{k: stats[k] for k in ("added", "updated", "failed")})
+            self._json({"ok": True, "stats": stats, "project": project,
+                        "failures": failures[:20], "dry_run": dry})
+            return
 
         if u.path == "/api/entry/update":
             conn = tb.connect()
