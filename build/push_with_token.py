@@ -32,8 +32,7 @@ def flags() -> list[str]:
     b64 = base64.b64encode(f"x-access-token:{token()}".encode()).decode()
     return ["-c", f"http.proxy={PROXY}", "-c", f"https.proxy={PROXY}",
             "-c", "http.sslBackend=openssl", "-c", f"http.sslCAInfo={CA}",
-            "-c", f"http.extraheader=AUTHORIZATION: basic {b64}",
-            "-c", "credential.helper="]
+            "-c", f"http.extraheader=AUTHORIZATION: basic {b64}"]
 
 
 def run(*args, quiet=False):
