@@ -147,15 +147,19 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
- .ctxbox{background:linear-gradient(180deg,#fbfcfe,#f5f8fc);border:1px solid var(--line);
-   border-radius:10px;padding:10px 12px;margin:0 0 10px}
- .ctxhead{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#5f6b7e;margin-bottom:6px}
- .ctxb{font-size:10.5px;background:#eef3fa;color:#3d5a86;border-radius:9px;padding:1px 7px}
- .ctxb.warn{background:#fdf3e0;color:#8a5a00}
- .ctxrow{display:flex;gap:7px;align-items:baseline;padding:5px 6px;border-radius:6px;cursor:pointer}
- .ctxrow:hover{background:#eef3fa}
- .ctxs{font-size:12.5px;line-height:1.5;color:#33405a;flex:1}
- .ctxwhy{font-size:10.5px;color:#93a0b4;white-space:nowrap}
+ .ctxbox{margin:0 0 8px}
+ .ticker{display:flex;align-items:baseline;gap:9px;padding:6px 2px;border-bottom:1px solid var(--line);
+   cursor:pointer;overflow:hidden}
+ .tk-label{font-size:11px;color:#8a97ab;letter-spacing:.04em;flex:none}
+ .tk-body{flex:1;min-width:0;font-size:12.5px;color:#33405a;
+   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+   opacity:1;transform:translateY(0);
+   transition:opacity .22s ease, transform .22s ease}
+ .tk-body.out{opacity:0;transform:translateY(-4px)}
+ .tk-why{flex:none;font-size:10.5px;color:#a3b0c2;max-width:34%;white-space:nowrap;
+   overflow:hidden;text-overflow:ellipsis}
+ .tk-badge{flex:none;font-size:10.5px;color:#8a5a00;background:#fdf3e0;border-radius:8px;padding:1px 6px}
+ .ticker:hover .tk-body{color:#1f2b40}
  .cf{background:#fff;border:1px solid var(--line);border-left:3px solid #e8a33d;
    border-radius:10px;padding:12px 14px;margin-top:10px}
  .cfh{display:flex;align-items:center;gap:8px;margin-bottom:8px}
@@ -310,22 +314,43 @@ function fmtGap(g){ if(g==null) return '';
   return `${Math.round(g)} 天`; }
 let openCols = {}, openGroups = {}, netCache = {}, netFilter = 'all';
 
+let ctxItems=[], ctxIdx=0, ctxTimer=null;
+function ctxShow(i){
+  const m=ctxItems[i]; if(!m) return;
+  const body=$('#tkbody'), why=$('#tkwhy');
+  if(!body) return;
+  body.classList.add('out');
+  setTimeout(()=>{
+    body.textContent=m.l1_summary;
+    if(why) why.textContent=m.why||'';
+    $('#ctxticker').dataset.id=m.entry_id;
+    body.classList.remove('out');
+  },200);
+}
+function ctxStart(){
+  clearInterval(ctxTimer);
+  if(ctxItems.length<2) return;
+  ctxTimer=setInterval(()=>{ ctxIdx=(ctxIdx+1)%ctxItems.length; ctxShow(ctxIdx); },6000);
+}
 async function renderContext(){
   const el=$('#ctx');
   try{
     const d=await (await fetch('/api/context?k=4')).json();
     if(!d.memories || !d.memories.length){ el.innerHTML=''; return; }
-    const badges=[];
-    if(d.pending_conflicts) badges.push(`<span class="ctxb warn">${d.pending_conflicts} 处待裁决</span>`);
-    if(d.provisional) badges.push(`<span class="ctxb">${d.provisional} 条未精修</span>`);
-    el.innerHTML=`<div class="ctxhead"><b>浮现</b>${badges.join('')}</div>`+
-      d.memories.map(m=>`
-        <div class="ctxrow" data-id="${m.entry_id}">
-          <span class="tag ${m.category}">${m.category}</span>
-          <span class="ctxs">${esc(m.l1_summary)}</span>
-          <span class="ctxwhy">${esc(m.why)}</span>
-        </div>`).join('');
-    el.querySelectorAll('.ctxrow').forEach(r=>r.onclick=()=>open(r.dataset.id));
+    ctxItems=d.memories; ctxIdx=0;
+    const badge=d.pending_conflicts
+      ? `<span class="tk-badge">${d.pending_conflicts} 待裁决</span>` : '';
+    el.innerHTML=`<div class="ticker" id="ctxticker" title="点开详情">
+        <span class="tk-label">浮现</span>
+        <span class="tk-body" id="tkbody"></span>
+        <span class="tk-why" id="tkwhy"></span>${badge}
+      </div>`;
+    ctxShow(0);
+    ctxStart();
+    const box=$('#ctxticker');
+    box.onclick=()=>{ if(box.dataset.id) open(box.dataset.id); };
+    box.onmouseenter=()=>clearInterval(ctxTimer);
+    box.onmouseleave=ctxStart;
   }catch(e){ el.innerHTML=''; }
 }
 async function renderConflicts(){

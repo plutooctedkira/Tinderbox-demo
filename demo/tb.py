@@ -1023,8 +1023,11 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
                     score += 0.06               # 优先挂在组内现行版本上，别挂在老尸首上
                 cands.append((score, same, a))
             fns = judge_fns or ([judge_fn] if judge_fn else [judge])
-            # 同话题的排前面：话题对上了，哪怕字面重合低也优先判
-            cands.sort(key=lambda x: (-x[1], -x[0]))
+            # 排序：同话题 > 是不是"决定" > 字面分。
+            # 少了中间那档，改口会挂到"备选是…"这类陈述句上，真正的旧决定依然是 active。
+            cands.sort(key=lambda x: (-x[1],
+                                      -int(speech_act(x[2]["l1_summary"]) in ("decision", "change")),
+                                      -x[0]))
 
             cands = [c for c in cands[:5] if c[0] >= min_score]
             if not cands:
@@ -1323,6 +1326,8 @@ def active_context(conn, k: int = 5) -> dict:
 
     picked = []
     for r in heads.values():
+        if REASON_START.match(r["l1_summary"]):
+            continue                      # 纯理由条目已作为 reason 挂在决定上，不再单独浮现
         rec = recency(r["created_at"], r["category"])
         score = 0.50 * r["weight"] + 0.30 * rec
         why = [f"权重 {r['weight']:.2f}", f"新鲜度 {rec:.2f}"]
