@@ -62,6 +62,21 @@ def _client_ip(handler) -> str:
     return handler.client_address[0] if handler.client_address else "-"
 
 
+LOOPBACK = {"127.0.0.1", "::1", "localhost"}
+
+
+def import_allowed(ip: str) -> tuple[bool, str]:
+    """导入会读服务端任意路径，默认只允许本机。
+
+    远程要开：环境变量 TB_ALLOW_IMPORT=1（放到反代后面时务必想清楚）。
+    """
+    if ip in LOOPBACK:
+        return True, ""
+    if os.environ.get("TB_ALLOW_IMPORT") == "1":
+        return True, ""
+    return False, "出于安全，导入只允许在本机操作（远程需设 TB_ALLOW_IMPORT=1）"
+
+
 def _rate_blocked(ip: str) -> bool:
     now = time.time()
     hits = [t for t in RATE.get((ip, "all"), []) if now - t < 60]
@@ -164,6 +179,13 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
+ .onboard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;
+   max-width:560px;margin:8px 0}
+ .onboard h3{margin:0 0 8px;font-size:15px;color:var(--navy)}
+ .onboard p{margin:0 0 10px;font-size:13px;color:#5f6b7e;line-height:1.7}
+ .onboard ol{margin:0 0 14px;padding-left:20px;font-size:13px;color:#33405a;line-height:1.9}
+ .onboard button{padding:8px 18px;border:0;border-radius:7px;background:var(--navy);color:#fff;
+   font-size:13px;cursor:pointer}
  .revbtn{padding:1px 8px;font-size:11px;border:1px solid var(--line);background:#fff;
    border-radius:5px;cursor:pointer;flex:none;margin-left:auto}
  .audit{margin:0 0 10px}
@@ -710,11 +732,28 @@ $('#impform').onsubmit=async e=>{
   }catch(err){ msg.textContent='出错：'+err; btn.disabled=false; }
 };
 
+function showOnboarding(){
+  $('#hint').textContent='还没有记忆';
+  $('#list').innerHTML=`<div class="onboard">
+    <h3>记忆库还是空的</h3>
+    <p>它靠导入你的笔记来积累记忆：一条条决定、偏好、任务会被提炼出来，原文按块冷存，随时能回看。</p>
+    <ol>
+      <li>点 <b>导入</b>，填一个文件夹路径（支持 .txt .md .docx .pdf）</li>
+      <li>给这批材料起个<b>项目名</b>，比如「咖啡车生意」</li>
+      <li>先勾<b>试跑</b>看看会导入什么，确认后去掉勾真跑</li>
+    </ol>
+    <button id="ob-import">导入笔记</button>
+  </div>`;
+  const b=$('#ob-import');
+  if(b) b.onclick=()=>{ $('#impform').hidden=false; $('#imf-path').focus(); };
+}
 async function loadMeta(){
   try{
     const m=await (await fetch('/api/meta')).json();
     if(m.provisional) $('#refn').textContent=m.provisional;
-  }catch(e){}
+    if(m.total===0) showOnboarding();
+    return m;
+  }catch(e){ return null; }
 }
 $('#refbtn').onclick=async()=>{
   const btn=$('#refbtn'); btn.disabled=true;
@@ -742,8 +781,7 @@ $('#bakbtn').onclick=async()=>{
     else alert(`已备份 ${j.result.counts.entries} 条记忆\n${j.result.dest}\n校验${j.result.ok?'通过':'不通过'}`);
   }finally{ b.disabled=false; b.textContent='备份'; }
 };
-loadMeta();
-document.querySelector('[data-mode=chains]').click();
+loadMeta().then(m=>{ if(!m || m.total!==0) document.querySelector('[data-mode=chains]').click(); });
 </script></body></html>"""
 
 
@@ -937,6 +975,10 @@ class Handler(BaseHTTPRequestHandler):
                 return
 
         if u.path == "/api/import":
+            allowed, why = import_allowed(_client_ip(self))
+            if not allowed:
+                self._json({"ok": False, "error": why}, 403)
+                return
             path = (data.get("path") or "").strip()
             project = (data.get("project") or "").strip()
             dry = bool(data.get("dry_run"))
