@@ -1292,6 +1292,59 @@ def resolve_conflict(conn, conflict_id: str, resolution: str) -> dict:
     return {"conflict_id": conflict_id, "resolution": resolution, "state": state}
 
 
+def entry_origin(conn, entry_id: str) -> dict:
+    """这条记忆从哪来：哪份材料、属于哪个项目。"""
+    row = conn.execute(
+        "SELECT e.doc_id, d.title FROM memory_entries e "
+        "LEFT JOIN memory_documents d ON d.doc_id = e.doc_id WHERE e.entry_id=?",
+        (entry_id,)).fetchone()
+    out = {"doc_title": "", "doc_id": "", "project": ""}
+    if row:
+        out["doc_id"] = row["doc_id"] or ""
+        out["doc_title"] = row["title"] or ""
+    # 项目 = 该条目挂的概念里，level 最小的那个根
+    cid = conn.execute("SELECT concept_id FROM memory_entry_concepts WHERE entry_id=? "
+                       "LIMIT 1", (entry_id,)).fetchone()
+    if cid:
+        cur, seen = cid["concept_id"], set()
+        best = None
+        while cur and cur not in seen:
+            seen.add(cur)
+            r = conn.execute("SELECT concept_id, name, parent_id, level FROM memory_concepts "
+                             "WHERE concept_id=?", (cur,)).fetchone()
+            if r is None:
+                break
+            if best is None or r["level"] < best["level"]:
+                best = r
+            cur = r["parent_id"]
+        if best:
+            out["project"] = best["name"]
+    return out
+
+
+def list_entries(conn, *, status: str = "archived", category: str = "",
+                 limit: int = 50) -> list[dict]:
+    """按状态列记忆（归档视图、未精修视图都用它）。"""
+    where = ["1=1"]
+    args: list = []
+    if status == "archived":
+        where.append("status='archived'")
+    elif status == "active":
+        where.append("status='active'")
+    elif status == "pending":
+        where.append("status='pending_merge'")
+    elif status == "provisional":
+        where.append("extract_state='provisional' AND status IN ('active','pending_merge')")
+    if category:
+        where.append("category=?")
+        args.append(category)
+    sql = ("SELECT entry_id, l1_summary, category, status, version_no, created_at, "
+           "extract_state FROM memory_entries WHERE " + " AND ".join(where) +
+           " ORDER BY created_at DESC LIMIT ?")
+    args.append(max(1, min(limit, 500)))
+    return [dict(r) for r in conn.execute(sql, args)]
+
+
 def _reindex(conn, entry_id: str) -> None:
     """改了摘要/关键词之后，把两套 FTS 都同步过去。"""
     row = conn.execute("SELECT row_id, l1_summary, keywords FROM memory_entries "

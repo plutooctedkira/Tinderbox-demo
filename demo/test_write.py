@@ -86,21 +86,45 @@ try:
     st, d = call("/api/entry?id=" + eid)
     acts = {a["action"] for a in d.get("audit", [])}
     ok({"update", "archive", "restore"} <= acts, f"审计轨迹完整（{sorted(acts)}）")
-    # 面板导入：试跑不写库、真跑入库、重复导入幂等
+    # 面板导入：异步任务，轮询到结束
+    import time as _t
+
+    def run_import(body):
+        st, j = call("/api/import", body)
+        jid = (j or {}).get("job")
+        if not jid:
+            return st, None
+        for _ in range(200):
+            _t.sleep(0.25)
+            _, cur = call("/api/import/status?id=" + jid)
+            job = (cur or {}).get("job") or {}
+            if job.get("state") in ("done", "error", "cancelled"):
+                return st, job
+        return st, None
+
     seed_dir = str(DEMO / "seed_notes")
-    st, dry = call("/api/import", {"path": seed_dir, "dry_run": True})
-    ok(st == 200 and dry["stats"]["added"] > 0 and dry["stats"]["entries"] == 0,
-       "面板导入：试跑不写库")
+    st, dry = run_import({"path": seed_dir, "dry_run": True})
+    ok(st == 200 and dry and dry["added"] > 0 and dry["entries"] == 0, "面板导入：试跑不写库")
 
-    st, real = call("/api/import", {"path": seed_dir, "project": "测试项目"})
-    ok(st == 200 and real["stats"]["entries"] > 0, f"面板导入：真跑写入 {real['stats']['entries']} 条")
+    st, real = run_import({"path": seed_dir, "project": "测试项目"})
+    ok(st == 200 and real and real["entries"] > 0, f"面板导入：真跑写入 {real and real['entries']} 条")
 
-    st, again = call("/api/import", {"path": seed_dir, "project": "测试项目"})
-    ok(st == 200 and again["stats"]["added"] == 0, "面板导入：重复导入不重复写")
+    st, again = run_import({"path": seed_dir, "project": "测试项目"})
+    ok(st == 200 and again and again["added"] == 0, "面板导入：重复导入不重复写")
 
     st, conc = call("/api/concepts")
     roots = [x for x in conc["items"] if x["parent_id"] is None]
     ok(any(r["name"] == "测试项目" for r in roots), "面板导入：项目成为星网根节点")
+
+    st, meta = call("/api/meta")
+    ok(st == 200 and meta["total"] > 0 and "provisional" in meta, "元信息可读")
+
+    st, arch = call("/api/list?status=archived")
+    ok(st == 200 and isinstance(arch.get("items"), list), "归档列表可读")
+
+    st, detail = call("/api/entry?id=" + eid)
+    ok(bool(detail.get("origin", {}).get("doc_title")), "详情显示来源材料")
+
 finally:
     proc.terminate()
     try:

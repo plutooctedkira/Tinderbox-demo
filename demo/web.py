@@ -7,6 +7,8 @@ from __future__ import annotations
 import hmac
 import json
 import os
+import uuid
+import threading
 import re
 import secrets
 import sys
@@ -274,6 +276,8 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
       <button id="impbtn" title="从文件夹导入">导入</button>
+      <button id="refbtn" title="把规则摘要改写成「结论——因为依据」">精修<span id="refn"></span></button>
+      <button data-mode="archived" title="已归档的记忆">归档</button>
     </div>
   </div>
   <form class="impform" id="impform" hidden>
@@ -313,6 +317,7 @@ async function search(keepSel){
   if(mode==='chains'){ return renderChains(); }
   if(mode==='net'){ return renderNet(); }
   if(mode==='conflicts'){ return renderConflicts(); }
+  if(mode==='archived'){ return renderArchived(); }
   mode='search';
   const q=$('#q').value.trim();
   if(!q){$('#list').innerHTML='';$('#hint').textContent='输入词后回车';return;}
@@ -350,7 +355,8 @@ async function open(id, card){
   }).join('');
   const st = d.status==='pending_merge' ? '待裁决' : d.status;
   $('#detail').innerHTML=`<h3>${esc(d.category)} · v${d.version_no} · ${esc(st)}</h3>
-    <div class="meta">${d.entry_id}<br>创建 ${fmtFull(d.created_at)}<br>
+    <div class="meta">${(d.origin && d.origin.doc_title) ? `来源《${esc(d.origin.doc_title)}》` : ''}${(d.origin && d.origin.project) ? ` · 项目「${esc(d.origin.project)}」` : ''}<br>
+      ${d.entry_id}<br>创建 ${fmtFull(d.created_at)}<br>
       L0 区间 [${d.offset}, ${d.offset+d.length}) · ${d.length} 字</div>
     ${d.chain && d.chain.length>1 ? `<div class="chain"><h4>版本链</h4>${chain}</div>`:''}
     ${(d.relations && d.relations.length) ? `<div class="rel"><h4>相关记忆</h4>${
@@ -465,6 +471,19 @@ async function renderConflicts(){
     if(!j.ok){ alert('失败：'+j.error); b.disabled=false; return; }
     await renderConflicts();
   });
+}
+async function renderArchived(){
+  const d=await (await fetch('/api/list?status=archived&limit=100')).json();
+  $('#hint').textContent = d.items.length ? `${d.items.length} 条已归档` : '没有归档的记忆';
+  if(!d.items.length){ $('#list').innerHTML='<div class="empty">没有归档的记忆</div>'; return; }
+  $('#list').innerHTML = d.items.map(it=>`
+    <div class="card" data-id="${it.entry_id}">
+      <div class="row">
+        <div class="l1 dead"><span class="tag gone">已归档</span>${esc(it.l1_summary)}</div>
+        <div class="score"><span>${fmt(it.created_at)}</span></div>
+      </div>
+    </div>`).join('');
+  document.querySelectorAll('#list .card').forEach(c=>c.onclick=()=>open(c.dataset.id, c));
 }
 async function renderNet(){
   const d=await (await fetch('/api/concepts')).json();
@@ -622,21 +641,42 @@ $('#impbtn').onclick=()=>{
 $('#imf-cancel').onclick=()=>{ $('#impform').hidden=true; };
 $('#impform').onsubmit=async e=>{
   e.preventDefault();
-  const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='导入中…';
+  const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='正在扫描…';
   const btn=e.target.querySelector('[type=submit]'); btn.disabled=true;
+  let jobId=null, timer=null, cancelled=false;
+  const cancelBtn=document.createElement('button');
+  cancelBtn.textContent='取消'; cancelBtn.type='button';
+  cancelBtn.onclick=async()=>{ cancelled=true; cancelBtn.disabled=true;
+    if(jobId) await fetch('/api/import/cancel',{method:'POST',
+      headers:{'Content-Type':'application/json'},body:JSON.stringify({id:jobId})}); };
+  msg.appendChild(document.createElement('br')); msg.appendChild(cancelBtn);
+
+  const poll=async()=>{
+    if(!jobId) return;
+    const j=await (await fetch('/api/import/status?id='+jobId)).json();
+    if(!j.ok){ clearInterval(timer); msg.textContent=j.error; return; }
+    const J=j.job;
+    const pct=J.total? Math.round(J.done*100/J.total):0;
+    msg.firstChild.textContent=`${J.state==='running'?'导入中':'已完成'} ${J.done}/${J.total}（${pct}%）`
+      +` · 新增 ${J.added} · 更新 ${J.updated} · 跳过 ${J.skipped} · 失败 ${J.failed} · ${J.entries} 条记忆`
+      + (J.project?` · 项目 ${J.project}`:'');
+    if(J.state!=='running'){
+      clearInterval(timer); cancelBtn.remove(); btn.disabled=false;
+      if(J.failures && J.failures.length)
+        msg.firstChild.textContent += '\n问题：'+J.failures.slice(0,5).join('；');
+      if(!cancelled && J.state==='done') await refreshList();
+    }
+  };
   try{
     const r=await fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({path:$('#imf-path').value.trim(), project:$('#imf-proj').value.trim(),
                            dry_run:$('#imf-dry').checked})});
     const j=await r.json();
-    if(!j.ok){ msg.textContent=j.error||'导入失败'; return; }
-    const s=j.stats;
-    msg.textContent=`新增 ${s.added} · 更新 ${s.updated} · 跳过 ${s.skipped} · 失败 ${s.failed} · 共 ${s.entries} 条记忆`
-      + (j.dry_run?'（试跑，未写库）':'') + (j.project?`\n项目：${j.project}`:'')
-      + (j.failures&&j.failures.length?`\n问题：\n`+j.failures.join('\n'):'');
-    if(!j.dry_run){ await refreshList(); }
-  }catch(err){ msg.textContent='出错：'+err; }
-  finally{ btn.disabled=false; }
+    if(!j.ok){ msg.textContent=j.error||'导入失败'; btn.disabled=false; return; }
+    jobId=j.job;
+    timer=setInterval(poll, 600);
+    poll();
+  }catch(err){ msg.textContent='出错：'+err; btn.disabled=false; }
 };
 document.querySelector('[data-mode=chains]').click();
 </script></body></html>"""
@@ -668,6 +708,74 @@ if (e === '1') box.textContent = '令牌不对：服务器用的是数据目录�
 if (e === '2') box.textContent = '请输入令牌';
 </script>
 </body></html>"""
+
+
+_JOBS: dict = {}
+_JOBS_LOCK = threading.Lock()
+_IMPORT_MAX_FILES = 2000
+
+
+def _start_import(target: Path, project: str, dry: bool) -> dict:
+    job_id = uuid.uuid4().hex[:10]
+    job = {"id": job_id, "state": "running", "done": 0, "total": 0, "added": 0,
+           "updated": 0, "skipped": 0, "failed": 0, "entries": 0, "cancel": False,
+           "failures": [], "started": time.time(), "path": str(target), "project": project}
+    with _JOBS_LOCK:
+        _JOBS[job_id] = job
+    threading.Thread(target=_import_worker, args=(job, target, project, dry),
+                     daemon=True).start()
+    return job
+
+
+def _import_worker(job: dict, target: Path, project: str, dry: bool) -> None:
+    import tbc
+    conn = None
+    try:
+        conn = tb.connect()
+        data_root = Path(os.environ.get("TB_DATA") or tb.DB_PATH.parent)
+        if not project and target.is_dir():
+            project = target.name
+            job["project"] = project
+        targets = list(tbc.iter_targets([str(target)], {}, exclude=data_root))
+        targets = targets[:_IMPORT_MAX_FILES]
+        job["total"] = len(targets)
+        for title, f in targets:
+            if job["cancel"]:
+                job["state"] = "cancelled"
+                return
+            try:
+                text, why = tbc.read_text(f)
+                if text is None:
+                    job["failed"] += 1
+                    job["failures"].append(f"{title}：{why or '读不了'}")
+                    continue
+                text = text.strip()
+                if len(text) < 20:
+                    job["skipped"] += 1
+                    continue
+                action, n = tbc.ingest_one(conn, title, text, dry=dry, project=project)
+                job[action] += 1
+                job["entries"] += n
+            except Exception as e:
+                job["failed"] += 1
+                job["failures"].append(f"{title}：{type(e).__name__}: {e}")
+            finally:
+                job["done"] += 1
+        job["state"] = "done"
+        tb.log_event("import", "panel import done", path=str(target), project=project,
+                     added=job["added"], entries=job["entries"])
+    except Exception as e:
+        job["state"] = "error"
+        job["failures"].append(f"{type(e).__name__}: {e}")
+    finally:
+        if conn is not None:
+            conn.close()
+            if not dry:
+                try:
+                    conn2 = tb.connect()
+                    conn2.close()
+                except Exception:
+                    pass
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -774,41 +882,38 @@ class Handler(BaseHTTPRequestHandler):
             if not target.exists():
                 self._json({"ok": False, "error": f"路径不存在：{target}"}, 404)
                 return
+            job = _start_import(target, project, dry)
+            self._json({"ok": True, "job": job["id"]})
+            return
 
-            import tbc                                  # 复用 CLI 的读取与分块逻辑
+        if u.path == "/api/import/status":
+            job = _JOBS.get((data.get("id") or qs.get("id", [""])[0]))
+            if job is None:
+                self._json({"ok": False, "error": "没有这个任务"}, 404)
+                return
+            self._json({"ok": True, "job": dict(job)})
+            return
+
+        if u.path == "/api/import/cancel":
+            job = _JOBS.get((data.get("id") or ""))
+            if job is None:
+                self._json({"ok": False, "error": "没有这个任务"}, 404)
+                return
+            job["cancel"] = True
+            self._json({"ok": True})
+            return
+
+        if u.path == "/api/refine":
+            limit = int(data.get("limit") or 10)
             conn = tb.connect()
-            stats = {"added": 0, "updated": 0, "skipped": 0, "failed": 0, "entries": 0}
-            failures, seen = [], {}
             try:
-                data_root = Path(os.environ.get("TB_DATA") or tb.DB_PATH.parent)
-                if not project and target.is_dir():
-                    project = target.name
-                for title, f in tbc.iter_targets([str(target)], seen, exclude=data_root):
-                    try:
-                        text, why = tbc.read_text(f)
-                        if text is None:
-                            failures.append(f"{title}：{why or '读不了'}")
-                            stats["failed"] += 1
-                            continue
-                        text = text.strip()
-                        if len(text) < 20:
-                            stats["skipped"] += 1
-                            continue
-                        action, n = tbc.ingest_one(conn, title, text, dry=dry, project=project)
-                        stats[action] += 1
-                        stats["entries"] += n
-                    except Exception as e:
-                        failures.append(f"{title}：{type(e).__name__}: {e}")
-                        stats["failed"] += 1
-                    if stats["added"] + stats["updated"] + stats["skipped"] > 800:
-                        failures.append("文件太多，已截断（上限 800 份）")
-                        break
+                out = tb.refine(conn, limit=max(1, min(limit, 50)))
+            except Exception as e:
+                self._json({"ok": False, "error": f"{type(e).__name__}: {e}"}, 500)
+                return
             finally:
                 conn.close()
-            tb.log_event("import", "panel import", path=str(target), project=project,
-                         dry=dry, **{k: stats[k] for k in ("added", "updated", "failed")})
-            self._json({"ok": True, "stats": stats, "project": project,
-                        "failures": failures[:20], "dry_run": dry})
+            self._json({"ok": True, "result": out})
             return
 
         if u.path == "/api/entry/update":
@@ -930,6 +1035,27 @@ class Handler(BaseHTTPRequestHandler):
             elif u.path == "/api/concept":
                 name = (qs.get("name") or [""])[0]
                 self._json({"name": name, "items": tb.concept_entries(conn, name)})
+            elif u.path == "/api/list":
+                status = (qs.get("status") or ["archived"])[0]
+                category = (qs.get("category") or [""])[0]
+                limit = int((qs.get("limit") or ["60"])[0])
+                self._json({"items": tb.list_entries(conn, status=status,
+                                                     category=category, limit=limit),
+                            "status": status})
+            elif u.path == "/api/import/status":
+                job = _JOBS.get((qs.get("id") or [""])[0])
+                if job is None:
+                    self._json({"ok": False, "error": "没有这个任务"}, 404)
+                else:
+                    self._json({"ok": True, "job": dict(job)})
+            elif u.path == "/api/meta":
+                row = conn.execute(
+                    "SELECT sum(extract_state='provisional' AND status IN ('active','pending_merge')) p,"
+                    " sum(status='archived') a, sum(status='pending_merge') m,"
+                    " sum(status='active') t, count(*) n FROM memory_entries").fetchone()
+                self._json({"provisional": row["p"] or 0, "archived": row["a"] or 0,
+                            "pending": row["m"] or 0, "active": row["t"] or 0,
+                            "total": row["n"] or 0})
             elif u.path == "/api/context":
                 k = int((qs.get("k") or ["5"])[0])
                 self._json(tb.active_context(conn, k=max(1, min(k, 10))))
@@ -959,6 +1085,7 @@ class Handler(BaseHTTPRequestHandler):
                 audit_rows = [dict(r) for r in conn.execute(
                     "SELECT at, actor, action, detail FROM memory_audit "
                     "WHERE entry_id=? ORDER BY at DESC LIMIT 8", (eid,))]
+                origin = tb.entry_origin(conn, eid)
                 span = tb.get_span(conn, eid, before=60, after=60)
                 nodes = tb.chain(conn, row["memory_group_id"])
                 prev = None
@@ -982,7 +1109,7 @@ class Handler(BaseHTTPRequestHandler):
                                      "confidence": r["confidence"]})
                 self._json({**dict(row), "offset": span["offset"],
                             "length": span["length"], "text": span["text"],
-                            "chain": nodes, "relations": rels, "audit": audit_rows})
+                            "chain": nodes, "relations": rels, "audit": audit_rows, "origin": origin})
             else:
                 self._json({"error": "not found"}, 404)
         finally:
