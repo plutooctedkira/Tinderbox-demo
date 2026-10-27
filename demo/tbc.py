@@ -20,10 +20,14 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+_VENDOR = Path(__file__).resolve().parent.parent / ".vendor"
+if _VENDOR.exists():
+    sys.path.insert(0, str(_VENDOR))
 import tb  # noqa: E402
 
-TEXT_EXT = {".txt", ".md", ".markdown", ".org", ".rst", ".csv", ".log", ".text", ".docx"}
-NEEDS_LIB = {".pdf": "pypdf", ".doc": "旧版 Word（另存为 .docx 或 .txt）"}
+TEXT_EXT = {".txt", ".md", ".markdown", ".org", ".rst", ".csv", ".log", ".text",
+            ".docx", ".pdf"}
+NEEDS_LIB = {".doc": "旧版 Word（另存为 .docx 或 .txt）"}
 SKIP_DIRS = {".git", "node_modules", ".venv", "venv", "__pycache__", ".idea", ".vscode",
              ".tools", "out", "dist", "build_cache", "logs", "l0", "backup"}
 SKIP_FILES = {"token.txt", "config.toml", "memory.db", "memory.db-wal", "memory.db-shm"}
@@ -132,6 +136,19 @@ def docx_text(path: Path) -> str | None:
     return html.unescape(text)
 
 
+def pdf_text(path: Path) -> str | None:
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return None
+    try:
+        reader = PdfReader(str(path))
+        pages = [(pg.extract_text() or "") for pg in reader.pages[:200]]
+        return "\n".join(pages)
+    except Exception:
+        return None
+
+
 def read_text(path: Path) -> tuple[str | None, str | None]:
     """返回 (文本, 失败原因)。"""
     suffix = path.suffix.lower()
@@ -139,6 +156,13 @@ def read_text(path: Path) -> tuple[str | None, str | None]:
         return None, f"不支持 {suffix}（{NEEDS_LIB[suffix]}）"
     if suffix == ".docx":
         return docx_text(path), None
+    if suffix == ".pdf":
+        try:
+            from pypdf import PdfReader  # noqa: F401
+        except ImportError:
+            return None, "缺少 pypdf（.vendor 里没有）"
+        text = pdf_text(path)
+        return (text, None) if text and text.strip() else (None, "PDF 里没有可提取的文字（可能是扫描件）")
     raw = path.read_bytes()
     if b"\x00" in raw[:4096]:
         return None, "二进制文件"
@@ -260,7 +284,17 @@ def cmd_ingest(args) -> int:
           + ("（dry-run，未写库）" if args.dry_run else ""))
     if handled == 0:
         excluded = seen.pop("_excluded", 0)
-        print("没有找到可导入的文件。目录里实际有：")
+        print("没有找到可导入的文件。逐个路径看：")
+        for item in args.paths:
+            q = Path(item).expanduser()
+            if not q.exists():
+                print(f"  ✗ {item}：路径不存在")
+            elif q.is_file():
+                print(f"  · {item}：是文件（{q.suffix or '无扩展名'}）")
+            else:
+                total = sum(1 for _ in q.rglob("*") if _.is_file())
+                print(f"  · {item}：目录，含 {total} 个文件")
+        print("目录里实际有：")
         if excluded:
             print(f"  （其中 {excluded} 个在数据目录里，已跳过）")
         for ext, n in sorted(((k, v) for k, v in seen.items() if k != "_excluded"),
