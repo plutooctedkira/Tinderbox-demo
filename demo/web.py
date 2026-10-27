@@ -82,13 +82,21 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <style>
  :root{--ink:#1a1a1a;--muted:#6b778a;--line:#e3e8ef;--navy:#1f3864;--blue:#2e5496;--bg:#fbfcfe}
  *{box-sizing:border-box}
- body{margin:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg)}
- header{padding:20px 28px 14px;border-bottom:1px solid var(--line);background:#fff}
+ body{margin:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:var(--ink);
+   background:var(--bg);display:flex;flex-direction:column;height:100vh;overflow:hidden}
+ header{flex:none;padding:20px 28px 14px;border-bottom:1px solid var(--line);background:#fff}
  h1{margin:0;font-size:20px;color:var(--navy);letter-spacing:.5px}
  .sub{color:var(--muted);font-size:12px;margin-top:6px}
- main{display:flex;gap:18px;padding:18px 28px;align-items:flex-start}
- .col{flex:1;min-width:0}
- .bar{display:flex;gap:8px;align-items:center}
+ main{flex:1;min-height:0;display:flex;gap:18px;padding:18px 28px 0;align-items:stretch;
+   overflow:hidden}
+ .col{flex:1;min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+   padding-bottom:18px;padding-right:4px}
+ .col::-webkit-scrollbar{width:9px}
+ .col::-webkit-scrollbar-thumb{background:#d3dbe6;border-radius:5px}
+ .col::-webkit-scrollbar-thumb:hover{background:#b9c5d6}
+ .col::-webkit-scrollbar-track{background:transparent}
+ .bar{display:flex;gap:8px;align-items:center;position:sticky;top:0;z-index:3;
+   background:var(--bg);padding:2px 0 8px}
  input[type=text]{flex:1;padding:11px 14px;border:1px solid var(--line);border-radius:8px;
    font-size:14px;outline:none;background:#fff}
  input[type=text]:focus{border-color:var(--blue)}
