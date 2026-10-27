@@ -18,6 +18,66 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent
+
+# ------------------------------------------------------------------ 日志
+import logging
+import logging.handlers
+
+LOG = logging.getLogger("tinderbox")
+LOG.addHandler(logging.NullHandler())
+SECRET_PARTS = ("key", "token", "secret", "password", "authorization")
+
+
+class _Line(logging.Formatter):
+    """2026-10-27T17:00:00Z INFO  ingest  file=发货.md entries=2"""
+
+    def format(self, r):
+        ts = datetime.fromtimestamp(r.created, timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        name = r.name.split(".")[-1]
+        return f"{ts} {r.levelname:<5} {name:<9} {r.getMessage()}"
+
+
+def setup_logging(log_dir: Path, console_level: str = "WARN") -> Path:
+    """文件日志（5 MB × 5 份轮转）+ 控制台。重复调用不叠加 handler。"""
+    log_dir.mkdir(parents=True, exist_ok=True)
+    path = log_dir / "tinderbox.log"
+    for h in list(LOG.handlers):
+        LOG.removeHandler(h)
+    fh = logging.handlers.RotatingFileHandler(path, maxBytes=5 * 1024 * 1024,
+                                              backupCount=5, encoding="utf-8")
+    fh.setLevel(logging.DEBUG)
+    fh.setFormatter(_Line())
+    LOG.addHandler(fh)
+    ch = logging.StreamHandler()
+    ch.setFormatter(_Line())
+    ch.setLevel(getattr(logging, console_level.upper(), logging.WARNING))
+    LOG.addHandler(ch)
+    LOG.setLevel(logging.DEBUG)
+    return path
+
+
+def _kv(**kv) -> str:
+    parts = []
+    for k, v in kv.items():
+        if any(x in k.lower() for x in SECRET_PARTS):
+            v = "***"
+        if isinstance(v, str) and (" " in v or "=" in v):
+            v = f'"{v}"'
+        parts.append(f"{k}={v}")
+    return " ".join(parts)
+
+
+def log_event(module: str, msg: str, **kv):
+    logging.getLogger(f"tinderbox.{module}").handle(
+        logging.LogRecord(f"tinderbox.{module}", logging.INFO, __file__, 0,
+                          msg + (" " + _kv(**kv) if kv else ""), None, None))
+
+
+def log_warn(module: str, msg: str, **kv):
+    logging.getLogger(f"tinderbox.{module}").handle(
+        logging.LogRecord(f"tinderbox.{module}", logging.WARNING, __file__, 0,
+                          msg + (" " + _kv(**kv) if kv else ""), None, None))
+
 DB_PATH = BASE / "out" / "memory.db"
 ARCHIVE = BASE / "out" / "archive" / "l0"
 
@@ -675,6 +735,8 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
                  (len(items_all), doc_id))
     doc = conn.execute("SELECT char_count, raw_size, compressed_size FROM memory_documents"
                        " WHERE doc_id=?", (doc_id,)).fetchone()
+    log_event("ingest", "document ingested", doc=doc_id, title=title or "-",
+              chunks=len(chunks), entries=len(items_all))
     return {"doc_id": doc_id, "chunks": len(chunks), "entries": items_all,
             "conflicts": conflicts, "complements": links,
             "chars": doc["char_count"], "raw_size": doc["raw_size"],
@@ -955,6 +1017,8 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
                     (a["entry_id"], b["entry_id"], b["entry_id"], a["entry_id"])).fetchone()
                 if exists:
                     continue
+                log_event("conflict", "conflict detected", old=a["entry_id"],
+                          new=b["entry_id"], relation=rel, confidence=round(conf, 2))
                 cid = new_id("c")
                 conn.execute(
                     "INSERT INTO memory_conflicts(conflict_id,old_entry_id,new_entry_id,"
@@ -1072,6 +1136,7 @@ def resolve_conflict(conn, conflict_id: str, resolution: str) -> dict:
 
         conn.execute("UPDATE memory_conflicts SET state=?, resolution=? WHERE conflict_id=?",
                      (state, resolution, conflict_id))
+    log_event("conflict", "conflict resolved", conflict=conflict_id, resolution=resolution)
     return {"conflict_id": conflict_id, "resolution": resolution, "state": state}
 
 
@@ -1333,6 +1398,8 @@ def refine(conn, *, limit: int = 20, user_id: str = "owner") -> dict:
             done.append(r["entry_id"])
         except Exception:
             failed.append(r["entry_id"])
+    log_event("refine", "refine done", scanned=len(rows), adopted=len(done),
+              rejected=len(failed))
     return {"refined": len(done), "failed": len(failed), "scanned": len(rows)}
 
 
@@ -1527,4 +1594,7 @@ def reclaim(conn, *, now_dt=None, dry_run: bool = True, shrink: bool = False) ->
                                  "WHERE hash=?", (row["blob_hash"],))
             conn.execute("DELETE FROM memory_blobs WHERE ref_count <= 0")
     report["victims"] = len(victims)
+    if not dry_run:
+        log_event("reclaim", "reclaim applied", victims=len(victims),
+                  freed_bytes=report["freed_bytes"])
     return report

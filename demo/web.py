@@ -550,6 +550,7 @@ class Handler(BaseHTTPRequestHandler):
         return bool(got) and hmac.compare_digest(got, TOKEN)
 
     def _deny_api(self):
+        tb.log_warn("web", "unauthorized", path=self.path[:80])
         self._json({"ok": False, "error": "需要访问令牌"}, 401)
 
     def _security_headers(self):
@@ -752,6 +753,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def run(port: int | None = None):
     p = port or PORT
+    tb.log_event("web", "server start", port=p, db=str(tb.DB_PATH))
     print(f"压缩 {tb.CODEC} · 分词 {tb.TOKENIZER}")
     print(f"数据 {tb.DB_PATH}")
     ThreadingHTTPServer(("127.0.0.1", p), Handler).serve_forever()

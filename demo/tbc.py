@@ -75,6 +75,16 @@ def read_config() -> dict:
     return cfg
 
 
+def boot(args) -> Path:
+    """解析数据目录 + 绑路径 + 挂日志。所有命令的入口。"""
+    root = data_dir(args)
+    bind_paths(root)
+    tb.setup_logging(root / "logs",
+                     console_level="INFO" if getattr(args, "verbose", False) else "WARN")
+    tb.log_event("cli", "command start", cmd=getattr(args, "cmd", "-"), data=str(root))
+    return root
+
+
 def bind_paths(root: Path):
     tb.DB_PATH = root / "memory.db"
     tb.ARCHIVE = root / "l0"
@@ -170,8 +180,7 @@ def ingest_one(conn, title: str, text: str, *, dry: bool) -> tuple[str, int]:
 
 
 def cmd_ingest(args) -> int:
-    root = data_dir(args)
-    bind_paths(root)
+    root = boot(args)
     conn = tb.connect()
     cfg = read_config().get("ingest", {})
     min_chars = int(cfg.get("min_chars", 20))
@@ -210,6 +219,14 @@ def cmd_ingest(args) -> int:
     print(f"\n新增 {stats['added']} · 更新 {stats['updated']} · 跳过 {stats['skipped']} "
           f"· 失败 {stats['failed']} · 共 {stats['entries']} 条记忆"
           + ("（dry-run，未写库）" if args.dry_run else ""))
+    tb.log_event("ingest", "import summary", added=stats["added"],
+                 updated=stats["updated"], skipped=stats["skipped"],
+                 failed=stats["failed"], entries=stats["entries"])
+    for title, why in failures[:20]:
+        tb.log_warn("ingest", "import failed", file=title, why=why)
+    for title, n in short[:20]:
+        tb.log_event("ingest", "skipped short", file=title, chars=n)
+
     if short:
         print(f"跳过（少于 {min_chars} 字）：" + "、".join(f"{t}({n})" for t, n in short[:5]))
     if failures:
@@ -222,8 +239,7 @@ def cmd_ingest(args) -> int:
 
 # ------------------------------------------------------------------ search / refine
 def cmd_search(args) -> int:
-    root = data_dir(args)
-    bind_paths(root)
+    root = boot(args)
     conn = tb.connect()
     hits = tb.search(conn, " ".join(args.query), mode="hybrid", top_k=args.limit)
     if not hits:
@@ -236,8 +252,7 @@ def cmd_search(args) -> int:
 
 
 def cmd_refine(args) -> int:
-    root = data_dir(args)
-    bind_paths(root)
+    root = boot(args)
     conn = tb.connect()
     out = tb.refine(conn, limit=args.limit)
     print(f"扫描 {out['scanned']} 条 · 采纳 {out['refined']} · 驳回 {out['failed']}")
@@ -262,8 +277,7 @@ def cmd_config(args) -> int:
 
 
 def cmd_check(args) -> int:
-    root = data_dir(args)
-    bind_paths(root)
+    root = boot(args)
     conn = tb.connect()
     st = tb.stats(conn)
     print(f"材料 {st['documents']} · 条目 {st['entries']} · L0 {st['l0_bytes']:,} 字节")
@@ -281,8 +295,7 @@ def cmd_check(args) -> int:
 
 
 def cmd_serve(args) -> int:
-    root = data_dir(args)
-    bind_paths(root)
+    root = boot(args)
     os.environ["TB_DATA"] = str(root)
     os.environ.setdefault("TB_PORT", str(args.port))
     import web
@@ -295,6 +308,7 @@ def cmd_serve(args) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser(prog="tbc", description="Tinderbox 命令行")
     ap.add_argument("--data", help="数据目录")
+    ap.add_argument("-v", "--verbose", action="store_true", help="日志同时打到控制台")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("init").set_defaults(func=cmd_init)
