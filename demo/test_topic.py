@@ -17,9 +17,9 @@ import tb  # noqa: E402
 
 shutil.rmtree(DATA, ignore_errors=True)
 subprocess.run([PY, str(DEMO / "tbc.py"), "--data", str(DATA), "init"], capture_output=True)
-for f in sorted((DEMO / "seed_notes").glob("*.md")):
-    subprocess.run([PY, str(DEMO / "tbc.py"), "--data", str(DATA), "ingest", str(f)],
-                   capture_output=True)
+_files = [str(f) for f in sorted((DEMO / "seed_notes").glob("*.md"))]
+subprocess.run([PY, str(DEMO / "tbc.py"), "--data", str(DATA), "ingest", *_files],
+               capture_output=True)
 
 tb.DB_PATH = DATA / "memory.db"
 tb.ARCHIVE = DATA / "l0"

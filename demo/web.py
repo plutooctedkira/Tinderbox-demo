@@ -111,7 +111,12 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  *{box-sizing:border-box}
  body{margin:0;font-family:"Segoe UI","Microsoft YaHei",sans-serif;color:var(--ink);
    background:var(--bg);display:flex;flex-direction:column;height:100vh;overflow:hidden}
- header{flex:none;padding:20px 28px 14px;border-bottom:1px solid var(--line);background:#fff}
+ header{flex:none;display:flex;align-items:center;justify-content:space-between;
+   padding:20px 28px 14px;border-bottom:1px solid var(--line);background:#fff}
+ #setbtn{padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:7px;
+   font-size:12.5px;color:#5f6b7e;cursor:pointer}
+ #setbtn:hover{border-color:var(--blue);color:var(--navy)}
+ #setbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
  h1{margin:0;font-size:20px;color:var(--navy);letter-spacing:.5px}
  .sub{color:var(--muted);font-size:12px;margin-top:6px}
  main{flex:1;min-height:0;display:flex;gap:18px;padding:18px 28px 0;align-items:stretch;
@@ -189,6 +194,30 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
+ #settings{flex:1;min-height:0;overflow-y:auto;padding:18px 28px 28px}
+ .sethead{display:flex;align-items:center;gap:12px;margin:0 0 14px}
+ .sethead h2{margin:0;font-size:16px;color:var(--navy)}
+ .sethead button{padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:7px;
+   font-size:12.5px;cursor:pointer}
+ .setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;max-width:1100px}
+ .setcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+ .setcard.wide{grid-column:1/-1}
+ .setcard h3{margin:0 0 6px;font-size:13.5px;color:var(--navy)}
+ .setcard .cnt{font-size:11px;color:#fff;background:var(--navy);border-radius:10px;padding:1px 7px;margin-left:6px}
+ .sethint{margin:0 0 12px;font-size:12px;color:#8a97ab;line-height:1.6}
+ .setcard input[type=text]{width:100%;box-sizing:border-box;margin:0 0 8px;padding:8px 10px;
+   font-size:13px;border:1px solid var(--line);border-radius:7px}
+ .setcard input[type=text]:focus{outline:none;border-color:var(--blue)}
+ .setrow{display:flex;gap:8px;align-items:center;margin-top:4px}
+ .setrow button{padding:7px 16px;border:1px solid var(--line);background:#fff;border-radius:7px;
+   font-size:12.5px;cursor:pointer}
+ #imf-go,#bakbtn{background:var(--navy);color:#fff;border-color:var(--navy)}
+ .setcard .imfmsg{margin-top:10px;font-size:12px;color:#5f6b7e;white-space:pre-wrap;display:none}
+ .archrow{display:flex;align-items:center;gap:8px;padding:6px 4px;border-bottom:1px dashed #eef1f6;font-size:12.5px}
+ .archrow .as{flex:1;color:#33405a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .archrow .ad{color:#a3b0c2;font-size:11px;flex:none}
+ .archrow .restore{flex:none;padding:2px 10px;font-size:11.5px;border:1px solid var(--line);
+   background:#fff;border-radius:6px;cursor:pointer}
  .onboard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:20px 24px;
    max-width:560px;margin:8px 0}
  .onboard h3{margin:0 0 8px;font-size:15px;color:var(--navy)}
@@ -300,7 +329,7 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .node.gone .sum{color:#9aa3b2;text-decoration:line-through}
  .node.gone .ver{color:#8a94a6}
 </style></head><body>
-<header><h1>Tinderbox</h1></header>
+<header><h1>Tinderbox</h1><button id="setbtn" title="设置">设置</button></header>
 <main>
  <div class="col">
   <div class="bar">
@@ -309,22 +338,9 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
-      <button id="impbtn" title="从文件夹导入">导入</button>
       <button id="refbtn" title="把规则摘要改写成「结论——因为依据」">精修<span id="refn"></span></button>
-      <button id="bakbtn" title="备份数据库与原文">备份</button>
-      <button data-mode="archived" title="已归档的记忆">归档</button>
     </div>
   </div>
-  <form class="impform" id="impform" hidden>
-    <input id="imf-path" type="text" placeholder="要导入的文件夹或文件路径，如 D:\笔记">
-    <div class="imfrow">
-      <input id="imf-proj" type="text" placeholder="项目名（留空=用文件夹名）">
-      <label class="imfchk"><input id="imf-dry" type="checkbox"> 试跑</label>
-      <button type="submit">开始导入</button>
-      <button type="button" id="imf-cancel">取消</button>
-    </div>
-    <div class="imfmsg" id="imf-msg"></div>
-  </form>
   <div class="ctxbox" id="ctx"></div>
 <div class="hint" id="hint">回车检索 · 历史含归档与旧版本</div>
   <div id="list"></div>
@@ -335,6 +351,32 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
    <pre id="span">（尚未选择）</pre></div>
  </div>
 </main>
+<section id="settings" hidden>
+  <div class="sethead"><button id="setback">← 返回</button><h2>设置</h2></div>
+  <div class="setgrid">
+    <div class="setcard">
+      <h3>导入</h3>
+      <p class="sethint">从本机文件夹或文件导入，支持 .txt .md .docx .pdf，单文件 ≤5 MB。</p>
+      <input id="imf-path" type="text" placeholder="路径，如 D:\笔记">
+      <input id="imf-proj" type="text" placeholder="项目名（留空=用文件夹名）">
+      <label class="imfchk"><input id="imf-dry" type="checkbox"> 试跑（不写库）</label>
+      <div class="setrow"><button id="imf-go">开始导入</button>
+        <button id="imf-cancel" hidden>取消</button></div>
+      <div class="imfmsg" id="imf-msg"></div>
+    </div>
+    <div class="setcard">
+      <h3>备份</h3>
+      <p class="sethint">把数据库与原文打包到数据目录下的 backup/，保留最近 5 份。</p>
+      <div class="setrow"><button id="bakbtn">立即备份</button></div>
+      <div class="imfmsg" id="bakmsg"></div>
+    </div>
+    <div class="setcard wide">
+      <h3>已归档 <span class="cnt" id="archn"></span></h3>
+      <p class="sethint">归档只是从现行检索里移走，随时可以恢复。</p>
+      <div id="archlist"></div>
+    </div>
+  </div>
+</section>
 <script>
 const $=s=>document.querySelector(s);
 let mode='search';
@@ -352,7 +394,6 @@ async function search(keepSel){
   if(mode==='chains'){ return renderChains(); }
   if(mode==='net'){ return renderNet(); }
   if(mode==='conflicts'){ return renderConflicts(); }
-  if(mode==='archived'){ return renderArchived(); }
   mode='search';
   const q=$('#q').value.trim();
   if(!q){$('#list').innerHTML='';$('#hint').textContent='输入词后回车';return;}
@@ -533,21 +574,6 @@ async function renderConflicts(){
     await renderConflicts();
   });
 }
-async function renderArchived(){
-  const d=await (await fetch('/api/list?status=archived&limit=100')).json();
-  d.items = d.items.filter(catKeep);
-  $('#hint').textContent = d.items.length ? `${d.items.length} 条已归档` : '没有归档的记忆';
-  if(!d.items.length){ $('#list').innerHTML=chipsHTML()+'<div class="empty">没有归档的记忆</div>'; bindChips(); return; }
-  $('#list').innerHTML = chipsHTML() + d.items.map(it=>`
-    <div class="card" data-id="${it.entry_id}">
-      <div class="row">
-        <div class="l1 dead"><span class="tag gone">已归档</span>${esc(it.l1_summary)}</div>
-        <div class="score"><span>${fmt(it.created_at)}</span></div>
-      </div>
-    </div>`).join('');
-  document.querySelectorAll('#list .card').forEach(c=>c.onclick=()=>open(c.dataset.id, c));
-  bindChips();
-}
 async function renderNet(){
   const d=await (await fetch('/api/concepts')).json();
   const by={};
@@ -697,37 +723,61 @@ $('#q').addEventListener('input',()=>{
   }catch(e){}
 })();
 renderContext();
-$('#impbtn').onclick=()=>{
-  const f=$('#impform'); f.hidden=!f.hidden;
-  if(!f.hidden) $('#imf-path').focus();
-};
-$('#imf-cancel').onclick=()=>{ $('#impform').hidden=true; };
-$('#impform').onsubmit=async e=>{
-  e.preventDefault();
+/* ---------------- 设置界面 ---------------- */
+function openSettings(){
+  document.querySelector('main').hidden = true;
+  $('#settings').hidden = false;
+  $('#setbtn').classList.add('on');
+  loadArchived();
+}
+function closeSettings(){
+  $('#settings').hidden = true;
+  document.querySelector('main').hidden = false;
+  $('#setbtn').classList.remove('on');
+}
+$('#setbtn').onclick=()=>{ $('#settings').hidden ? openSettings() : closeSettings(); };
+$('#setback').onclick=closeSettings;
+
+async function loadArchived(){
+  const d=await (await fetch('/api/list?status=archived&limit=200')).json();
+  $('#archn').textContent = d.items.length? d.items.length : '';
+  if(!d.items.length){ $('#archlist').innerHTML='<div class="sethint">还没有归档的记忆</div>'; return; }
+  $('#archlist').innerHTML = d.items.map(it=>`
+    <div class="archrow" data-id="${it.entry_id}">
+      <span class="tag ${it.category}">${it.category}</span>
+      <span class="as">${esc(it.l1_summary)}</span>
+      <span class="ad">${fmt(it.created_at)}</span>
+      <button class="restore" data-id="${it.entry_id}">恢复</button>
+    </div>`).join('');
+  document.querySelectorAll('.restore').forEach(b=>b.onclick=async ev=>{
+    ev.stopPropagation();
+    b.disabled=true;
+    await fetch('/api/entry/archive',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({entry_id:b.dataset.id, archived:false})});
+    await loadArchived(); await loadMeta();
+  });
+}
+
+$('#imf-go').onclick=async()=>{
   const msg=$('#imf-msg'); msg.style.display='block'; msg.textContent='正在扫描…';
-  const btn=e.target.querySelector('[type=submit]'); btn.disabled=true;
+  const go=$('#imf-go'), cancel=$('#imf-cancel');
+  go.disabled=true; cancel.hidden=false;
   let jobId=null, timer=null, cancelled=false;
-  const cancelBtn=document.createElement('button');
-  cancelBtn.textContent='取消'; cancelBtn.type='button';
-  cancelBtn.onclick=async()=>{ cancelled=true; cancelBtn.disabled=true;
+  cancel.onclick=async()=>{ cancelled=true; cancel.disabled=true;
     if(jobId) await fetch('/api/import/cancel',{method:'POST',
       headers:{'Content-Type':'application/json'},body:JSON.stringify({id:jobId})}); };
-  msg.appendChild(document.createElement('br')); msg.appendChild(cancelBtn);
-
   const poll=async()=>{
     if(!jobId) return;
     const j=await (await fetch('/api/import/status?id='+jobId)).json();
-    if(!j.ok){ clearInterval(timer); msg.textContent=j.error; return; }
-    const J=j.job;
-    const pct=J.total? Math.round(J.done*100/J.total):0;
-    msg.firstChild.textContent=`${J.state==='running'?'导入中':'已完成'} ${J.done}/${J.total}（${pct}%）`
-      +` · 新增 ${J.added} · 更新 ${J.updated} · 跳过 ${J.skipped} · 失败 ${J.failed} · ${J.entries} 条记忆`
+    if(!j.ok){ clearInterval(timer); msg.textContent=j.error; go.disabled=false; return; }
+    const J=j.job, pct=J.total? Math.round(J.done*100/J.total):0;
+    msg.textContent=`${J.state==='running'?'导入中':'完成'} ${J.done}/${J.total}（${pct}%）`
+      +` · 新增 ${J.added} · 更新 ${J.updated} · 跳过 ${J.skipped} · 失败 ${J.failed} · ${J.entries} 条`
       + (J.project?` · 项目 ${J.project}`:'');
     if(J.state!=='running'){
-      clearInterval(timer); cancelBtn.remove(); btn.disabled=false;
-      if(J.failures && J.failures.length)
-        msg.firstChild.textContent += '\n问题：'+J.failures.slice(0,5).join('；');
-      if(!cancelled && J.state==='done') await refreshList();
+      clearInterval(timer); cancel.hidden=true; cancel.disabled=false; go.disabled=false;
+      if(J.failures && J.failures.length) msg.textContent += '\n问题：'+J.failures.slice(0,5).join('；');
+      if(!cancelled && J.state==='done'){ await loadMeta(); }
     }
   };
   try{
@@ -735,11 +785,22 @@ $('#impform').onsubmit=async e=>{
       body:JSON.stringify({path:$('#imf-path').value.trim(), project:$('#imf-proj').value.trim(),
                            dry_run:$('#imf-dry').checked})});
     const j=await r.json();
-    if(!j.ok){ msg.textContent=j.error||'导入失败'; btn.disabled=false; return; }
-    jobId=j.job;
-    timer=setInterval(poll, 600);
-    poll();
-  }catch(err){ msg.textContent='出错：'+err; btn.disabled=false; }
+    if(!j.ok){ msg.textContent=j.error||'导入失败'; go.disabled=false; cancel.hidden=true; return; }
+    jobId=j.job; timer=setInterval(poll, 600); poll();
+  }catch(err){ msg.textContent='出错：'+err; go.disabled=false; cancel.hidden=true; }
+};
+
+$('#bakbtn').onclick=async()=>{
+  const b=$('#bakbtn'), msg=$('#bakmsg');
+  b.disabled=true; msg.style.display='block'; msg.textContent='备份中…';
+  try{
+    const r=await fetch('/api/backup',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({keep:5})});
+    const j=await r.json();
+    msg.textContent = j.ok ? `已备份 ${j.result.counts.entries} 条 · 校验${j.result.ok?'通过':'不通过'}\n${j.result.dest}`
+                           : (j.error||'备份失败');
+  }catch(e){ msg.textContent='出错：'+e; }
+  finally{ b.disabled=false; }
 };
 
 function showOnboarding(){
@@ -755,7 +816,7 @@ function showOnboarding(){
     <button id="ob-import">导入笔记</button>
   </div>`;
   const b=$('#ob-import');
-  if(b) b.onclick=()=>{ $('#impform').hidden=false; $('#imf-path').focus(); };
+  if(b) b.onclick=()=>{ openSettings(); $('#imf-path').focus(); };
 }
 async function loadMeta(){
   try{
