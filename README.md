@@ -7,7 +7,7 @@
 
 ## 快速开始
 
-`ash
+dash
 git clone <repo>
 cd <repo>
 cp demo/.env.example demo/.env     # 填 LLM_API_KEY（可留空，会退回规则提炼）
@@ -15,7 +15,7 @@ cp demo/.env.example demo/.env     # 填 LLM_API_KEY（可留空，会退回规�
 python demo/run_demo.py            # 八步走查
 python demo/selftest.py            # 12 项不变量
 python demo/web.py                 # 看板 http://127.0.0.1:8777（首次访问要令牌）
-`
+
 
 零第三方依赖，Python 3.10+。令牌自动生成在 demo/.env 的 API_TOKEN。
 
@@ -28,7 +28,7 @@ python demo/web.py                 # 看板 http://127.0.0.1:8777（首次访问
 | 测试报告_v1.0 | 12/12 通过、两次运行逐行一致 |
 | 变更日志.md | 每一轮改了什么、为什么 |
 | demo/ | 可运行实现（14 个脚本，含 12 项测试） |
-| uild/ | 文档流水线：生成 → 校验 → 报告 |
+| build/ | 文档流水线：生成 → 校验 → 报告 |
 
 ## ⚠ 密钥
 
