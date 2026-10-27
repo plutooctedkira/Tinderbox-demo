@@ -14,7 +14,7 @@ cp demo/.env.example demo/.env     # 填 LLM_API_KEY（可留空，会退回规�
 
 python demo/run_demo.py            # 八步走查
 python demo/selftest.py            # 12 项不变量
-python demo/web.py                 # 看板 http://127.0.0.1:8777（首次访问要令牌）
+python demo/web.py
 
 
 零第三方依赖，Python 3.10+。令牌自动生成在 demo/.env 的 API_TOKEN。
