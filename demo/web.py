@@ -522,9 +522,17 @@ font-size:13px;cursor:pointer}
 <form method="post" action="/login">
 <h1>Tinderbox 记忆库</h1>
 <p>需要访问令牌（数据目录的 token.txt，或 demo/.env 的 API_TOKEN）</p>
+<p id="err" style="color:#b4232c;font-size:13px;margin:0 0 8px"></p>
 <input name="token" type="password" placeholder="粘贴令牌" autofocus>
 <button type="submit">进入</button>
-</form></body></html>"""
+</form>
+<script>
+const e = new URLSearchParams(location.search).get('e');
+const box = document.getElementById('err');
+if (e === '1') box.textContent = '令牌不对：服务器用的是数据目录里的 token.txt';
+if (e === '2') box.textContent = '请输入令牌';
+</script>
+</body></html>"""
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -588,16 +596,16 @@ class Handler(BaseHTTPRequestHandler):
             token = (data.get("token") or "").strip()
             if not token:
                 self.send_response(303)
-                self.send_header("Location", "/login")
+                self.send_header("Location", "/login?e=2")
                 self.end_headers()
                 return
             if not hmac.compare_digest(token, TOKEN):
                 _note_fail(ip)
                 if _fail_blocked(ip):
-                    self._json({"ok": False, "error": "尝试次数过多"}, 429)
+                    self._json({"ok": False, "error": "尝试次数过多，稍后再试"}, 429)
                     return
                 self.send_response(303)
-                self.send_header("Location", "/login")
+                self.send_header("Location", "/login?e=1")
                 self.end_headers()
                 return
             self.send_response(303)
