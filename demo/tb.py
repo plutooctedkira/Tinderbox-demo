@@ -377,7 +377,8 @@ def ensure_columns(conn) -> list[str]:
                            ("refined_at", "TEXT"),
                            ("verified_at", "TEXT"),
                            ("verified_by", "TEXT"),
-                           ("context", "TEXT NOT NULL DEFAULT ''")],
+                           ("context", "TEXT NOT NULL DEFAULT ''"),
+                             ("reason", "TEXT NOT NULL DEFAULT ''")],
         "memory_documents": [("expires_at", "TEXT")],
     }
     added = []
@@ -557,6 +558,9 @@ def decompose(para: str) -> tuple[str, str]:
     return "", ""
 
 
+REASON_START = re.compile(r"^\s*(?:原因|因为|考虑到|理由|背景|动机|之所以)")
+
+
 def extract(text: str, chunk: str, *, chunk_start: int = 0,
             max_items: int = 20) -> list[dict]:
     """规则提炼——LLM 关闭时的降级路径（方案 6.6.5）。
@@ -609,6 +613,16 @@ def extract(text: str, chunk: str, *, chunk_start: int = 0,
         })
         if len(items) >= max_items:
             break
+
+    # 每条都补「为什么」：取同一份材料里紧随其后的原因段
+    paras = [(m.start(), m.group(0).strip()) for m in re.finditer(r"[^\n]+", chunk)]
+    for it in items:
+        if "——因为" in it["l1_summary"]:
+            it["reason"] = ""                     # 理由已经在摘要里
+            continue
+        rel = it.get("offset", 0) - chunk_start
+        cand = [(pos, txt) for pos, txt in paras if pos >= rel and REASON_START.match(txt)]
+        it["reason"] = _clip(cand[0][1], 90) if cand else ""
     return items
 
 
@@ -621,7 +635,7 @@ def insert_memory(conn, *, user_id, summary, category, doc_id=None, offset=None,
                   length=None, chunk_index=None, importance=0.5,
                   confidence="medium", group_id=None,
                   version_no=None, predecessor_id=None, keywords="",
-                  context: str = "", created_at: str | None = None,
+                  context: str = "", reason: str = "", created_at: str | None = None,
                   extract_state: str = "provisional") -> str:
     summary = summary.strip()
     tokenized = tokenize_for_index(summary)
@@ -649,12 +663,12 @@ def insert_memory(conn, *, user_id, summary, category, doc_id=None, offset=None,
         conn.execute(
             "INSERT INTO memory_entries(entry_id,user_id,memory_group_id,root_id,version_no,"
             "predecessor_id,category,l1_summary,tokenized,kw_tokens,keywords,context,"
-            "doc_id,l0_offset,l0_length,chunk_index,confidence,importance,extract_state,"
-            "status,created_at)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'active',?)",
+            "reason,doc_id,l0_offset,l0_length,chunk_index,confidence,importance,"
+            "extract_state,status,created_at)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'active',?)",
             (entry_id, user_id, group_id, root, version, predecessor, category, summary,
-             tokenized, kw_tokens, keywords, context, doc_id, offset, length, chunk_index,
-             confidence, importance, extract_state, created_at or now()))
+             tokenized, kw_tokens, keywords, context, reason, doc_id, offset, length,
+             chunk_index, confidence, importance, extract_state, created_at or now()))
         conn.execute("UPDATE memory_groups SET current_version_no=? WHERE group_id=?",
                      (version, group_id))
         return entry_id
@@ -717,6 +731,7 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
             sec = topic_key(item["topic"] or "").removeprefix("回到").strip()
             hub = ensure_concept(conn, (title or "未命名材料").replace("记录", "").strip(), None, 0)
             eid = insert_memory(conn, user_id=user_id, summary=item["l1_summary"],
+                                reason=item.get("reason", ""),
                                 category=item["category"], doc_id=doc_id,
                                 offset=item["offset"], length=item["length"],
                                 chunk_index=idx,
@@ -866,7 +881,7 @@ def supersede(conn, entry_id: str, new_summary: str) -> dict:
 
 def chain(conn, group_id: str) -> list[dict]:
     return [dict(r) for r in conn.execute(
-        "SELECT entry_id, version_no, status, l1_summary, context, superseded_by, "
+        "SELECT entry_id, version_no, status, l1_summary, context, reason, superseded_by, "
         "created_at FROM memory_entries WHERE memory_group_id=? ORDER BY version_no",
         (group_id,))]
 

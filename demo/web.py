@@ -473,12 +473,12 @@ async function renderChains(){
   $('#list').innerHTML = d.items.map((g,i)=>`
     <div class="grp"><div class="tl">${g.nodes.map((n,j)=>{
       const gap = j===0 ? '' : `<div class="arrow">→<br><span style="font-size:10px">${Math.round(n.gap_days)}天</span></div>`;
-      const ctx = (n.version_no===1 && n.context)
-        ? `<div class="ctx">前因：${esc(n.context)}</div>` : '';
+      const why = n.reason ? `<div class="ctx">为什么：${esc(n.reason)}</div>`
+        : (n.version_no===1 && n.context ? `<div class="ctx">前因：${esc(n.context)}</div>` : '');
       return (j? gap : '') + `<div class="step ${n.status==='active'?'on':'gone'}" data-id="${n.entry_id}">
         <div class="t">${fmt(n.created_at)}</div>
         <div class="h"><span class="v">v${n.version_no}</span>${esc(n.status)}</div>
-        ${ctx}<div class="s">${esc(n.l1_summary)}</div></div>`;
+        ${why}<div class="s">${esc(n.l1_summary)}</div></div>`;
     }).join('')}</div></div>`).join('');
   document.querySelectorAll('.step').forEach(el=>el.onclick=()=>open(el.dataset.id));
 }
