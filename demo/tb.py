@@ -893,6 +893,18 @@ TOPIC_NOISE = re.compile(r"^[一二三四五六七八九十]+、|^回到|这件�
 CHANGE_RE = re.compile(r"改(?:成|为|到|换|用|口)|换成|换到|推翻|取消|放弃|替代|搬到|调到|重定|定下来|不再")
 
 
+_DOC_PREFIX = re.compile(r"^[\d\s_\-\.、（）()]+")
+
+
+def _doc_topic(title: str | None) -> str:
+    """文档标题 → 话题。`02_选址改口.md` → `选址改口`。"""
+    if not title:
+        return ""
+    t = Path(title).stem if "." in title else title
+    t = _DOC_PREFIX.sub("", t).strip()
+    return topic_key(t[:8])
+
+
 def topic_key(topic: str) -> str:
     return TOPIC_NOISE.sub("", (topic or "").strip()).strip()
 
@@ -961,18 +973,14 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
     doc_id 给定时**只把这份材料的条目当"新"**——否则每灌一份新材料都会把全表
     重扫一遍，已裁决过的旧条目会被重新配对、重新挂起（实测过）。
     """
-    where = "status IN ('active','pending_merge')"
-    args: list = []
-    if doc_id:
-        where += " AND doc_id = ?"
-        args.append(doc_id)
     rows = conn.execute(
-        "SELECT entry_id, l1_summary, keywords, category, created_at, doc_id, status, "
-        "memory_group_id FROM memory_entries "
-        f"WHERE {where} ORDER BY doc_id, l0_offset, row_id", args).fetchall()
-    if doc_id:
-        # 把"新条目"的 id 集合单独标出来：b 只能是它们
-        new_ids = {r["entry_id"] for r in rows}
+        "SELECT e.entry_id, e.l1_summary, e.keywords, e.category, e.created_at, e.doc_id, "
+        "e.status, e.memory_group_id, e.row_id, d.title AS doc_title "
+        "FROM memory_entries e LEFT JOIN memory_documents d ON d.doc_id = e.doc_id "
+        "WHERE e.status IN ('active','pending_merge') ORDER BY e.row_id").fetchall()
+    # b（新决定）只能是本次入库那份材料的条目；a（前任）可以是任何更早的条目
+    new_ids = ({r["entry_id"] for r in rows if r["doc_id"] == doc_id}
+               if doc_id else {r["entry_id"] for r in rows})
     # 组内现行版本，循环外算一次；之前每行都重算一遍，是 O(n²)
     heads = {r["entry_id"] for r in rows if r["status"] == "active"}
     found = []
@@ -986,15 +994,14 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
                 continue                        # 罗列/备注不主动去改别人
             best, best_score = None, 0.0
             for a in rows[:i]:
-                if a["doc_id"] != b["doc_id"]:      # 只跟同一份材料里的条目比
-                    continue
+                if a["doc_id"] == b["doc_id"] and a["row_id"] >= b["row_id"]:
+                    continue                        # 同批里更晚的不算前任
                 if speech_act(a["l1_summary"]) not in ("change", "decision"):
                     continue                        # 候选清单不能当前任
                 if a["status"] == "superseded":
                     continue                        # 已作废的不再当前任
                 ov = _overlap(_tokens(b["l1_summary"]), _tokens(a["l1_summary"]))
-                nt, ot = topic_key(b["keywords"].split()[0] if b["keywords"] else ""), \
-                         topic_key(a["keywords"].split()[0] if a["keywords"] else "")
+                nt, ot = _doc_topic(b["doc_title"]), _doc_topic(a["doc_title"])
                 same = 1.0 if (nt and ot and (nt == ot or nt in ot or ot in nt)) else 0.0
                 score = 0.7 * ov + 0.3 * same
                 if a["entry_id"] in heads:
@@ -1006,8 +1013,9 @@ def check_conflicts(conn, *, threshold: float = 0.8, judge_fn=None,
                 continue                        # 召回分太低，不值得动用贵模型
             a = best
             if True:
-                goods = [fn(b["l1_summary"], b["keywords"], a["l1_summary"],
-                             a["keywords"]) for fn in fns]
+                b_kw = f"{nt} {b['keywords']}" if nt else b["keywords"]
+                a_kw = f"{ot} {a['keywords']}" if ot else a["keywords"]
+                goods = [fn(b["l1_summary"], b_kw, a["l1_summary"], a_kw) for fn in fns]
                 rel, conf, reason = merge_verdicts(goods)
                 if rel not in ("override", "duplicate") or conf < threshold:
                     continue

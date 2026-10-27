@@ -32,6 +32,10 @@ ENV_FILE = Path(__file__).resolve().parent / ".env"
 def _load_token() -> str:
     """优先环境变量，其次 .env 的 API_TOKEN，最后生成一个并写回 .env。"""
     tok = os.environ.get("TB_TOKEN")
+    if not tok:
+        _tf = Path(os.environ.get("TB_DATA", "")) / "token.txt" if os.environ.get("TB_DATA") else None
+        if _tf and _tf.exists():
+            tok = _tf.read_text(encoding="utf-8").strip()
     if tok:
         return tok
     text = ENV_FILE.read_text(encoding="utf-8") if ENV_FILE.exists() else ""
@@ -517,7 +521,7 @@ font-size:13px;cursor:pointer}
 </style></head><body>
 <form method="post" action="/login">
 <h1>Tinderbox 记忆库</h1>
-<p>需要访问令牌（见 demo/.env 的 API_TOKEN）</p>
+<p>需要访问令牌（数据目录的 token.txt，或 demo/.env 的 API_TOKEN）</p>
 <input name="token" type="password" placeholder="粘贴令牌" autofocus>
 <button type="submit">进入</button>
 </form></body></html>"""
