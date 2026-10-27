@@ -1,12 +1,14 @@
 """把 E:\\记忆库 推到 GitHub。
 
-这台机器上 git 出网需要三个额外设置（缺一不可）：
-  1. http.proxy           —— 直连 GitHub 不通，必须走本地代理
-  2. http.sslBackend=openssl —— 默认 schannel 拿不到凭证句柄
-  3. 凭证用 URL 内联 —— credential helper 依赖 sh.exe，沙箱里跑不起来
+这台机器上 git 出网有三个坑（都已处理）：
+  1. 直连 GitHub 不通 → 必须走本地代理 127.0.0.1:7897
+  2. 默认 schannel 后端拿不到凭证句柄 → 换 openssl + 指定 CA
+  3. credential helper 依赖 sh.exe，沙箱里跑不起来 → 用 Authorization 头
+     （URL 内联凭证会偶发 TLS EOF，用头部稳定）
 
 用法：python build/push_with_token.py ["提交说明"] [--no-commit]
 """
+import base64
 import re
 import subprocess
 import sys
@@ -17,10 +19,7 @@ GIT = r"D:\Git\cmd\git.exe"
 TOKEN_FILE = BASE / ".github_token"
 PROXY = "http://127.0.0.1:7897"
 CA = r"D:\Git\ucrt64\etc\ssl\certs\ca-bundle.crt"
-REMOTE = "https://github.com/plutooctedkira/Tinderbox-demo.git"
-
-FLAGS = ["-c", f"http.proxy={PROXY}", "-c", f"https.proxy={PROXY}",
-         "-c", "http.sslBackend=openssl", "-c", f"http.sslCAInfo={CA}"]
+REPO = "https://github.com/plutooctedkira/Tinderbox-demo"
 
 
 def token() -> str:
@@ -29,14 +28,23 @@ def token() -> str:
     return m.group(1) if m else raw
 
 
+def flags() -> list[str]:
+    b64 = base64.b64encode(f"x-access-token:{token()}".encode()).decode()
+    return ["-c", f"http.proxy={PROXY}", "-c", f"https.proxy={PROXY}",
+            "-c", "http.sslBackend=openssl", "-c", f"http.sslCAInfo={CA}",
+            "-c", f"http.extraheader=AUTHORIZATION: basic {b64}",
+            "-c", "credential.helper="]
+
+
 def run(*args, quiet=False):
-    p = subprocess.run([GIT, "-C", str(BASE), *FLAGS, *args],
+    p = subprocess.run([GIT, "-C", str(BASE), *flags(), *args],
                        capture_output=True, text=True, encoding="utf-8", errors="replace")
     out = ((p.stdout or "") + (p.stderr or "")).replace(token(), "***")
-    out = re.sub(r"https://[^@\s]+@", "https://***@", out)
     if not quiet:
-        print(out.strip()[:600])
-    return p.returncode, out
+        keep = [ln for ln in out.splitlines()
+                if re.search(r"->|error|fatal|rejected|up-to-date|To https", ln)]
+        print("\n".join(keep[:8]))
+    return p.returncode
 
 
 def main():
@@ -44,17 +52,15 @@ def main():
     msg = args[0] if args else None
 
     if "--no-commit" not in sys.argv:
-        code, _ = run("add", "-A", quiet=True)
+        subprocess.run([GIT, "-C", str(BASE), "add", "-A"], capture_output=True)
         st = subprocess.run([GIT, "-C", str(BASE), "status", "--porcelain"],
                             capture_output=True, text=True).stdout.strip()
         if st:
             run("commit", "-q", "-m", msg or "update", quiet=True)
             print(f"已提交：{msg or 'update'}")
 
-    url = REMOTE.replace("https://", f"https://x-access-token:{token()}@")
-    code, out = run("push", url, "main")
-    if code != 0:
-        print(f"\n✗ 推送失败（退出码 {code}）")
+    if run("push", "origin", "main") != 0:
+        print("✗ 推送失败")
         return 1
 
     run("fetch", "origin", quiet=True)
@@ -62,9 +68,9 @@ def main():
                           capture_output=True, text=True).stdout.strip()[:8]
     remote = subprocess.run([GIT, "-C", str(BASE), "rev-parse", "origin/main"],
                             capture_output=True, text=True).stdout.strip()[:8]
-    print(f"\n{'✓ 已同步' if head == remote else '⚠ 不一致'}  本地 {head} / 远端 {remote}")
-    print(f"https://github.com/plutooctedkira/Tinderbox-demo")
-    return 0 if head == remote else 1
+    ok = head == remote
+    print(f"{'✓ 已同步' if ok else '⚠ 不一致'}  本地 {head} / 远端 {remote}  {REPO}")
+    return 0 if ok else 1
 
 
 if __name__ == "__main__":
