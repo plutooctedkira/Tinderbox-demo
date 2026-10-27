@@ -504,6 +504,13 @@ async function loadCol(rootName){
     const e=await (await fetch('/api/concept?name='+encodeURIComponent(s.name))).json();
     if(e.items.length) groups.push({name:s.name, items:e.items});
   }
+  if(!groups.length && root){
+    // 没有子概念：直接显示这个项目自己挂的记忆（按分类分组）
+    const e=await (await fetch('/api/concept?name='+encodeURIComponent(root.name))).json();
+    const byCat={};
+    e.items.forEach(it=>{ (byCat[it.category]=byCat[it.category]||[]).push(it); });
+    for(const [cat,items] of Object.entries(byCat)) groups.push({name:cat, items});
+  }
   netCache[rootName]=groups;
   return groups;
 }

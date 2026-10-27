@@ -772,7 +772,7 @@ def ingest(conn, text: str, *, user_id="owner", title="", source="import",
                 " → ".join(_clip(p["l1_summary"], 36) for p in prior[-2:])
             seen_topic.setdefault(item["topic"], []).append(item)
             sec = topic_key(item["topic"] or "").removeprefix("回到").strip()
-            hub = ensure_concept(conn, (title or "未命名材料").replace("记录", "").strip(), None, 0)
+            hub = ensure_concept(conn, (title_words(title) or "未命名材料"), None, 0)
             eid = insert_memory(conn, user_id=user_id, summary=item["l1_summary"],
                                 reason=item.get("reason", ""),
                                 category=item["category"], doc_id=doc_id,
