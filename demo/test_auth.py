@@ -14,17 +14,25 @@ import sys
 from pathlib import Path
 
 _DEMO = Path(__file__).resolve().parent
+
+# 动态挑一个空闲端口：固定 8777 会撞上残留实例（甚至是被限流封禁的旧进程）
+_s = socket.socket()
+_s.bind(("127.0.0.1", 0))
+_PORT = _s.getsockname()[1]
+_s.close()
+
+import os
+_env = dict(os.environ, TB_PORT=str(_PORT))
 _proc = subprocess.Popen([sys.executable, str(_DEMO / "web.py")],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, env=_env)
 atexit.register(lambda: _proc.terminate())
 for _ in range(120):
     try:
-        socket.create_connection(("127.0.0.1", 8777), timeout=0.5).close()
+        socket.create_connection(("127.0.0.1", _PORT), timeout=0.5).close()
         break
     except OSError:
         time.sleep(0.1)
 
-BASE = "http://127.0.0.1:8777"
 TOKEN = [ln.split("=", 1)[1].strip()
          for ln in open(r"E:\记忆库\demo\.env", encoding="utf-8")
          if ln.startswith("API_TOKEN=")][0]
@@ -36,6 +44,9 @@ class NoRedirect(urllib.request.HTTPRedirectHandler):
 
 
 OP = urllib.request.build_opener(NoRedirect)
+
+
+BASE = f"http://127.0.0.1:{_PORT}"
 
 
 def req(path, token=None, cookie=None, method="GET", data=None, form=False):

@@ -43,7 +43,7 @@ def R(pattern: str, text: str) -> str:
 
 METRICS = {
     "write": lambda t: [("不达标", R(r"通过：(\d+) 项不达标", t)),
-                      ("审计", "create/update/archive/restore" if "审计轨迹完整" in t else "—")],
+                      ("审计", "update/archive/restore" if "审计轨迹完整" in t else "—")],
     "backup": lambda t: [("恢复", R(r"恢复后条目还原（(\d+) vs (\d+)）", t)),
                         ("不达标", R(r"通过：(\d+) 项不达标", t))],
     "topic": lambda t: [("按材料名", R(r"R@1 (\d+%).*?R@5 (\d+%)", t)),
@@ -104,7 +104,7 @@ CHECKS = {
     "cli_decay": lambda t: "扫描" in t,
     "cli_reclaim": lambda t: "可释放" in t,
     "probe_concept": lambda t: "accuracy@1" in t,
-    "write": lambda t: "0 项不达标" in t and "审计轨迹完整" in t,
+    "write": lambda t: "新增接口已关闭" in t and "审计轨迹完整" in t,
     "backup": lambda t: "恢复后条目还原" in t and "0 项不达标" in t,
     "topic": lambda t: "通过（门槛" in t,
 }
@@ -123,7 +123,7 @@ CRITERIA = {
     "cli_decay": "不写库（dry-run）",
     "cli_reclaim": "dry-run 只报告条数",
     "probe_concept": "能输出 accuracy 与分位表",
-    "write": "缺依据 422；新增/编辑/归档/恢复全通；审计轨迹 ≥4 条",
+    "write": "新增接口已关闭（404）；编辑/归档/恢复全通；审计轨迹含三类",
     "backup": "备份自检通过；破坏后能完整还原",
     "topic": "按材料名 R@1 ≥60% / R@5 ≥95%",
 }

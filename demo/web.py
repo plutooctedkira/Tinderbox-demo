@@ -172,16 +172,8 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .acts{display:flex;gap:8px;margin:6px 0 10px}
  .acts button{padding:4px 12px;font-size:12px;border:1px solid var(--line);background:#fff;
    border-radius:6px;cursor:pointer}
- .addform{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px;margin:0 0 8px}
- .addform textarea{width:100%;box-sizing:border-box;margin:0 0 6px;padding:8px 10px;font-size:13px;
    border:1px solid var(--line);border-radius:7px;font-family:inherit;resize:vertical}
- .addform textarea:focus{outline:none;border-color:var(--blue)}
- .afrow{display:flex;gap:8px;align-items:center}
- .afrow select{padding:5px 8px;border:1px solid var(--line);border-radius:6px;font-size:12px}
- .afrow button{padding:6px 14px;border:1px solid var(--line);background:#fff;border-radius:6px;
    font-size:12.5px;cursor:pointer}
- .afrow button[type=submit]{background:var(--navy);color:#fff;border-color:var(--navy)}
- .afmsg{flex:1;font-size:12px;color:#b4232c}
  .ctxbox{margin:0 0 8px}
  .ticker{display:flex;align-items:baseline;gap:9px;padding:6px 2px;border-bottom:1px solid var(--line);
    cursor:pointer;overflow:hidden}
@@ -270,24 +262,8 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
-      <button id="addbtn" title="记一条">＋</button>
     </div>
   </div>
-  <form class="addform" id="addform" hidden>
-    <textarea id="af-sum" rows="2" placeholder="结论：定了什么（一句话）"></textarea>
-    <textarea id="af-why" rows="2" placeholder="依据：为什么这么定（写不出依据就别记）"></textarea>
-    <div class="afrow">
-      <select id="af-cat">
-        <option value="decision">决策</option>
-        <option value="preference">偏好</option>
-        <option value="task">任务</option>
-        <option value="knowledge">知识</option>
-      </select>
-      <span class="afmsg" id="af-msg"></span>
-      <button type="submit">保存</button>
-      <button type="button" id="af-cancel">取消</button>
-    </div>
-  </form>
   <div class="ctxbox" id="ctx"></div>
 <div class="hint" id="hint">回车检索 · 历史含归档与旧版本</div>
   <div id="list"></div>
@@ -603,30 +579,6 @@ $('#q').addEventListener('input',()=>{
   }catch(e){}
 })();
 renderContext();
-$('#addbtn').onclick=()=>{
-  const f=$('#addform');
-  f.hidden=!f.hidden;
-  if(!f.hidden){ $('#af-sum').focus(); $('#af-msg').textContent=''; }
-};
-$('#af-cancel').onclick=()=>{ $('#addform').hidden=true; };
-$('#addform').onsubmit=async e=>{
-  e.preventDefault();
-  const msg=$('#af-msg'); msg.textContent='';
-  const body={
-    summary:$('#af-sum').value.trim(),
-    reason:$('#af-why').value.trim(),
-    category:$('#af-cat').value
-  };
-  const r=await fetch('/api/add',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(body)});
-  const j=await r.json();
-  if(!j.ok){ msg.textContent=j.error||'保存失败'; return; }
-  $('#af-sum').value=''; $('#af-why').value=''; $('#addform').hidden=true;
-  renderContext();
-  document.querySelector('#modes [data-mode].on')?.click() ||
-    document.querySelector('[data-mode=chains]').click();
-  open(j.result.entry_id);
-};
 document.querySelector('[data-mode=chains]').click();
 </script></body></html>"""
 
@@ -644,7 +596,7 @@ button{width:100%;padding:9px;border:0;border-radius:7px;background:#1f3864;colo
 font-size:13px;cursor:pointer}
 </style></head><body>
 <form method="post" action="/login">
-<h1>Tinderbox 记忆库</h1>
+<h1>Tinderbox</h1>
 <p>需要访问令牌（数据目录的 token.txt，或 demo/.env 的 API_TOKEN）</p>
 <p id="err" style="color:#b4232c;font-size:13px;margin:0 0 8px"></p>
 <input name="token" type="password" placeholder="粘贴令牌" autofocus>
@@ -751,24 +703,6 @@ class Handler(BaseHTTPRequestHandler):
                     return
                 self._deny_api()
                 return
-
-        if u.path == "/api/add":
-            conn = tb.connect()
-            try:
-                out = tb.add_memory(
-                    conn,
-                    summary=(data.get("summary") or ""),
-                    reason=(data.get("reason") or ""),
-                    category=(data.get("category") or "decision"),
-                    title=(data.get("title") or ""),
-                )
-            except ValueError as e:
-                self._json({"ok": False, "error": str(e)}, 422)
-                return
-            finally:
-                conn.close()
-            self._json({"ok": True, "result": out})
-            return
 
         if u.path == "/api/entry/update":
             conn = tb.connect()

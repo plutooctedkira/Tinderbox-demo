@@ -1283,34 +1283,6 @@ def resolve_conflict(conn, conflict_id: str, resolution: str) -> dict:
     return {"conflict_id": conflict_id, "resolution": resolution, "state": state}
 
 
-def add_memory(conn, *, summary: str, reason: str, category: str = "decision",
-               title: str = "") -> dict:
-    """手写一条记忆。强制「结论 + 依据」——和 LLM 精修同一把尺。
-
-    会先落一份 L0 原文（结论——因为依据），保证每条记忆都有原文可回看。
-    """
-    summary, reason = summary.strip(), reason.strip()
-    if len(summary) < 6:
-        raise ValueError("结论太短：至少 6 个字")
-    if len(reason) < 6:
-        raise ValueError("依据太短：写清为什么这么定（至少 6 个字）")
-    if category not in ("decision", "preference", "task", "knowledge"):
-        raise ValueError(f"分类不认识：{category}")
-    if "——因为" in summary:
-        text = summary
-    else:
-        text = f"{summary}——因为{reason}"
-    doc_title = title.strip() or f"手记 {now()[:16].replace('T', ' ')}"
-    doc_id = put_document(conn, text, title=doc_title, source="manual")
-    eid = insert_memory(conn, user_id="owner", summary=_clip(text, 160),
-                        category=category, doc_id=doc_id, offset=0, length=len(text),
-                        importance=0.8, confidence="high", keywords="",
-                        reason=reason, extract_state="manual")
-    audit(conn, "owner", "create", eid, source="manual", category=category)
-    log_event("manual", "memory added", entry=eid, doc=doc_id, category=category)
-    return {"entry_id": eid, "doc_id": doc_id, "summary": text}
-
-
 def _reindex(conn, entry_id: str) -> None:
     """改了摘要/关键词之后，把两套 FTS 都同步过去。"""
     row = conn.execute("SELECT row_id, l1_summary, keywords FROM memory_entries "
