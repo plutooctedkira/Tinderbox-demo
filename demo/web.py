@@ -234,8 +234,7 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .node.gone .sum{color:#9aa3b2;text-decoration:line-through}
  .node.gone .ver{color:#8a94a6}
 </style></head><body>
-<header><h1>Tinderbox · 记忆库</h1>
- <div class="sub">L1 摘要 · L0 原文 · 中文检索 · 版本链</div></header>
+<header><h1>Tinderbox</h1></header>
 <main>
  <div class="col">
   <div class="bar">
@@ -349,7 +348,6 @@ async function renderContext(){
     const badge=d.pending_conflicts
       ? `<span class="tk-badge">${d.pending_conflicts} 待裁决</span>` : '';
     el.innerHTML=`<div class="ticker" id="ctxticker" title="点开详情">
-        <span class="tk-label">浮现</span>
         <span class="tk-body" id="tkbody"></span>
         <span class="tk-why" id="tkwhy"></span>${badge}
       </div>`;
