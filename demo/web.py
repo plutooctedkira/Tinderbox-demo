@@ -119,6 +119,7 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  #setbtn.on{background:var(--navy);color:#fff;border-color:var(--navy)}
  h1{margin:0;font-size:20px;color:var(--navy);letter-spacing:.5px}
  .sub{color:var(--muted);font-size:12px;margin-top:6px}
+ [hidden]{display:none !important}
  main{flex:1;min-height:0;display:flex;gap:18px;padding:18px 28px 0;align-items:stretch;
    overflow:hidden}
  .col{flex:1;min-width:0;min-height:0;overflow-y:auto;overscroll-behavior:contain;
@@ -194,12 +195,14 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
- #settings{flex:1;min-height:0;overflow-y:auto;padding:18px 28px 28px}
+ #settings{flex:1;min-height:0;width:100%;box-sizing:border-box;overflow-y:auto;
+   padding:18px 28px 28px}
  .sethead{display:flex;align-items:center;gap:12px;margin:0 0 14px}
  .sethead h2{margin:0;font-size:16px;color:var(--navy)}
  .sethead button{padding:5px 12px;border:1px solid var(--line);background:#fff;border-radius:7px;
    font-size:12.5px;cursor:pointer}
- .setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;max-width:1100px}
+ .setgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:14px;
+   width:100%;max-width:none}
  .setcard{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
  .setcard.wide{grid-column:1/-1}
  .setcard h3{margin:0 0 6px;font-size:13.5px;color:var(--navy)}
@@ -357,7 +360,6 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
       <button data-mode="chains">演变</button>
       <button data-mode="net">星网</button>
       <button data-mode="conflicts">冲突<span id="cfn"></span></button>
-      <button id="refbtn" title="把规则摘要改写成「结论——因为依据」">精修<span id="refn"></span></button>
     </div>
   </div>
   <div class="ctxbox" id="ctx"></div>
@@ -874,7 +876,7 @@ async function loadArchived(){
 }
 
 /* ---------- 清洗 ---------- */
-let cleanMode='manual';
+let cleanMode='manual', PROPS={};
 $('#cleanmode').querySelectorAll('button').forEach(b=>b.onclick=()=>{
   cleanMode=b.dataset.cm;
   $('#cleanmode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));
@@ -896,19 +898,28 @@ async function renderClean(){
     body.innerHTML='<div class="sethint">逐条改或删。改动会留痕，可回滚。</div><div id="manual-list">加载中…</div>';
     const d=await (await fetch('/api/list?status=provisional&limit=50')).json();
     if(!d.items.length){ $('#manual-list').innerHTML='<div class="sethint">没有待清洗的记忆</div>'; return; }
-    $('#manual-list').innerHTML = d.items.map(it=>cleanRow(it,
-      `<button class="cbtn edit" data-id="${it.entry_id}">编辑</button>
-       <button class="cbtn del" data-id="${it.entry_id}">删除</button>`)).join('');
-    document.querySelectorAll('.cbtn.edit').forEach(b=>b.onclick=async()=>{
-      const cur=b.closest('.cleanrow').querySelector('.cs').textContent;
-      const next=prompt('改摘要（留痕，可回滚）', cur);
-      if(!next || next.trim()===cur) return;
+    $('#manual-list').innerHTML = d.items.map(it=>`
+      <div class="cleanrow" data-id="${it.entry_id}">
+        <textarea class="cs-edit" data-id="${it.entry_id}" rows="2">${esc(it.l1_summary)}</textarea>
+        <div class="cacts">
+          <button class="cbtn save" data-id="${it.entry_id}">保存</button>
+          <button class="cbtn del" data-id="${it.entry_id}">删除</button>
+        </div>
+      </div>`).join('');
+    document.querySelectorAll('.cbtn.save').forEach(b=>b.onclick=async()=>{
+      const ta=b.closest('.cleanrow').querySelector('.cs-edit');
+      const next=(ta.value||'').trim();
+      if(next.length < 6){ alert('太短了'); return; }
+      b.disabled=true; b.textContent='保存中…';
       const r=await fetch('/api/entry/update',{method:'POST',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({entry_id:b.dataset.id, summary:next.trim()})});
+        body:JSON.stringify({entry_id:b.dataset.id, summary:next})});
       const j=await r.json();
-      if(!j.ok){ alert(j.error||'改不了'); return; }
-      renderClean(); loadMeta();
+      b.disabled=false; b.textContent='保存';
+      if(!j.ok){ alert(j.error||'保存失败'); return; }
+      b.textContent='已保存';
+      setTimeout(()=>{ b.textContent='保存'; }, 1200);
+      loadMeta();
     });
     document.querySelectorAll('.cbtn.del').forEach(b=>b.onclick=async()=>{
       if(!confirm('彻底删除这条记忆？（不可恢复，归档才可恢复）')) return;
@@ -940,13 +951,15 @@ async function renderProposals(){
   const list=$('#prop-list'); if(!list) return;
   const d=await (await fetch('/api/clean/list?state=pending')).json();
   if(!d.items.length){ list.innerHTML='<div class="sethint">没有待审建议</div>'; return; }
+  PROPS = {};
+  d.items.forEach(it=>{ PROPS[it.proposal_id] = it.new_summary; });
   list.innerHTML = d.items.map(it=>`
-    <div class="cleanrow">
+    <div class="cleanrow" data-pid="${it.proposal_id}">
       <div class="cs">原：${esc(it.old_summary)}</div>
-      <div class="cn">建议：${esc(it.new_summary)}</div>
+      <textarea class="cs-edit" data-pid="${it.proposal_id}" rows="2">${esc(it.new_summary)}</textarea>
       <div class="cacts">
         <button class="cbtn ok" data-id="${it.proposal_id}">采纳</button>
-        <button class="cbtn editp" data-id="${it.proposal_id}" data-new="${esc(it.new_summary)}">改后采纳</button>
+        <button class="cbtn editp" data-id="${it.proposal_id}">采用上面这版</button>
         <button class="cbtn no" data-id="${it.proposal_id}">忽略</button>
       </div>
     </div>`).join('');
@@ -959,7 +972,8 @@ async function renderProposals(){
     renderProposals(); loadMeta();
   });
   list.querySelectorAll('.cbtn.editp').forEach(b=>b.onclick=async()=>{
-    const next=prompt('改完再采纳', b.dataset.new);
+    const ta=b.closest('.cleanrow').querySelector('.cs-edit');
+    const next=(ta.value||'').trim();
     if(!next) return;
     b.disabled=true;
     const r=await fetch('/api/clean/apply',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -994,27 +1008,10 @@ function showOnboarding(){
 async function loadMeta(){
   try{
     const m=await (await fetch('/api/meta')).json();
-    if(m.provisional) $('#refn').textContent=m.provisional;
     if(m.total===0) showOnboarding();
     return m;
   }catch(e){ return null; }
 }
-$('#refbtn').onclick=async()=>{
-  const btn=$('#refbtn'); btn.disabled=true;
-  const txt=btn.textContent; btn.textContent='精修中…';
-  try{
-    const r=await fetch('/api/refine',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({limit:10})});
-    const j=await r.json();
-    if(!j.ok){ alert(j.error||'精修失败'); }
-    else{
-      const s=j.result;
-      alert(`扫描 ${s.scanned} 条 · 采纳 ${s.refined} · 驳回 ${s.failed}`);
-      await refreshList(); await loadMeta();
-    }
-  }catch(e){ alert('出错：'+e); }
-  finally{ btn.disabled=false; btn.textContent=txt; }
-};
 $('#bakbtn').onclick=async()=>{
   const b=$('#bakbtn'); b.disabled=true; b.textContent='备份中…';
   try{
