@@ -353,6 +353,7 @@ def connect() -> sqlite3.Connection:
     conn.execute("PRAGMA busy_timeout=30000")
     try:
         ensure_columns(conn)
+        ensure_tables(conn)
     except sqlite3.OperationalError:
         pass          # 全新库、表还没建：交给 init_db
     return conn
@@ -366,10 +367,42 @@ def init_db(reset: bool = False):
     conn.executescript(SCHEMA)
     conn.executescript(TRIGGERS)
     ensure_columns(conn)
+    ensure_tables(conn)
     return conn
 
 
 # ------------------------------------------------------------------ L0
+AUDIT_DDL = """
+CREATE TABLE IF NOT EXISTS memory_audit(
+    audit_id  TEXT PRIMARY KEY,
+    at        TEXT NOT NULL,
+    actor     TEXT NOT NULL,
+    action    TEXT NOT NULL,
+    entry_id  TEXT,
+    detail    TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX IF NOT EXISTS idx_audit_entry ON memory_audit(entry_id, at);
+"""
+
+
+def ensure_tables(conn) -> None:
+    """只建不改：新增表在这里登记，connect 时自动补齐。"""
+    conn.executescript(AUDIT_DDL)
+
+
+def audit(conn, actor: str, action: str, entry_id: str = "", **detail) -> str:
+    """记一条操作轨迹。永远不抛错——审计不能影响主流程。"""
+    aid = new_id("au")
+    try:
+        conn.execute("INSERT INTO memory_audit(audit_id,at,actor,action,entry_id,detail)"
+                     " VALUES (?,?,?,?,?,?)",
+                     (aid, now(), actor, action, entry_id,
+                      ", ".join(f"{k}={v}" for k, v in detail.items())))
+    except Exception:
+        pass
+    return aid
+
+
 def ensure_columns(conn) -> list[str]:
     """旧库补列。新增字段时在这里登记，启动即自动迁移。"""
     wanted = {
@@ -1195,6 +1228,8 @@ def resolve_conflict(conn, conflict_id: str, resolution: str) -> dict:
 
         conn.execute("UPDATE memory_conflicts SET state=?, resolution=? WHERE conflict_id=?",
                      (state, resolution, conflict_id))
+    audit(conn, "owner", "resolve", new["entry_id"], conflict=conflict_id,
+          resolution=resolution)
     log_event("conflict", "conflict resolved", conflict=conflict_id, resolution=resolution)
     return {"conflict_id": conflict_id, "resolution": resolution, "state": state}
 
@@ -1222,6 +1257,7 @@ def add_memory(conn, *, summary: str, reason: str, category: str = "decision",
                         category=category, doc_id=doc_id, offset=0, length=len(text),
                         importance=0.8, confidence="high", keywords="",
                         reason=reason, extract_state="manual")
+    audit(conn, "owner", "create", eid, source="manual", category=category)
     log_event("manual", "memory added", entry=eid, doc=doc_id, category=category)
     return {"entry_id": eid, "doc_id": doc_id, "summary": text}
 
@@ -1257,6 +1293,7 @@ def update_summary(conn, entry_id: str, new_summary: str, *, why: str = "manual_
                      "new_summary,reason,created_at) VALUES (?,?,?,?,?,?)",
                      (new_id("rv"), entry_id, old, new_summary, why, now()))
         _reindex(conn, entry_id)
+    audit(conn, "owner", "update", entry_id, old_len=len(old), new_len=len(new_summary))
     log_event("manual", "memory edited", entry=entry_id)
     return {"entry_id": entry_id, "old": old, "new": new_summary}
 
@@ -1518,6 +1555,7 @@ def refine(conn, *, limit: int = 20, user_id: str = "owner") -> dict:
                     "INSERT INTO memory_revisions(revision_id,entry_id,old_summary,"
                     "new_summary,reason,created_at) VALUES (?,?,?,?,?,?)",
                     (new_id("rv"), r["entry_id"], r["l1_summary"], new, "llm_refine", now()))
+                audit(conn, "llm", "refine", r["entry_id"], new_len=len(new))
             done.append(r["entry_id"])
         except Exception:
             failed.append(r["entry_id"])

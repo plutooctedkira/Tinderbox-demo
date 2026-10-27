@@ -361,6 +361,120 @@ def cmd_config(args) -> int:
     return 0
 
 
+def _db_counts(db_path: Path) -> dict:
+    import sqlite3
+    c = sqlite3.connect(db_path)
+    try:
+        out = {}
+        for name, sql in (("documents", "SELECT count(*) FROM memory_documents"),
+                          ("entries", "SELECT count(*) FROM memory_entries"),
+                          ("active", "SELECT count(*) FROM memory_entries WHERE status='active'"),
+                          ("conflicts", "SELECT count(*) FROM memory_conflicts")):
+            out[name] = c.execute(sql).fetchone()[0]
+        return out
+    finally:
+        c.close()
+
+
+def cmd_backup(args) -> int:
+    import hashlib
+    import json
+    import shutil
+    import sqlite3
+    from datetime import datetime
+
+    root = data_dir(args)
+    bind_paths(root)
+    stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+    dest = root / "backup" / stamp
+    dest.mkdir(parents=True, exist_ok=True)
+
+    db = root / "memory.db"
+    if not db.exists():
+        print("还没有数据库，无需备份")
+        return 1
+
+    # 用 sqlite 的 backup 接口，保证拿到一致的快照（不复制 WAL 中间态）
+    src = sqlite3.connect(db)
+    tgt = sqlite3.connect(dest / "memory.db")
+    try:
+        src.backup(tgt)
+    finally:
+        tgt.close()
+        src.close()
+
+    if (root / "l0").exists():
+        shutil.copytree(root / "l0", dest / "l0", dirs_exist_ok=True)
+    for name in ("config.toml",):
+        if (root / name).exists():
+            shutil.copy2(root / name, dest / name)
+    # 刻意不含 token.txt
+
+    digest = hashlib.sha256((dest / "memory.db").read_bytes()).hexdigest()
+    manifest = {"created_at": stamp, "db_sha256": digest,
+                "counts": _db_counts(dest / "memory.db"),
+                "l0_files": len(list((dest / "l0").rglob("*"))) if (dest / "l0").exists() else 0}
+    (dest / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2),
+                                        encoding="utf-8")
+
+    # 校验：备份出来的库能打开、计数与源库一致
+    src_counts = _db_counts(db)
+    ok = manifest["counts"] == src_counts
+    print(f"备份 {dest}")
+    print(f"  条目 {src_counts['entries']} · 材料 {src_counts['documents']} · L0 {manifest['l0_files']} 个")
+    print(f"  校验 {'通过 ✓' if ok else '不一致 ✗'}")
+
+    if args.keep:
+        olds = sorted((root / "backup").iterdir(), key=lambda x: x.name)[:-args.keep]
+        for old in olds:
+            shutil.rmtree(old, ignore_errors=True)
+        if olds:
+            print(f"  清理旧备份 {len(olds)} 份（保留最近 {args.keep}）")
+    return 0 if ok else 1
+
+
+def cmd_restore(args) -> int:
+    import json
+    import shutil
+    from datetime import datetime
+
+    root = data_dir(args)
+    src = Path(args.source).expanduser()
+    if not (src / "memory.db").exists():
+        print(f"不是有效备份：{src}")
+        return 1
+    manifest_file = src / "manifest.json"
+    if manifest_file.exists():
+        manifest = json.loads(manifest_file.read_text(encoding="utf-8"))
+        print(f"备份时间 {manifest.get('created_at')} · 条目 {manifest.get('counts', {}).get('entries')}")
+
+    if not args.force:
+        ans = input(f"将覆盖 {root} 的现有数据（会先另存一份），继续？[y/N] ").strip().lower()
+        if ans != "y":
+            print("已取消")
+            return 1
+
+    safety = root / "backup" / f"_before-restore-{datetime.now().strftime('%Y%m%d-%H%M%S')}"
+    safety.mkdir(parents=True, exist_ok=True)
+    for name in ("memory.db", "l0"):
+        p = root / name
+        if p.exists():
+            (shutil.copytree if p.is_dir() else shutil.copy2)(p, safety / name)
+
+    for suffix in ("", "-wal", "-shm"):
+        (Path(str(root / "memory.db") + suffix)).unlink(missing_ok=True)
+    shutil.copy2(src / "memory.db", root / "memory.db")
+    if (src / "l0").exists():
+        shutil.rmtree(root / "l0", ignore_errors=True)
+        shutil.copytree(src / "l0", root / "l0")
+
+    bind_paths(root)
+    counts = _db_counts(root / "memory.db")
+    print(f"已恢复：条目 {counts['entries']} · 材料 {counts['documents']} · 冲突 {counts['conflicts']}")
+    print(f"（恢复前的数据另存于 {safety}）")
+    return 0
+
+
 def cmd_check(args) -> int:
     root = boot(args)
     conn = tb.connect()
@@ -417,6 +531,15 @@ def main() -> int:
     p.set_defaults(func=cmd_config)
 
     sub.add_parser("check").set_defaults(func=cmd_check)
+
+    p = sub.add_parser("backup")
+    p.add_argument("--keep", type=int, default=0, help="只保留最近 N 份")
+    p.set_defaults(func=cmd_backup)
+
+    p = sub.add_parser("restore")
+    p.add_argument("source", help="备份目录")
+    p.add_argument("--force", "-f", action="store_true")
+    p.set_defaults(func=cmd_restore)
 
     p = sub.add_parser("serve")
     p.add_argument("--port", type=int, default=8777)

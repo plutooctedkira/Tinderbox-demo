@@ -162,6 +162,13 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
  .rs{font-size:12.5px;color:#3a4454;line-height:1.5}
  .rc{margin-left:auto;font-size:11px;color:#8a94a6;font-family:Consolas,monospace}
  .relcount{display:block;font-size:10px;color:#4f7a3f}
+ .audit{margin:0 0 10px}
+ .audit h4{margin:0 0 6px;font-size:12px;color:var(--muted);font-weight:600}
+ .arow{display:flex;gap:8px;font-size:11px;color:#5f6b7e;padding:2px 0;border-bottom:1px dashed #eef1f6}
+ .aat{color:#93a0b4;flex:none}
+ .aac{flex:none;color:#3d5a86}
+ .aac2{flex:none;color:#8a5a00}
+ .adt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
  .acts{display:flex;gap:8px;margin:6px 0 10px}
  .acts button{padding:4px 12px;font-size:12px;border:1px solid var(--line);background:#fff;
    border-radius:6px;cursor:pointer}
@@ -348,6 +355,11 @@ async function open(id, card){
         <span class="rtag">${esc(r.relation)}</span>
         <span class="rs">${esc(r.l1_summary)}</span>
         <span class="rc">${r.confidence.toFixed(2)}</span></div>`).join('')}</div>`:''}
+    ${(d.audit && d.audit.length) ? `<div class="audit"><h4>操作轨迹</h4>${
+      d.audit.map(a=>`<div class="arow"><span class="aat">${fmtFull(a.at)}</span>
+        <span class="aac">${esc(a.actor)}</span>
+        <span class="aac2">${esc(a.action)}</span>
+        <span class="adt">${esc(a.detail||'')}</span></div>`).join('')}</div>`:''}
     <div class="acts"><button id="act-edit">编辑</button>
       <button id="act-arch">${d.status==='archived'?'恢复':'归档'}</button></div>
     <pre>${esc(d.text)}</pre>`;
@@ -791,6 +803,9 @@ class Handler(BaseHTTPRequestHandler):
                     tb._reindex(conn, eid)
             finally:
                 conn.close()
+            _c = tb.connect()
+            tb.audit(_c, "owner", "archive" if archived else "restore", eid)
+            _c.close()
             tb.log_event("manual", "memory archived" if archived else "memory restored", entry=eid)
             self._json({"ok": True, "status": new_status})
             return
@@ -900,6 +915,9 @@ class Handler(BaseHTTPRequestHandler):
                 if row is None:
                     self._json({"error": "not found"}, 404)
                     return
+                audit_rows = [dict(r) for r in conn.execute(
+                    "SELECT at, actor, action, detail FROM memory_audit "
+                    "WHERE entry_id=? ORDER BY at DESC LIMIT 8", (eid,))]
                 span = tb.get_span(conn, eid, before=60, after=60)
                 nodes = tb.chain(conn, row["memory_group_id"])
                 prev = None
@@ -923,7 +941,7 @@ class Handler(BaseHTTPRequestHandler):
                                      "confidence": r["confidence"]})
                 self._json({**dict(row), "offset": span["offset"],
                             "length": span["length"], "text": span["text"],
-                            "chain": nodes, "relations": rels})
+                            "chain": nodes, "relations": rels, "audit": audit_rows})
             else:
                 self._json({"error": "not found"}, 404)
         finally:
