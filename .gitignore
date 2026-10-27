@@ -28,3 +28,5 @@ desktop.ini
 
 # 本地工具（下载的便携 git，38 MB）
 .tools/
+.vendor/
+.tmp/
