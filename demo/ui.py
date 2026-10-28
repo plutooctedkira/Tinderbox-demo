@@ -74,20 +74,19 @@ a{color:inherit}
 .hero button{width:30px;height:30px;border-radius:50%;border:0;background:var(--green);color:#fff;cursor:pointer}
 .hero .hue{position:absolute;right:32px;top:28px;font-size:11px;color:#b9ac95;text-align:right;
   line-height:1.9;opacity:.9}
-.homegrid{display:flex;gap:18px;align-items:flex-start}
+.homegrid{display:flex;gap:18px;align-items:stretch}
 .homeleft{flex:1;min-width:0}
-.homeright{width:262px;flex:none;display:flex;flex-direction:column;gap:14px;
-  min-height:calc(100vh - 120px)}
+.homeright{width:262px;flex:none;display:flex;flex-direction:column;min-height:0}
 .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow)}
 .stat .t{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .stat .n{font-family:"Noto Serif SC",Georgia,serif;font-size:26px;line-height:1.2;margin-top:2px}
 .stat .d{font-size:11px;color:#a9a294;margin-top:2px}
 .qa{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
-  box-shadow:var(--shadow);height:50vh;min-height:320px;display:flex;flex-direction:column}
+  box-shadow:var(--shadow);flex:1;min-height:360px;display:flex;flex-direction:column}
 .qa h4{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:.05em}
-.qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:10px;
-  flex:1;min-height:64px;max-height:110px;
+.qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:15px;
+  flex:none;height:105px;
   border:1px solid var(--line);border-radius:10px;background:#fffef9;color:var(--ink);
   cursor:pointer;font-family:inherit;text-align:left}
 .qa button:last-child{margin-bottom:0}
@@ -96,7 +95,8 @@ a{color:inherit}
   place-items:center;color:var(--green2);font-size:14px;flex:none;background:#fff}
 .qa .qt{display:flex;flex-direction:column;gap:1px;font-size:13px;line-height:1.35}
 .qa .qt em{font-style:normal;font-size:11px;color:var(--muted)}
-.art{flex:1;min-height:200px;border-radius:14px}
+.qdiv{border-top:1px dashed #ded4c0;margin:0 2px 14px}
+.art{flex:1;min-height:140px;border-radius:12px}
 .quote{background:linear-gradient(160deg,#f0e7d3,#e7dcc2);border:1px solid #e0d3b8;border-radius:14px;
   padding:18px;color:#6c5a3d;font-family:"Noto Serif SC",Georgia,serif;font-size:13px;line-height:2;
   text-align:center;letter-spacing:.04em}
@@ -325,8 +325,9 @@ input[type=file]{font-size:12px;color:#6b6558}
                 <span class="qt">导入资料<em>支持 txt / md / docx / pdf</em></span></button>
               <button id="qa-recent"><span class="qi">◷</span>
                 <span class="qt">打开最近<em>继续你的工作</em></span></button>
+              <div class="qdiv"></div>
+              <div class="art" id="qa-art" aria-hidden="true"></div>
             </div>
-            <div class="art" id="qa-art" aria-hidden="true"></div>
           </div>
         </div>
       </section>
