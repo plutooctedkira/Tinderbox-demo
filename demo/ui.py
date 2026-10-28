@@ -57,7 +57,7 @@ a{color:inherit}
 .view.on{display:block}
 
 /* ---------- 首页 ---------- */
-.hero{position:relative;border-radius:18px;overflow:hidden;padding:38px 36px 32px;margin:0 0 18px;
+.hero{position:relative;border-radius:18px;overflow:hidden;padding:34px 32px 30px;margin:0 0 16px;
   color:#f7efe1;box-shadow:var(--shadow);
   background:
     radial-gradient(900px 320px at 78% -30%,rgba(255,233,190,.30),transparent 60%),
@@ -73,7 +73,8 @@ a{color:inherit}
 .hero .hue{position:absolute;right:38px;top:34px;font-size:11px;color:#b9ac95;text-align:right;line-height:1.9}
 .homegrid{display:flex;gap:18px;align-items:flex-start}
 .homeleft{flex:1;min-width:0}
-.homeright{width:250px;flex:none;display:flex;flex-direction:column;gap:12px}
+.homeright{width:262px;flex:none;display:flex;flex-direction:column;gap:14px;
+  min-height:calc(100vh - 120px)}
 .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px;box-shadow:var(--shadow)}
 .stat .t{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
@@ -81,11 +82,16 @@ a{color:inherit}
 .stat .d{font-size:11px;color:#a9a294;margin-top:2px}
 .qa{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
 .qa h4{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:.05em}
-.qa button{display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;margin-bottom:6px;
-  border:1px solid var(--line);border-radius:9px;background:#fffef9;font-size:12.5px;color:var(--ink);
+.qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:8px;
+  border:1px solid var(--line);border-radius:10px;background:#fffef9;color:var(--ink);
   cursor:pointer;font-family:inherit;text-align:left}
+.qa button:last-child{margin-bottom:0}
 .qa button:hover{border-color:var(--green3);background:#f4f8f2}
-.qa button .ic{color:var(--green2)}
+.qa .qi{width:30px;height:30px;border-radius:7px;border:1px solid var(--line);display:grid;
+  place-items:center;color:var(--green2);font-size:14px;flex:none;background:#fff}
+.qa .qt{display:flex;flex-direction:column;gap:1px;font-size:13px;line-height:1.35}
+.qa .qt em{font-style:normal;font-size:11px;color:var(--muted)}
+.art{flex:1;min-height:200px;border-radius:14px}
 .quote{background:linear-gradient(160deg,#f0e7d3,#e7dcc2);border:1px solid #e0d3b8;border-radius:14px;
   padding:18px;color:#6c5a3d;font-family:"Noto Serif SC",Georgia,serif;font-size:13px;line-height:2;
   text-align:center;letter-spacing:.04em}
@@ -215,6 +221,17 @@ input[type=file]{font-size:12px;color:#6b6558}
 .sysrow:last-child{border-bottom:0}
 
 /* ---------- 提示 ---------- */
+.modal{position:fixed;inset:0;background:rgba(40,34,26,.42);display:grid;place-items:center;
+  z-index:80;padding:20px}
+.mbox{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;width:min(560px,100%);
+  box-shadow:0 20px 60px rgba(40,30,18,.28)}
+.mbox h3{margin:0 0 6px;font-size:15px}
+.mbox .hint{font-size:12px;color:var(--muted);margin:0 0 12px;line-height:1.7}
+.mbox textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;
+  font-size:13px;font-family:inherit;color:#4a4437;resize:vertical;background:#fffef9}
+.mrow{display:flex;gap:8px;margin-top:10px;align-items:center}
+.mrow input{flex:1;padding:9px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;
+  font-family:inherit;background:#fffef9}
 #toasts{position:fixed;right:22px;bottom:22px;display:flex;flex-direction:column;gap:8px;z-index:99}
 .toast{background:#2c3a2f;color:#f2f4ec;font-size:12.5px;padding:10px 16px;border-radius:10px;
   box-shadow:0 10px 26px rgba(30,40,30,.28);opacity:0;transform:translateY(8px);
@@ -270,33 +287,37 @@ input[type=file]{font-size:12px;color:#6b6558}
     <div class="wrap">
       <!-- 首页 -->
       <section class="view on" id="v-home">
-        <div class="hero">
-          <div class="kicker">Tinderbox</div>
-          <h1>你的记忆，都在这里</h1>
-          <p>记录 · 整理 · 连接 · 成长</p>
-          <form id="herosearch">
-            <input id="heroq" placeholder="试一试：我之前为什么决定 Tinderbox？">
-            <button type="submit">→</button>
-          </form>
-          <div class="hue">知识是时间的沉淀<br>记忆是人生的底色</div>
-        </div>
-
         <div class="homegrid">
           <div class="homeleft">
+            <div class="hero">
+              <div class="kicker">Tinderbox</div>
+              <h1>你的记忆，都在这里</h1>
+              <p>记录 · 整理 · 连接 · 成长</p>
+              <form id="herosearch">
+                <input id="heroq" placeholder="试一试：我之前为什么决定 Tinderbox？">
+                <button type="submit">→</button>
+              </form>
+              <div class="hue">知识是时间的沉淀<br>记忆是人生的底色</div>
+            </div>
+
             <div class="statgrid" id="stats"></div>
             <div class="panel">
               <div class="phead"><h3>最近记忆</h3><span class="more" data-go="library">查看全部 →</span></div>
               <div id="recent"></div>
             </div>
           </div>
+
           <div class="homeright">
             <div class="qa">
               <h4>快捷操作</h4>
-              <button data-go="settings"><span class="ic">⤒</span>导入资料</button>
-              <button data-go="library"><span class="ic">▦</span>浏览记忆库</button>
-              <button data-go="search"><span class="ic">⌕</span>搜索记忆</button>
+              <button id="qa-new"><span class="qi">✎</span>
+                <span class="qt">新建记忆<em>贴一段话或对话</em></span></button>
+              <button data-go="settings" id="qa-import"><span class="qi">⤒</span>
+                <span class="qt">导入资料<em>支持 txt / md / docx / pdf</em></span></button>
+              <button id="qa-recent"><span class="qi">◷</span>
+                <span class="qt">打开最近<em>继续你的工作</em></span></button>
             </div>
-            <div class="quote">好的记忆<br>是留给未来的自己<br>的一句提醒</div>
+            <div class="art" id="qa-art" aria-hidden="true"></div>
           </div>
         </div>
       </section>
@@ -426,6 +447,20 @@ input[type=file]{font-size:12px;color:#6b6558}
   </div>
 </div>
 <div id="toasts"></div>
+<div class="modal" id="newmodal" hidden>
+  <div class="mbox">
+    <h3>新建记忆</h3>
+    <p class="hint">贴一段话或一段对话。系统会把它当一份材料导入，再提炼成记忆——
+      记忆只从导入进来，不在面板里手写。</p>
+    <textarea id="newtext" rows="6" placeholder="例如：今天决定把出摊时间改到 10:30——因为园区 12 点半之后人就走了。"></textarea>
+    <div class="mrow">
+      <input id="newproj" type="text" placeholder="项目名（可留空）">
+      <button class="btn" id="newcancel">取消</button>
+      <button class="btn primary" id="newok">导入</button>
+    </div>
+    <div class="msg" id="newmsg"></div>
+  </div>
+</div>
 
 <script>
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -504,6 +539,37 @@ async function loadHome(){
     bindRows('#recent');
   }catch(e){ toast(e.message,true); }
 }
+function openNew(){
+  $('#newmodal').hidden=false;
+  $('#newtext').focus();
+}
+function closeNew(){ $('#newmodal').hidden=true; $('#newmsg').textContent=''; }
+$('#qa-new').onclick=openNew;
+$('#newcancel').onclick=closeNew;
+$('#newmodal').onclick=e=>{ if(e.target.id==='newmodal') closeNew(); };
+$('#newok').onclick=async()=>{
+  const text=($('#newtext').value||'').trim();
+  const msg=$('#newmsg');
+  if(text.length<10){ msg.style.display='block'; msg.textContent='再写长一点（至少 10 个字）'; return; }
+  const ts=new Date(), pad=n=>String(n).padStart(2,'0');
+  const name='手记-'+ts.getFullYear()+pad(ts.getMonth()+1)+pad(ts.getDate())
+    +'-'+pad(ts.getHours())+pad(ts.getMinutes())+'.md';
+  let bin=''; const buf=new TextEncoder().encode(text);
+  for(let i=0;i<buf.length;i+=0x8000)
+    bin+=String.fromCharCode.apply(null,buf.subarray(i,i+0x8000));
+  msg.style.display='block'; msg.textContent='导入中…';
+  try{
+    const j=await post('/api/upload',{files:[{name,b64:btoa(bin)}],
+      project:$('#newproj').value.trim()});
+    pollJob(j.job, msg, async()=>{
+      toast('已导入并提炼'); closeNew(); $('#newtext').value=''; await loadHome();
+    });
+  }catch(e){ msg.textContent=e.message; }
+};
+$('#qa-recent').onclick=()=>{
+  const panel=$('#recent');
+  if(panel) panel.scrollIntoView({behavior:'smooth',block:'center'});
+};
 function bindRows(sel){
   $$(sel+' .row[data-id], '+sel+' .rescard[data-id]').forEach(el=>{
     el.onclick=()=>openDetail(el.dataset.id);
