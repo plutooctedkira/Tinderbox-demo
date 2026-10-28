@@ -67,11 +67,13 @@ a{color:inherit}
 .hero .kicker{font-size:11.5px;letter-spacing:.28em;color:#c8bda6;text-transform:uppercase}
 .hero h1{margin:10px 0 6px;font-size:31px;letter-spacing:1px;color:#fff8ea}
 .hero p{margin:0 0 20px;color:#cfc4b1;font-size:13px;letter-spacing:.12em}
+.hero{text-align:center}
 .hero form{display:flex;align-items:center;gap:10px;background:rgba(255,252,244,.96);
-  border-radius:24px;padding:10px 16px;max-width:620px}
+  border-radius:24px;padding:10px 16px;max-width:620px;margin:0 auto}
 .hero input{flex:1;border:0;outline:none;background:transparent;font-size:13.5px;color:#3a332a;font-family:inherit}
 .hero button{width:30px;height:30px;border-radius:50%;border:0;background:var(--green);color:#fff;cursor:pointer}
-.hero .hue{position:absolute;right:38px;top:34px;font-size:11px;color:#b9ac95;text-align:right;line-height:1.9}
+.hero .hue{position:absolute;right:32px;top:28px;font-size:11px;color:#b9ac95;text-align:right;
+  line-height:1.9;opacity:.9}
 .homegrid{display:flex;gap:18px;align-items:flex-start}
 .homeleft{flex:1;min-width:0}
 .homeright{width:262px;flex:none;display:flex;flex-direction:column;gap:14px;
@@ -81,9 +83,11 @@ a{color:inherit}
 .stat .t{font-size:11.5px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .stat .n{font-family:"Noto Serif SC",Georgia,serif;font-size:26px;line-height:1.2;margin-top:2px}
 .stat .d{font-size:11px;color:#a9a294;margin-top:2px}
-.qa{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;box-shadow:var(--shadow)}
+.qa{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;
+  box-shadow:var(--shadow);height:50vh;min-height:320px;display:flex;flex-direction:column}
 .qa h4{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:.05em}
-.qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:8px;
+.qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:10px;
+  flex:1;min-height:64px;max-height:110px;
   border:1px solid var(--line);border-radius:10px;background:#fffef9;color:var(--ink);
   cursor:pointer;font-family:inherit;text-align:left}
 .qa button:last-child{margin-bottom:0}
@@ -108,9 +112,12 @@ a{color:inherit}
 .row .ic{width:26px;height:26px;border-radius:8px;background:#f2ece0;color:var(--green2);
   display:grid;place-items:center;font-size:13px;flex:none}
 .row .tx{flex:1;min-width:0}
-.row .tx .s{font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .tx{min-width:0}
+.row .tx .s{font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  max-width:46em}
 .row .tx .m{font-size:11px;color:var(--muted);margin-top:1px}
-.row .ts{font-size:11.5px;color:#a9a294;white-space:nowrap}
+.row .ts{font-size:11.5px;color:#a9a294;white-space:nowrap;width:68px;flex:none;text-align:right}
+.row > .badge{width:62px;flex:none;text-align:center}
 
 /* ---------- 标签 ---------- */
 .badge{font-size:11px;padding:1px 9px;border-radius:20px;border:1px solid;white-space:nowrap;
@@ -256,6 +263,7 @@ input[type=file]{font-size:12px;color:#6b6558}
   .side .foot{display:none}
   .homegrid,.detailgrid,.libgrid{flex-direction:column}
   .homeright,.sidecol,.filter{width:auto}
+  .qa{height:auto;min-height:0}
   .statgrid{grid-template-columns:repeat(2,1fr)}
   .hero{padding:26px 20px}
   .hero h1{font-size:23px}
@@ -499,6 +507,7 @@ function badge(it){
   return `<span class="badge ${STCLS[st]||'dim'}">${STNAME[st]||st}</span>`;
 }
 function catTag(c){ return `<span class="cat">${CATNAME[c]||c||'其他'}</span>`; }
+function clip(s,n){ s=String(s||''); return s.length>n? s.slice(0,n-1)+'…' : s; }
 
 /* ---------------- 导航 ---------------- */
 let view='home', lastDetail=null;
@@ -533,7 +542,7 @@ async function loadHome(){
     $('#recent').innerHTML = r.items.length? r.items.map(it=>`
       <div class="row" data-id="${it.entry_id}">
         <div class="ic">${it.category==='decision'?'◆':it.category==='task'?'▢':it.category==='preference'?'❖':'▤'}</div>
-        <div class="tx"><div class="s">${esc(it.l1_summary)}</div>
+        <div class="tx"><div class="s" title="${esc(it.l1_summary)}">${esc(clip(it.l1_summary,40))}</div>
           <div class="m">${catTag(it.category)} <span style="margin-left:6px">${fmt(it.created_at)}</span></div></div>
         ${badge(it)}<div class="ts">${rel(it.created_at)}</div>
       </div>`).join('') : '<div class="empty">还没有记忆，去「设置 → 导入」放一些进来</div>';
