@@ -22,9 +22,9 @@ a{color:inherit}
 
 /* ---------- 侧栏 ---------- */
 .side{width:214px;flex:none;background:var(--green);color:#dfe5d5;position:sticky;top:0;
-  height:100vh;display:flex;flex-direction:column;padding:22px 14px 18px}
+  height:100vh;display:flex;flex-direction:column;padding:0 14px 18px}
 .brand{display:flex;align-items:center;gap:9px;color:#fff;font-family:"Noto Serif SC",Georgia,serif;
-  font-size:17px;letter-spacing:.3px;padding:2px 8px 22px}
+  font-size:17px;letter-spacing:.3px;height:60px;flex:none;padding:0 8px;box-sizing:border-box}
 .brand .mark{width:26px;height:26px;border-radius:7px;background:#e7dcc4;color:var(--green);
   display:grid;place-items:center;font-size:14px}
 .nav{display:flex;flex-direction:column;gap:2px}
@@ -38,22 +38,24 @@ a{color:inherit}
 .side .foot .leaf{display:block;margin-bottom:6px;opacity:.6;font-size:15px}
 
 /* ---------- 主区 ---------- */
-.main{flex:1;min-width:0;display:flex;flex-direction:column}
-.topbar{display:flex;align-items:center;gap:16px;padding:16px 26px 10px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh}
+.topbar{display:flex;align-items:center;gap:16px;height:60px;flex:none;
+  padding:0 26px;box-sizing:border-box}
 .searchbox{flex:1;display:flex;align-items:center;gap:10px;background:var(--card);
-  border:1px solid var(--line);border-radius:22px;padding:9px 16px;box-shadow:var(--shadow)}
+  border:1px solid var(--line);border-radius:22px;padding:8px 16px;height:40px;
+  box-sizing:border-box;box-shadow:var(--shadow)}
 .searchbox input{flex:1;border:0;outline:none;background:transparent;font-size:13.5px;color:var(--ink);
   font-family:inherit}
 .searchbox .go{width:26px;height:26px;border-radius:50%;border:0;background:var(--green);
   color:#fff;cursor:pointer;font-size:13px}
 .who{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .who b{color:var(--ink);font-weight:600}
-.wrap{padding:6px 26px 40px;flex:1;min-height:0;overflow:auto}
+.wrap{padding:10px 26px 40px;flex:1}
 .view{display:none}
 .view.on{display:block}
 
 /* ---------- 首页 ---------- */
-.hero{position:relative;border-radius:18px;overflow:hidden;padding:40px 38px 34px;margin:4px 0 18px;
+.hero{position:relative;border-radius:18px;overflow:hidden;padding:38px 36px 32px;margin:0 0 18px;
   color:#f7efe1;box-shadow:var(--shadow);
   background:
     radial-gradient(900px 320px at 78% -30%,rgba(255,233,190,.30),transparent 60%),
@@ -227,7 +229,8 @@ input[type=file]{font-size:12px;color:#6b6558}
   .app{flex-direction:column}
   .side{width:auto;height:auto;position:static;flex-direction:row;align-items:center;gap:6px;
     padding:10px 12px;overflow-x:auto}
-  .brand{padding:0 10px 0 4px;font-size:15px;white-space:nowrap}
+  .brand{height:auto;padding:0 10px 0 4px;font-size:15px;white-space:nowrap}
+  .topbar{height:auto;padding:10px 14px}
   .nav{flex-direction:row}
   .nav a{white-space:nowrap;padding:7px 10px}
   .side .foot{display:none}
