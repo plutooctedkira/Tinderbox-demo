@@ -86,7 +86,7 @@ a{color:inherit}
   box-shadow:var(--shadow);flex:1;min-height:360px;display:flex;flex-direction:column}
 .qa h4{margin:0 0 10px;font-size:12.5px;color:var(--muted);font-weight:600;letter-spacing:.05em}
 .qa button{display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;margin-bottom:15px;
-  flex:none;height:105px;
+  flex:none;height:95px;
   border:1px solid var(--line);border-radius:10px;background:#fffef9;color:var(--ink);
   cursor:pointer;font-family:inherit;text-align:left}
 .qa button:last-child{margin-bottom:0}
