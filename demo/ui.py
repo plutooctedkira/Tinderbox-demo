@@ -144,6 +144,55 @@ a{color:inherit}
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .rescard .mt{display:flex;gap:14px;margin-top:8px;font-size:11px;color:#a9a294}
 
+/* ---------- 搜索页 ---------- */
+.srchead{margin:2px 0 14px}
+.srchead h2{margin:0 0 4px;font-size:20px;color:#332c22}
+.srchead p{margin:0;font-size:12.5px;color:var(--muted)}
+.sbig{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);
+  border-radius:14px;padding:10px 14px;box-shadow:var(--shadow);margin-bottom:12px}
+.sbig .sicon{color:#b3ab9b;font-size:16px}
+.sbig input{flex:1;border:0;outline:none;background:transparent;font-size:14.5px;color:var(--ink);
+  font-family:inherit;min-width:0}
+.sbig .sclear{border:0;background:transparent;color:#b3ab9b;font-size:13px;cursor:pointer;padding:2px 6px}
+.sbig .sclear:hover{color:var(--ink)}
+.sbig .sgo{width:34px;height:34px;border:0;border-radius:50%;background:var(--green);color:#fff;
+  font-size:15px;cursor:pointer;flex:none}
+.sbig .sgo:disabled{opacity:.6;cursor:default}
+.sbig:focus-within{border-color:var(--green3);box-shadow:0 0 0 3px rgba(63,115,85,.12)}
+.srow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.srow select{padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);
+  font-size:12.5px;color:#5f5a4e;font-family:inherit;cursor:pointer}
+.srow select:focus{outline:none;border-color:var(--green3)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;margin:0}
+.seg button{border:0;background:var(--card);padding:7px 14px;font-size:12.5px;color:#6b6558;
+  cursor:pointer;font-family:inherit}
+.seg button.on{background:var(--green);color:#fff}
+.seg button.off{color:#b3ab9b;cursor:default}
+.swho{font-size:12px;color:var(--muted)}
+.ssort{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.srclist{display:flex;flex-direction:column;gap:10px}
+.rescard{display:flex;gap:13px;align-items:flex-start;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:14px 16px;box-shadow:var(--shadow);cursor:pointer}
+.rescard:hover{border-color:#cdbfa1}
+.ricon{width:34px;height:34px;border-radius:9px;background:#f2ece0;color:var(--green2);
+  display:grid;place-items:center;font-size:15px;flex:none}
+.rbody{flex:1;min-width:0}
+.rtop{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rtitle{font-family:"Noto Serif SC",Georgia,serif;font-size:14.5px;color:#3a332a}
+.rsnip{font-size:12.5px;color:#6f6a5d;line-height:1.75;margin-top:4px;
+  overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.rsnip mark{background:#F2E4C8;color:#5c4a24;padding:0 2px;border-radius:3px}
+.rmeta{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:7px;font-size:11px;color:#a9a294}
+.rmeta .src{border:0;background:transparent;padding:0;color:var(--green2);font-size:11px;
+  cursor:pointer;text-decoration:underline;text-underline-offset:2px;font-family:inherit}
+.rmeta .nosrc{color:#c0b7a5}
+.rgo{color:#c9bfa9;font-size:18px;align-self:center;flex:none}
+.sempty{padding:44px 18px;text-align:center}
+.sempty .et{font-family:"Noto Serif SC",Georgia,serif;font-size:15px;color:#3a332a;margin-bottom:6px}
+.sempty .ed{font-size:12.5px;color:var(--muted);line-height:1.8}
+.sempty .sg{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.smore{text-align:center;margin:14px 0 4px}
+
 /* ---------- 表格（记忆库 / 资料） ---------- */
 .tbl{width:100%;border-collapse:collapse;font-size:12.5px}
 .tbl th{text-align:left;font-weight:600;color:var(--muted);font-size:11.5px;padding:10px 14px;
@@ -334,12 +383,49 @@ input[type=file]{font-size:12px;color:#6b6558}
 
       <!-- 搜索 -->
       <section class="view" id="v-search">
-        <div class="phead" style="padding:0 0 12px;border:0">
-          <h2 style="margin:0;font-size:17px">记忆搜索</h2>
-          <span id="srchint" style="margin-left:auto;font-size:12px;color:var(--muted)"></span>
+        <div class="srchead">
+          <h2>想找回哪段记忆？</h2>
+          <p>试着描述你记得的事情，不必记住原来的关键词。</p>
         </div>
-        <div class="toolbar" id="srchips"></div>
-        <div id="srclist"></div>
+
+        <form class="sbig" id="sform">
+          <span class="sicon">⌕</span>
+          <input id="sq" type="search" placeholder="例如：我之前为什么把出摊时间改了？"
+                 autocomplete="off" aria-label="搜索记忆">
+          <button class="sclear" type="button" id="sclear" title="清空" hidden>✕</button>
+          <button class="sgo" type="submit" id="sgo" aria-label="搜索">→</button>
+        </form>
+
+        <div class="srow">
+          <div class="seg" id="sscope">
+            <button data-scope="all" class="on">全部</button>
+            <button data-scope="mem">记忆条目</button>
+            <button data-scope="doc" class="off" title="原始资料全文检索尚未实现">原始资料</button>
+          </div>
+          <select id="stime" aria-label="时间范围">
+            <option value="all">时间范围</option>
+            <option value="7">最近 7 天</option>
+            <option value="30">最近 30 天</option>
+            <option value="365">最近一年</option>
+          </select>
+          <select id="scat" aria-label="类型">
+            <option value="">类型</option>
+            <option value="decision">决策</option>
+            <option value="preference">偏好</option>
+            <option value="task">计划</option>
+            <option value="knowledge">事实</option>
+          </select>
+          <span class="swho" id="sinfo"></span>
+          <div class="ssort" id="ssortbox">
+            <span>排序</span>
+            <select id="ssort" aria-label="排序方式">
+              <option value="rel">相关性高</option>
+              <option value="time">最近</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="sresults"></div>
       </section>
 
       <!-- 记忆库 -->
@@ -591,37 +677,139 @@ function bindRows(sel){
 }
 
 /* ---------------- 搜索 ---------------- */
-let srchCat='all', srchQ='';
-function srchChips(){
-  const cats=[['all','全部'],['decision','决策'],['preference','偏好'],['task','计划'],['knowledge','事实']];
-  $('#srchips').innerHTML = cats.map(([k,n])=>
-    `<button class="chip ${srchCat===k?'on':''}" data-cat="${k}">${n}</button>`).join('');
-  $$('#srchips .chip').forEach(b=>b.onclick=()=>{ srchCat=b.dataset.cat; renderSearch(); });
+let srchQ='', srchStatus='all', srchCat='', srchSort='rel', srchTime='all',
+    srchOffset=0, srchTotal=0, srchBusy=false, srchScope='all';
+const SUGGEST=['定价','选址','供应商','改口','成本','周末'];
+
+function sSetInfo(t){ $('#sinfo').textContent=t||''; }
+function sClearBtn(){ $('#sclear').hidden = !$('#sq').value.trim() && !srchQ; }
+
+function sInitial(){
+  $('#sresults').innerHTML=`<div class="sempty">
+    <div class="et">还没有搜索</div>
+    <div class="ed">输入一段描述或关键词，或者试试这些：</div>
+    <div class="sg">${SUGGEST.map(x=>`<button class="chip" data-q="${x}">${x}</button>`).join('')}</div>
+  </div>`;
+  $$('#sresults .chip').forEach(b=>b.onclick=()=>{ $('#sq').value=b.dataset.q; doSearch(b.dataset.q); });
+  sSetInfo('');
+  sClearBtn();
 }
-async function renderSearch(){
-  srchChips();
-  if(!srchQ){ $('#srclist').innerHTML='<div class="empty">输入关键词开始搜索</div>'; $('#srchint').textContent=''; return; }
-  $('#srclist').innerHTML='<div class="empty"><span class="spin"></span> 搜索中…</div>';
+
+async function doSearch(q){
+  srchQ=(q!==undefined? q : $('#sq').value).trim();
+  srchOffset=0;
+  if(!srchQ){ sInitial(); return; }
+  if(srchBusy) return;
+  srchBusy=true; $('#sgo').disabled=true;
+  $('#sresults').innerHTML='<div class="sempty"><div class="ed"><span class="spin"></span> 正在检索…</div></div>';
+  sClearBtn();
+  await sFetch();
+  srchBusy=false; $('#sgo').disabled=false;
+}
+
+function sQuery(extra){
+  const p=new URLSearchParams({q:srchQ, mode:'hybrid', sort:srchSort,
+    status:srchStatus, limit:'10', offset:String(srchOffset)});
+  if(srchCat) p.set('category', srchCat);
+  return '/api/search?'+p.toString();
+}
+
+async function sFetch(append){
   try{
-    const d=await api('/api/search?q='+encodeURIComponent(srchQ)+'&mode=hybrid');
-    let items=d.items;
-    if(srchCat!=='all') items=items.filter(it=>it.category===srchCat);
-    $('#srchint').textContent=`找到 ${items.length} 条 · ${d.ms} ms`;
-    $('#srclist').innerHTML = items.length? items.map(it=>`
-      <div class="rescard" data-id="${it.entry_id}">
-        <div class="hd">${badge(it)}${catTag(it.category)}</div>
-        <div class="ti">${esc(it.l1_summary)}</div>
-        <div class="sn">${esc(it.l1_summary)}</div>
-        <div class="mt"><span>${fmt(it.created_at)}</span>
-          <span>相关度 ${Math.round((it.score||0)*100)}%</span>
-          ${it.rel_count?`<span>相关 ${it.rel_count}</span>`:''}</div>
-      </div>`).join('') : '<div class="empty">没有命中</div>';
-    bindRows('#srclist');
-  }catch(e){ $('#srclist').innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+    const d=await api(sQuery());
+    let items=d.items||[];
+    if(srchTime!=='all'){
+      const cut=Date.now()-Number(srchTime)*86400e3;
+      items=items.filter(it=>new Date(it.created_at).getTime()>=cut);
+    }
+    srchTotal=d.total||0;
+    sSetInfo(`找到 ${srchTotal} 条相关结果`);
+    if(srchScope==='doc'){
+      $('#sresults').innerHTML=`<div class="sempty"><div class="et">原始资料全文检索尚未开放</div>
+        <div class="ed">当前只索引记忆摘要，不索引原文全文。这条路径留作预览，暂不返回结果。</div>
+        <div class="sg"><button class="chip" id="backmem">回到记忆条目</button></div></div>`;
+      $('#backmem').onclick=()=>{ srchScope='all'; syncScope(); doSearch(srchQ); };
+      return;
+    }
+    if(!items.length){
+      const filtered = srchCat || srchStatus!=='all' || srchTime!=='all';
+      $('#sresults').innerHTML=`<div class="sempty"><div class="et">${filtered?'当前筛选下没有匹配':'没有找到匹配的记忆'}</div>
+        <div class="ed">${filtered?'可以清除筛选再试，或换个说法。':'换个说法，或减少关键词再试一次。'}</div>
+        <div class="sg">${filtered?'<button class="chip" id="clearf">清除筛选</button>':''}
+          <button class="chip" id="retry">用原词重试</button></div></div>`;
+      const cf=$('#clearf'); if(cf) cf.onclick=()=>{ srchCat=''; srchStatus='all'; srchTime='all';
+        $('#scat').value=''; $('#stime').value='all'; syncScope(); doSearch(srchQ); };
+      $('#retry').onclick=()=>doSearch(srchQ);
+      return;
+    }
+    const rows=items.map(sCard).join('');
+    const more = srchOffset+items.length < Math.min(srchTotal,200);
+    if(append){
+      const old=$('#sresults .srclist');
+      if(old) old.insertAdjacentHTML('beforeend', rows);
+      const box=$('#sresults .smore');
+      if(!more && box) box.remove();
+    }else{
+      $('#sresults').innerHTML = `<div class="srclist">${rows}</div>` +
+        (more? `<div class="smore"><button class="btn" id="smore">加载更多</button></div>`:'');
+    }
+    $$('#sresults .rescard').forEach(c=>c.onclick=()=>openDetail(c.dataset.id));
+    $$('#sresults .src').forEach(b=>b.onclick=ev=>{ ev.stopPropagation(); openDoc(b.dataset.doc); });
+    const sm=$('#smore');
+    if(sm) sm.onclick=async()=>{ sm.disabled=true; sm.textContent='加载中…';
+      srchOffset+=10; await sFetch(true); };
+  }catch(e){
+    $('#sresults').innerHTML=`<div class="sempty"><div class="et">检索失败</div>
+      <div class="ed">${esc(e.message)}</div>
+      <div class="sg"><button class="chip" id="retry2">重试</button></div></div>`;
+    const r=$('#retry2'); if(r) r.onclick=()=>doSearch(srchQ);
+    sSetInfo('');
+  }
 }
-function doSearch(q){ srchQ=(q||'').trim(); go('search'); renderSearch(); }
-$('#topsearch').onsubmit=e=>{ e.preventDefault(); doSearch($('#q').value); };
-$('#herosearch').onsubmit=e=>{ e.preventDefault(); doSearch($('#heroq').value); };
+
+function sCard(it){
+  const o=it.origin||{};
+  const snippet=it.snippet||esc(clip(it.l1_summary,90));
+  const rel=Math.round((it.s_rel||0)*100);
+  return `<article class="rescard" data-id="${it.entry_id}">
+    <div class="ricon">${it.category==='decision'?'◆':it.category==='task'?'▢':
+      it.category==='preference'?'❖':'▤'}</div>
+    <div class="rbody">
+      <div class="rtop">
+        <span class="rtitle">${esc(clip(it.l1_summary,34))}</span>
+        <span class="cat">${CATNAME[it.category]||it.category}</span>
+        ${badge(it)}
+      </div>
+      <div class="rsnip">${snippet}</div>
+      <div class="rmeta">
+        <span>${fmt(it.created_at)}</span>
+        <span>匹配 ${rel}%</span>
+        ${it.snippet?'':'<span class="nosrc">命中材料名</span>'}
+        ${o.doc_title?`<button class="src" data-doc="${o.doc_id}">来源《${esc(o.doc_title)}》</button>`:
+          '<span class="nosrc">未关联材料</span>'}
+      </div>
+    </div>
+    <div class="rgo">›</div>
+  </article>`;
+}
+
+function syncScope(){
+  $$('#sscope button').forEach(b=>{
+    b.classList.toggle('on', b.dataset.scope===srchScope ||
+      (srchScope==='all' && b.dataset.scope==='all'));
+  });
+}
+$('#sform').onsubmit=e=>{ e.preventDefault(); doSearch(); };
+$('#sq').addEventListener('input',()=>{ sClearBtn(); });
+$('#sclear').onclick=()=>{ $('#sq').value=''; srchQ=''; sInitial(); $('#sq').focus(); };
+$('#scat').onchange=e=>{ srchCat=e.target.value; doSearch(srchQ); };
+$('#stime').onchange=e=>{ srchTime=e.target.value; doSearch(srchQ); };
+$('#ssort').onchange=e=>{ srchSort=e.target.value; doSearch(srchQ); };
+$$('#sscope button').forEach(b=>b.onclick=()=>{
+  if(b.classList.contains('off')){ srchScope='doc'; syncScope(); sFetch(); return; }
+  srchScope=b.dataset.scope; syncScope(); doSearch(srchQ);
+});
+function renderSearch(){ syncScope(); if(srchQ) doSearch(srchQ); else sInitial(); }
 
 /* ---------------- 记忆库 ---------------- */
 let libStatus='active', libCat='';

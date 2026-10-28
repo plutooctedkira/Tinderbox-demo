@@ -584,12 +584,18 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if u.path == "/api/search":
                 q = (qs.get("q") or [""])[0]
-                mode = (qs.get("mode") or ["active"])[0]
-                if mode not in ("active", "history"):
-                    mode = "active"
+                mode = (qs.get("mode") or ["hybrid"])[0]
+                if mode not in ("active", "history", "hybrid"):
+                    mode = "hybrid"
+                status = (qs.get("status") or ["all"])[0]
+                category = (qs.get("category") or [""])[0]
+                sort = (qs.get("sort") or ["rel"])[0]
+                limit = int((qs.get("limit") or ["10"])[0])
+                offset = int((qs.get("offset") or ["0"])[0])
                 t = time.time()
-                items = tb.search(conn, q, mode=mode, top_k=10)
-                self._json({"items": items, "mode": mode,
+                out = tb.search_page(conn, q, mode=mode, status=status, category=category,
+                                     sort=sort, limit=limit, offset=offset)
+                self._json({**out, "mode": mode, "sort": sort,
                             "ms": round((time.time() - t) * 1000, 1),
                             "tokenizer": tb.TOKENIZER})
             elif u.path == "/api/concepts":

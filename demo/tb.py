@@ -851,6 +851,68 @@ def _apply_title_bonus(conn, hits: list[dict], query: str) -> None:
             h["title_hit"] = True
 
 
+def _snippet(summary: str, query: str, width: int = 26) -> str:
+    """从摘要里截一段带匹配词的窗口，用 <mark> 标出来。
+
+    索引列就是摘要本身，所以这段文字是真的命中区间，不是编的。
+    """
+    toks = [t for t in tokenize(query) if len(t) >= 1]
+    if not toks or not summary:
+        return ""
+    low = summary.lower()
+    pos, hit = -1, ""
+    for t in toks:
+        i = low.find(t.lower())
+        if i >= 0 and (pos < 0 or i < pos):
+            pos, hit = i, t
+    if pos < 0:
+        return ""
+    start = max(0, pos - width)
+    end = min(len(summary), pos + len(hit) + width)
+    body = summary[start:end]
+    # 只标第一次命中，避免整段都是 mark
+    k = body.lower().find(hit.lower())
+    if k >= 0:
+        body = body[:k] + "<mark>" + body[k:k + len(hit)] + "</mark>" + body[k + len(hit):]
+    return ("…" if start > 0 else "") + body + ("…" if end < len(summary) else "")
+
+
+def search_page(conn, query: str, *, mode: str = "hybrid", status: str = "all",
+                category: str = "", sort: str = "rel", limit: int = 10,
+                offset: int = 0, cap: int = 200) -> dict:
+    """带筛选/排序/分页的搜索。返回 {items, total, offset, limit}。
+
+    total 是**本次召回范围内**的数量（上限 cap），不是全库精确计数。
+    """
+    limit = max(1, min(int(limit or 10), 50))
+    offset = max(0, int(offset or 0))
+    all_items = search(conn, query, mode=("hybrid" if mode == "hybrid" else mode), top_k=cap)
+
+    if status == "active":
+        all_items = [x for x in all_items if x["status"] == "active"]
+    elif status == "pending":
+        all_items = [x for x in all_items if x["status"] == "pending_merge"]
+    elif status == "history":
+        all_items = [x for x in all_items if x["status"] in ("superseded", "archived")]
+    if category:
+        all_items = [x for x in all_items if x["category"] == category]
+
+    if sort == "time":
+        all_items.sort(key=lambda x: x["created_at"], reverse=True)
+    else:
+        all_items.sort(key=lambda x: (x.get("s_rel", 0), x.get("score", 0)), reverse=True)
+
+    total = len(all_items)
+    page = all_items[offset:offset + limit]
+    for it in page:
+        it["snippet"] = _snippet(it["l1_summary"], query)
+        try:
+            it["origin"] = entry_origin(conn, it["entry_id"])
+        except Exception:
+            it["origin"] = {"doc_title": "", "doc_id": "", "project": ""}
+    return {"items": page, "total": total, "offset": offset, "limit": limit}
+
+
 def title_rows(conn, query: str, statuses: tuple[str, ...]) -> list:
     """FTS 无命中时的兜底：按来源文件名、关键词、摘要做字面匹配。
 
