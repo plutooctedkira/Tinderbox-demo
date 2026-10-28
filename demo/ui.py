@@ -311,12 +311,18 @@ input[type=file]{font-size:12px;color:#6b6558}
 .cbtn{font-size:11.5px;padding:0 14px}
 .mini{font-size:11px;padding:0 13px}
 .revbtn{font-size:11px;padding:0 13px;margin-left:auto}
-.seg{border-radius:999px;height:var(--btn-h);box-sizing:border-box;
-  display:inline-flex;align-items:stretch;overflow:hidden;flex:none}
-.seg button{height:100%;padding:0 16px;border:0;display:inline-flex;align-items:center;
-  justify-content:center;line-height:1;box-sizing:border-box}
+.scopebtns{display:inline-flex;gap:8px;flex:none}
+.scopebtns .sbtn{height:var(--btn-h);box-sizing:border-box;padding:0 18px;border-radius:999px;
+  border:1px solid var(--line);background:var(--card);color:#6b6558;font-size:12.5px;
+  font-family:inherit;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
+  line-height:1;white-space:nowrap}
+.scopebtns .sbtn:hover{border-color:var(--green3);color:var(--green2)}
+.scopebtns .sbtn.on{background:var(--green);border-color:var(--green);color:#fff}
+.scopebtns .sbtn.off{color:#b3ab9b;cursor:default;background:transparent}
+.scopebtns .sbtn.off:hover{border-color:var(--line);color:#b3ab9b}
+.srow > *{height:var(--btn-h);box-sizing:border-box;vertical-align:middle}
 .srow select,.ssort select{height:var(--btn-h);padding:0 12px;box-sizing:border-box;
-  border-radius:999px;line-height:1}
+  border-radius:999px;line-height:1;font-family:inherit}
 .sbig .sgo{width:var(--btn-h);height:var(--btn-h)}
 .searchbox .go{width:var(--btn-h);height:var(--btn-h);font-size:13px}
 .sbig .sclear{height:var(--btn-h);width:var(--btn-h);display:inline-flex;align-items:center;
@@ -421,10 +427,10 @@ input[type=file]{font-size:12px;color:#6b6558}
         </form>
 
         <div class="srow">
-          <div class="seg" id="sscope">
-            <button data-scope="all" class="on">全部</button>
-            <button data-scope="mem">记忆条目</button>
-            <button data-scope="doc" class="off" title="原始资料全文检索尚未实现">原始资料</button>
+          <div class="scopebtns" id="sscope">
+            <button data-scope="all" class="sbtn on">全部</button>
+            <button data-scope="mem" class="sbtn">记忆条目</button>
+            <button data-scope="doc" class="sbtn off" title="原始资料全文检索尚未实现">原始资料</button>
           </div>
           <select id="stime" aria-label="时间范围">
             <option value="all">时间范围</option>
