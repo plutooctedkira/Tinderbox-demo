@@ -311,8 +311,9 @@ input[type=file]{font-size:12px;color:#6b6558}
 .cbtn{font-size:11.5px;padding:0 14px}
 .mini{font-size:11px;padding:0 13px}
 .revbtn{font-size:11px;padding:0 13px;margin-left:auto}
-.seg{border-radius:999px}
-.seg button{height:var(--btn-h);padding:0 16px;display:inline-flex;align-items:center;
+.seg{border-radius:999px;height:var(--btn-h);box-sizing:border-box;
+  display:inline-flex;align-items:stretch;overflow:hidden;flex:none}
+.seg button{height:100%;padding:0 16px;border:0;display:inline-flex;align-items:center;
   justify-content:center;line-height:1;box-sizing:border-box}
 .srow select,.ssort select{height:var(--btn-h);padding:0 12px;box-sizing:border-box;
   border-radius:999px;line-height:1}
