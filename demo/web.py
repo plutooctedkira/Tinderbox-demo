@@ -584,9 +584,10 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if u.path == "/api/search":
                 q = (qs.get("q") or [""])[0]
-                mode = (qs.get("mode") or ["hybrid"])[0]
+                # 默认仍只看现行版本（老调用方依赖这个行为）；界面显式传 hybrid
+                mode = (qs.get("mode") or ["active"])[0]
                 if mode not in ("active", "history", "hybrid"):
-                    mode = "hybrid"
+                    mode = "active"
                 status = (qs.get("status") or ["all"])[0]
                 category = (qs.get("category") or [""])[0]
                 sort = (qs.get("sort") or ["rel"])[0]
