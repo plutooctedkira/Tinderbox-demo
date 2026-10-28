@@ -53,7 +53,7 @@ a{color:inherit}
   color:#fff;cursor:pointer;font-size:13px}
 .who{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .who b{color:var(--ink);font-weight:600}
-.wrap{padding:10px 26px 40px;flex:1}
+.wrap{padding:24px 26px 40px;flex:1}
 .view{display:none}
 .view.on{display:block}
 
@@ -363,15 +363,6 @@ input[type=file]{font-size:12px;color:#6b6558}
   </aside>
 
   <div class="main">
-    <div class="topbar">
-      <form class="searchbox" id="topsearch">
-        <span style="color:#b3ab9b">⌕</span>
-        <input id="q" placeholder="搜索记忆、对话、文件，或问一句…" autocomplete="off">
-        <button class="go" type="submit">→</button>
-      </form>
-      <div class="who">你好，<b>主人</b></div>
-    </div>
-
     <div class="wrap">
       <!-- 首页 -->
       <section class="view on" id="v-home">
