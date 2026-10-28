@@ -5,6 +5,7 @@
 
 PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="build" content="ui-2026-10-28-a">
 <title>Tinderbox</title>
 <style>
 :root{
@@ -13,12 +14,13 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
   --red:#a8442c; --amber:#a97a22; --shadow:0 8px 26px rgba(58,44,28,.07);
 }
 *{box-sizing:border-box}
+html{scrollbar-gutter:stable}
 html,body{margin:0;height:100%}
 body{background:var(--paper);color:var(--ink);
   font:14px/1.65 "Segoe UI","Microsoft YaHei",system-ui,sans-serif}
 h1,h2,h3,h4,.serif{font-family:"Noto Serif SC","Songti SC",Georgia,serif;font-weight:600}
 a{color:inherit}
-.app{display:flex;min-height:100vh}
+.app{display:flex;min-height:100vh;align-items:stretch}
 
 /* ---------- 侧栏 ---------- */
 .side{width:214px;flex:none;background:var(--green);color:#dfe5d5;position:sticky;top:0;
