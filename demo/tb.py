@@ -1322,6 +1322,30 @@ def entry_origin(conn, entry_id: str) -> dict:
     return out
 
 
+def recent_entries(conn, limit: int = 8) -> list[dict]:
+    """最近发生变化的记忆（首页「最近记忆」用）。"""
+    return [dict(r) for r in conn.execute(
+        "SELECT entry_id, l1_summary, category, status, extract_state, created_at, "
+        "coalesce(refined_at, created_at) AS at FROM memory_entries "
+        "WHERE status IN ('active','pending_merge') "
+        "ORDER BY at DESC LIMIT ?", (max(1, min(limit, 50)),))]
+
+
+def list_documents(conn, limit: int = 100) -> list[dict]:
+    """原始资料清单。"""
+    return [dict(r) for r in conn.execute(
+        "SELECT doc_id, title, source, char_count, entry_count, created_at, "
+        "raw_size, compressed_size FROM memory_documents "
+        "ORDER BY created_at DESC LIMIT ?", (max(1, min(limit, 500)),))]
+
+
+def document_entries(conn, doc_id: str, limit: int = 100) -> list[dict]:
+    """某份材料下的记忆。"""
+    return [dict(r) for r in conn.execute(
+        "SELECT entry_id, l1_summary, category, status, created_at FROM memory_entries "
+        "WHERE doc_id=? ORDER BY l0_offset LIMIT ?", (doc_id, max(1, min(limit, 300))))]
+
+
 def list_entries(conn, *, status: str = "archived", category: str = "",
                  limit: int = 50) -> list[dict]:
     """按状态列记忆（归档视图、未精修视图都用它）。"""
@@ -1766,6 +1790,9 @@ def delete_entry(conn, entry_id: str) -> dict:
     if row is None:
         raise KeyError("没有这条记忆")
     with tx(conn):
+        if row["doc_id"]:
+            conn.execute("UPDATE memory_documents SET entry_count = max(0, entry_count - 1) "
+                         "WHERE doc_id=?", (row["doc_id"],))
         conn.execute("DELETE FROM memory_entry_concepts WHERE entry_id=?", (entry_id,))
         conn.execute("DELETE FROM memory_relations WHERE from_entry=? OR to_entry=?",
                      (entry_id, entry_id))
