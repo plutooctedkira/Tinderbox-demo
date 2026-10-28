@@ -14,6 +14,7 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
   --red:#a8442c; --amber:#a97a22; --shadow:0 8px 26px rgba(58,44,28,.07);
 }
 *{box-sizing:border-box}
+[hidden]{display:none !important}
 html{scrollbar-gutter:stable}
 html,body{margin:0;height:100%}
 body{background:var(--paper);color:var(--ink);
@@ -547,6 +548,9 @@ function closeNew(){ $('#newmodal').hidden=true; $('#newmsg').textContent=''; }
 $('#qa-new').onclick=openNew;
 $('#newcancel').onclick=closeNew;
 $('#newmodal').onclick=e=>{ if(e.target.id==='newmodal') closeNew(); };
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape' && !$('#newmodal').hidden) closeNew();
+});
 $('#newok').onclick=async()=>{
   const text=($('#newtext').value||'').trim();
   const msg=$('#newmsg');
