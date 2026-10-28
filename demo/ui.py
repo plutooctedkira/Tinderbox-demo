@@ -300,6 +300,29 @@ input[type=file]{font-size:12px;color:#6b6558}
   border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
 @keyframes sp{to{transform:rotate(360deg)}}
 
+/* ---------- 按钮统一：胶囊 + 同一高度 ---------- */
+:root{--btn-h:34px}
+.btn,.chip,.cbtn,.mini,.revbtn{
+  height:var(--btn-h);padding:0 18px;display:inline-flex;align-items:center;justify-content:center;
+  border-radius:999px;box-sizing:border-box;line-height:1;white-space:nowrap;
+}
+.btn{font-size:12.5px}
+.chip{font-size:12px;padding:0 15px}
+.cbtn{font-size:11.5px;padding:0 14px}
+.mini{font-size:11px;padding:0 13px}
+.revbtn{font-size:11px;padding:0 13px;margin-left:auto}
+.seg{border-radius:999px}
+.seg button{height:var(--btn-h);padding:0 16px;display:inline-flex;align-items:center;
+  justify-content:center;line-height:1;box-sizing:border-box}
+.srow select,.ssort select{height:var(--btn-h);padding:0 12px;box-sizing:border-box;
+  border-radius:999px;line-height:1}
+.sbig .sgo{width:var(--btn-h);height:var(--btn-h)}
+.searchbox .go{width:var(--btn-h);height:var(--btn-h);font-size:13px}
+.sbig .sclear{height:var(--btn-h);width:var(--btn-h);display:inline-flex;align-items:center;
+  justify-content:center;border-radius:999px}
+.sbig .sclear:hover{background:#f2ece0}
+.qa button{height:95px}          /* 首页快捷操作是卡片，不参与统一高度 */
+
 /* ---------- 手机 ---------- */
 @media (max-width:920px){
   .app{flex-direction:column}
