@@ -9,9 +9,21 @@ PAGE = r"""<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <title>Tinderbox</title>
 <style>
 :root{
-  --paper:#f5efe3; --card:#fffdf7; --ink:#2c2a25; --muted:#8b8577; --line:#e6ddcc;
-  --green:#1f3a2b; --green2:#2f5d43; --green3:#3f7355; --gold:#a8834a;
-  --red:#a8442c; --amber:#a97a22; --shadow:0 8px 26px rgba(58,44,28,.07);
+  /* 设计规范 */
+  --paper:#F7F2E8;      /* 羊皮纸白：主背景 */
+  --card:#FCFAF5;       /* 书页白：内容表面 */
+  --green:#263D30;      /* 书脊绿：主色 */
+  --sage:#DCE8D9;       /* 鼠尾草绿：辅助色 */
+  --brass:#B58A52;      /* 黄铜金：装饰色 */
+  --brick:#A65B48;      /* 砖红：冲突与危险 */
+  --ink:#302D27;        /* 深棕黑：正文 */
+
+  /* 派生 */
+  --muted:#8C8578; --line:#E7DECB;
+  --green2:#2F4C3A; --green3:#3C5C47;
+  --gold:var(--brass); --red:var(--brick); --amber:#9A7434;
+  --shadow:0 8px 26px rgba(48,45,39,.06);
+  --sidebar:240px; --content:1200px;
 }
 *{box-sizing:border-box}
 [hidden]{display:none !important}
@@ -24,18 +36,31 @@ a{color:inherit}
 .app{display:flex;min-height:100vh;align-items:stretch}
 
 /* ---------- 侧栏 ---------- */
-.side{width:214px;flex:none;background:var(--green);color:#dfe5d5;position:sticky;top:0;
-  height:100vh;display:flex;flex-direction:column;padding:0 14px 18px}
+.side{width:var(--sidebar);flex:none;background:var(--green);color:#dfe5d5;
+  position:sticky;top:0;height:100vh;display:flex;flex-direction:column;
+  padding:0 14px 18px;transition:width .18s ease;overflow:hidden}
+.side.mini{width:68px}
+.side.mini .brand span:not(.mark),.side.mini .nav a span:not(.ic),.side.mini .foot,
+.side.mini .collapse span{display:none}
+.side.mini .brand{justify-content:center;padding:0}
+.side.mini .nav a{justify-content:center;padding:10px 0}
+.side.mini .collapse{justify-content:center}
 .brand{display:flex;align-items:center;gap:9px;color:#fff;font-family:"Noto Serif SC",Georgia,serif;
   font-size:17px;letter-spacing:.3px;height:60px;flex:none;padding:0 8px;box-sizing:border-box}
 .brand .mark{width:26px;height:26px;border-radius:7px;background:#e7dcc4;color:var(--green);
   display:grid;place-items:center;font-size:14px}
-.nav{display:flex;flex-direction:column;gap:2px}
+.nav{display:flex;flex-direction:column;gap:2px;flex:1;min-height:0;overflow-y:auto}
+.collapse{display:flex;align-items:center;gap:8px;margin:10px 0 4px;padding:8px 11px;
+  border:1px solid rgba(255,255,255,.16);border-radius:8px;background:transparent;
+  color:#c8d2bf;font-size:12px;font-family:inherit;cursor:pointer}
+.collapse:hover{background:rgba(255,255,255,.08);color:#fff}
 .nav a{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;
   color:#c8d2bf;font-size:13.5px;text-decoration:none;cursor:pointer;user-select:none}
 .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
 .nav a.on{background:rgba(255,255,255,.14);color:#fff;font-weight:600}
 .nav a .ic{width:16px;text-align:center;opacity:.85;font-size:13px}
+.nav a .dot{margin-left:auto;background:var(--brick);color:#fff;border-radius:9px;
+  padding:0 6px;font-size:10.5px;line-height:16px}
 .side .foot{margin-top:auto;padding:0 10px;font-size:11px;color:#93a58c;line-height:1.9;
   font-family:"Noto Serif SC",Georgia,serif}
 .side .foot .leaf{display:block;margin-bottom:6px;opacity:.6;font-size:15px}
@@ -43,6 +68,7 @@ a{color:inherit}
 /* ---------- 主区 ---------- */
 .main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh}
 .topbar{display:flex;align-items:center;gap:16px;height:60px;flex:none;
+  width:100%;max-width:calc(var(--content) + 52px);margin:0 auto;
   padding:0 26px;box-sizing:border-box}
 .searchbox{flex:1;display:flex;align-items:center;gap:10px;background:var(--card);
   border:1px solid var(--line);border-radius:22px;padding:8px 16px;height:40px;
@@ -53,7 +79,8 @@ a{color:inherit}
   color:#fff;cursor:pointer;font-size:13px}
 .who{font-size:12.5px;color:var(--muted);white-space:nowrap}
 .who b{color:var(--ink);font-weight:600}
-.wrap{padding:10px 26px 40px;flex:1}
+.wrap{padding:10px 26px 40px;flex:1;width:100%;max-width:calc(var(--content) + 52px);
+  margin:0 auto;box-sizing:border-box}
 .view{display:none}
 .view.on{display:block}
 
@@ -61,18 +88,18 @@ a{color:inherit}
 .hero{position:relative;border-radius:18px;overflow:hidden;padding:34px 32px 30px;margin:0 0 16px;
   color:#f7efe1;box-shadow:var(--shadow);
   background:
-    radial-gradient(900px 320px at 78% -30%,rgba(255,233,190,.30),transparent 60%),
-    radial-gradient(600px 260px at 8% 120%,rgba(0,0,0,.35),transparent 60%),
-    linear-gradient(112deg,#413126 0%,#5c4733 42%,#332a21 100%);}
-.hero .kicker{font-size:11.5px;letter-spacing:.28em;color:#c8bda6;text-transform:uppercase}
+    radial-gradient(900px 320px at 80% -30%,rgba(181,138,82,.28),transparent 62%),
+    radial-gradient(620px 280px at 6% 120%,rgba(0,0,0,.34),transparent 62%),
+    linear-gradient(112deg,#263D30 0%,#2F4C3A 46%,#1C2C23 100%);}
+.hero .kicker{font-size:11.5px;letter-spacing:.28em;color:var(--brass);text-transform:uppercase}
 .hero h1{margin:10px 0 6px;font-size:31px;letter-spacing:1px;color:#fff8ea}
-.hero p{margin:0 0 20px;color:#cfc4b1;font-size:13px;letter-spacing:.12em}
+.hero p{margin:0 0 20px;color:#C7D4C6;font-size:13px;letter-spacing:.12em}
 .hero{text-align:center}
 .hero form{display:flex;align-items:center;gap:10px;background:rgba(255,252,244,.96);
   border-radius:24px;padding:10px 16px;max-width:620px;margin:0 auto}
 .hero input{flex:1;border:0;outline:none;background:transparent;font-size:13.5px;color:#3a332a;font-family:inherit}
 .hero button{width:30px;height:30px;border-radius:50%;border:0;background:var(--green);color:#fff;cursor:pointer}
-.hero .hue{position:absolute;right:32px;top:28px;font-size:11px;color:#b9ac95;text-align:right;
+.hero .hue{position:absolute;right:32px;top:28px;font-size:11px;color:#A9B9A6;text-align:right;
   line-height:1.9;opacity:.9}
 .homegrid{display:flex;gap:18px;align-items:stretch}
 .homeleft{flex:1;min-width:0}
@@ -97,9 +124,9 @@ a{color:inherit}
 .qa .qt em{font-style:normal;font-size:11px;color:var(--muted)}
 .qdiv{border-top:1px dashed #ded4c0;margin:0 2px 14px}
 .art{flex:1;min-height:140px;border-radius:12px}
-.quote{background:linear-gradient(160deg,#f0e7d3,#e7dcc2);border:1px solid #e0d3b8;border-radius:14px;
-  padding:18px;color:#6c5a3d;font-family:"Noto Serif SC",Georgia,serif;font-size:13px;line-height:2;
-  text-align:center;letter-spacing:.04em}
+.quote{background:linear-gradient(160deg,#E8F0E4,var(--sage));border:1px solid #CBDCC6;
+  border-radius:14px;padding:18px;color:#3F5343;font-family:"Noto Serif SC",Georgia,serif;
+  font-size:13px;line-height:2;text-align:center;letter-spacing:.04em}
 
 /* ---------- 卡片 / 列表 ---------- */
 .panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);overflow:hidden}
@@ -122,9 +149,9 @@ a{color:inherit}
 /* ---------- 标签 ---------- */
 .badge{font-size:11px;padding:1px 9px;border-radius:20px;border:1px solid;white-space:nowrap;
   display:inline-block;line-height:1.8}
-.badge.ok{color:#2f5d43;border-color:#bfd8c6;background:#f1f8f3}
-.badge.wait{color:#8a5a00;border-color:#e5cf9f;background:#fdf6e6}
-.badge.conf{color:#8c3b28;border-color:#e3c2b5;background:#fbeee8}
+.badge.ok{color:#2B4A38;border-color:#C4D6C3;background:var(--sage)}
+.badge.wait{color:#8A6423;border-color:#E2CFA8;background:#FAF3E4}
+.badge.conf{color:var(--brick);border-color:#DDBCB1;background:#F7ECE8}
 .badge.gray{color:#7c776b;border-color:#ded7c7;background:#f5f2e9}
 .badge.dim{color:#8b8577;border-color:#e6ddcc;background:#faf7ef}
 .cat{font-size:10.5px;color:#6b6558;background:#f2ece0;border-radius:6px;padding:0 6px;line-height:1.9}
@@ -192,6 +219,14 @@ a{color:inherit}
 .vtn .h{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted)}
 .vtn .s{font-size:12px;color:#4a4437;margin-top:3px;line-height:1.7}
 .vtn .why{font-size:11px;color:#7d7768;margin-top:3px}
+.cfrow{padding:12px 18px;border-bottom:1px solid #f0e9da}
+.cfrow:last-child{border-bottom:0}
+.cfrow .hd{display:flex;align-items:center;gap:8px;font-size:11px;color:var(--muted);margin-bottom:6px}
+.cfrow .pair{font-size:12.5px;line-height:1.7;color:#4a4437}
+.cfrow .pair b{font-weight:600}
+.cfrow .old{color:#7d7768;text-decoration:line-through;text-decoration-color:#cfc6b3}
+.cfrow .why{font-size:11px;color:var(--muted);margin-top:4px}
+.cfrow .acts{display:flex;gap:8px;margin-top:8px}
 .relrow{display:flex;gap:8px;padding:9px 18px;border-bottom:1px solid #f2ecdd;cursor:pointer;font-size:12px}
 .relrow:last-child{border-bottom:0}
 .relrow:hover{background:#fbf7ec}
@@ -261,6 +296,7 @@ input[type=file]{font-size:12px;color:#6b6558}
   .nav{flex-direction:row}
   .nav a{white-space:nowrap;padding:7px 10px}
   .side .foot{display:none}
+  .collapse{display:none}
   .homegrid,.detailgrid,.libgrid{flex-direction:column}
   .homeright,.sidecol,.filter{width:auto}
   .qa{height:auto;min-height:0}
@@ -272,7 +308,7 @@ input[type=file]{font-size:12px;color:#6b6558}
 </style></head><body>
 <div class="app">
   <aside class="side">
-    <div class="brand"><span class="mark">▤</span>Tinderbox</div>
+    <div class="brand"><span class="mark">▤</span><span>Tinderbox</span></div>
     <nav class="nav">
       <a data-v="home"><span class="ic">⌂</span>首页</a>
       <a data-v="search"><span class="ic">⌕</span>记忆搜索</a>
@@ -280,6 +316,7 @@ input[type=file]{font-size:12px;color:#6b6558}
       <a data-v="sources"><span class="ic">▤</span>原始资料</a>
       <a data-v="settings"><span class="ic">⚙</span>设置</a>
     </nav>
+    <button class="collapse" id="collapse" title="收起/展开导航"><span class="ic">⇤</span><span>收起</span></button>
     <div class="foot"><span class="leaf">❧</span>让重要的记忆<br>成为你行动的起点</div>
   </aside>
 
@@ -310,6 +347,13 @@ input[type=file]{font-size:12px;color:#6b6558}
             </div>
 
             <div class="statgrid" id="stats"></div>
+
+            <div class="panel" id="todoPanel">
+              <div class="phead"><h3>待处理</h3>
+                <span class="more" id="todoCount" style="color:var(--brick)"></span></div>
+              <div id="todo"></div>
+            </div>
+
             <div class="panel">
               <div class="phead"><h3>最近记忆</h3><span class="more" data-go="library">查看全部 →</span></div>
               <div id="recent"></div>
@@ -548,6 +592,8 @@ async function loadHome(){
         ${badge(it)}<div class="ts">${rel(it.created_at)}</div>
       </div>`).join('') : '<div class="empty">还没有记忆，去「设置 → 导入」放一些进来</div>';
     bindRows('#recent');
+    await loadTodo();
+    loadMetaBadge();
   }catch(e){ toast(e.message,true); }
 }
 function openNew(){
@@ -584,6 +630,63 @@ $('#qa-recent').onclick=()=>{
   const panel=$('#recent');
   if(panel) panel.scrollIntoView({behavior:'smooth',block:'center'});
 };
+async function loadTodo(){
+  const box=$('#todo'), cnt=$('#todoCount');
+  try{
+    const [cf,meta]=await Promise.all([api('/api/conflicts'), api('/api/meta')]);
+    const items=cf.items||[];
+    const cleanN=meta.provisional||0;
+    cnt.textContent = items.length? `${items.length} 处冲突` : (cleanN? `${cleanN} 条待清洗` : '');
+    if(!items.length && !cleanN){
+      box.innerHTML='<div class="empty">没有待处理的事</div>';
+      return;
+    }
+    box.innerHTML = items.slice(0,5).map(c=>`
+      <div class="cfrow" data-cid="${c.conflict_id}">
+        <div class="hd"><span class="badge conf">${esc(c.relation)}</span>
+          <span>${Math.round((c.confidence||0)*100)}% 置信</span>
+          <span style="margin-left:auto">${esc((c.reason||'').slice(0,28))}</span></div>
+        <div class="pair"><span class="old">${esc(clip(c.old&&c.old.l1_summary,46))}</span><br>
+          <b>→ ${esc(clip(c.new&&c.new.l1_summary,46))}</b></div>
+        <div class="acts">
+          <button class="btn primary" data-res="supersede">采用新的</button>
+          <button class="btn" data-res="ignore">保留旧的</button>
+          <button class="btn" data-res="keep_both">都留下</button>
+        </div>
+      </div>`).join('')
+      + (cleanN? `<div class="cfrow"><div class="hd"><span class="badge wait">待清洗</span></div>
+          <div class="pair">${cleanN} 条记忆还是规则提炼的摘要，去设置里清洗会更准确。</div>
+          <div class="acts"><button class="btn" id="todo-clean">去清洗</button></div></div>`:'');
+    box.querySelectorAll('[data-res]').forEach(b=>b.onclick=async()=>{
+      const cid=b.closest('.cfrow').dataset.cid;
+      b.disabled=true;
+      try{
+        await post('/api/conflicts/resolve',{conflict_id:cid,resolution:b.dataset.res});
+        toast('已裁决'); loadTodo(); loadHome(); loadMetaBadge();
+      }catch(e){ toast(e.message,true); b.disabled=false; }
+    });
+    const tc=$('#todo-clean');
+    if(tc) tc.onclick=()=>go('settings');
+  }catch(e){ box.innerHTML='<div class="empty">'+esc(e.message)+'</div>'; }
+}
+
+async function loadMetaBadge(){
+  try{
+    const m=await api('/api/meta');
+    const nav=$$('.nav a').find(a=>a.dataset.v==='library');
+    if(nav && m.pending) nav.innerHTML='<span class="ic">▦</span>记忆库 <span class="dot">'+m.pending+'</span>';
+  }catch(e){}
+}
+
+/* 侧栏收起 */
+const mini=localStorage.getItem('tb-side-mini')==='1';
+if(mini) $('.side').classList.add('mini');
+$('#collapse').onclick=()=>{
+  const side=$('.side');
+  side.classList.toggle('mini');
+  localStorage.setItem('tb-side-mini', side.classList.contains('mini')?'1':'0');
+};
+
 function bindRows(sel){
   $$(sel+' .row[data-id], '+sel+' .rescard[data-id]').forEach(el=>{
     el.onclick=()=>openDetail(el.dataset.id);
